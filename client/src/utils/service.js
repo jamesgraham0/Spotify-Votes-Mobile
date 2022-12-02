@@ -1,0 +1,281 @@
+import axios from 'axios';
+import { CLIENT_ID, REDIRECT_URI } from "@env";
+import SpotifyWebApi from "spotify-web-api-node";
+
+const spotifyApi = new SpotifyWebApi({
+  clientId: CLIENT_ID,
+})
+
+let token = '';
+let device_id = '';
+let currently_playing = {
+    image: '',
+    artistName: '',
+    trackName: '',
+    trackUri: '',
+}
+let queue = [];
+
+const BASE_URL = "https://api.spotify.com/v1"
+const concatUrl = (url) => `${BASE_URL}/${url}`;
+
+const getDeviceId = async () => {
+    const url = concatUrl("me/player/devices");
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        device_id = response.data.devices.map((device) => {
+            if (device.is_active) {
+                return device.id;
+            }
+        })
+        if (device_id !== '') {
+            device_id = response.data.devices[0].id;
+        }
+        return device_id;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const service = {
+
+    getAccessToken: () => {
+        try {
+            if (token !== '') {
+                return token;
+            }
+            else {
+                throw new Error('No token found');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    login: async () => {
+        const url = concatUrl('authorize');
+        try {
+            const response = await axios.get(url, {
+                params: {
+                    client_id: CLIENT_ID,
+                    response_type: 'code',
+                    redirect_uri: REDIRECT_URI,
+                    scope: "user-read-currently-playing \
+                            user-read-recently-played \
+                            user-read-playback-state \
+                            user-top-read \
+                            user-modify-playback-state \
+                            streaming \
+                            user-read-email \
+                            user-read-private"
+                }
+            });
+            console.log("RESPONSE", response);
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    getUserCredentials: async (authInfo) => {
+        const { access_token } = authInfo.params;
+        spotifyApi.setAccessToken(access_token);
+        token = access_token;
+        const url = concatUrl('me');
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`
+                }
+            });
+            console.log("User Authorized");
+            return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    searchTrack: async (search) => {
+        try {
+            return await spotifyApi.searchTracks(search);
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    addTrackToQueue: async (track) => {
+        const uri = track.uri;
+        if (device_id === '') {
+            device_id = await getDeviceId();
+        }
+
+        const data = {
+            uri: uri,
+            device_id: device_id
+        }
+
+        try {
+            if (device_id === '') {
+                throw new Error('No device found trying to addTrackToQueue');
+            }
+            const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${device_id}`;
+            await axios.post(url,
+                data, 
+                {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+              },
+            });
+            console.log(`${track.title} added to queue`);
+          } catch (error) {
+            console.log(error);
+          }
+    },
+
+    /**
+     * 
+     * @returns 
+     * Currently playing track as object {image, artistName, trackName, trackUri}
+     * Queue as array of objects [{image, artistName, trackName, trackUri}]
+     */
+    getQueue: async () => {
+        const url = concatUrl('me/player/queue');
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            queue = response.data.queue.map((track) => {
+                if (track.type === 'track') {
+                    return {
+                        image: track.album.images[0].url,
+                        artistName: track.artists[0].name,
+                        trackName: track.name,
+                        trackUri: track.uri,
+                    }
+                }
+            })
+            queue = queue.filter((track) => track !== undefined);
+            return queue;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    getCurrentlyPlaying: async () => {
+        const url = concatUrl('me/player/currently-playing');
+        try {   
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (response.data) {
+                currently_playing = {
+                    image: response.data.item.album.images[0].url,
+                    artistName: response.data.item.artists[0].name,
+                    trackName: response.data.item.name,
+                    trackUri: response.data.item.uri,
+                }
+            }
+            return currently_playing;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    transferPlayback: async () => {
+        if (device_id === '') {
+            device_id = await getDeviceId();
+        }
+
+        const url = concatUrl('me/player');
+        try {
+            if (device_id === '') {
+                throw new Error('No device found trying to transferPlayback');
+            }
+            const response = await axios.put(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    "device_ids": [device_id],
+                }
+            });
+            console.log("Success", response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    startPlaying: async () => {
+        if (device_id === '') {
+            device_id = await getDeviceId();
+        }
+
+        const url = concatUrl(`me/player/play?device_id=${device_id}`);
+        try {
+            if (device_id === '') {
+                throw new Error('No device found trying to startPlaying');
+            }
+            await axios.put(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Successfully playing");
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    pausePlaying: async () => {
+        if (device_id === '') {
+            device_id = await getDeviceId();
+        }
+
+        const url = concatUrl(`me/player/pause?device_id=${device_id}`);
+        try {
+            if (device_id === '') {
+                throw new Error('No device found trying to startPlaying');
+            }
+            await axios.put(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Successfully paused");
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    getPlaybackState: async () => {
+        const url = concatUrl('me/player');
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Is playing", response.data.is_playing);
+            return response.data.is_playing;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+}
+
+export default service;
