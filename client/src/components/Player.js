@@ -1,33 +1,32 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
 import { Ionicons } from '@expo/vector-icons'; 
 
 const Player = ({ currentlyPlaying }) => {
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [trackPlaying, setTrackPlaying] = useState();
-
+    const [isPlaying, setIsPlaying] = useState(true);
+ 
     useEffect(() => {
-        if (currentlyPlaying) {
-            setTrackPlaying(currentlyPlaying);
+        const initializePlayer = async () => {
+            // check if the user is already playing something
+            const playBackState = await service.getPlaybackState();
+            setIsPlaying(playBackState.body.is_playing);
         }
-    }, []);
+        initializePlayer();
+    }, [])
 
     const handlePlayPause = async () => {
-        const playing = await service.getPlaybackState();
-        if (playing) {
-            await service.pausePlaying().then(() => {
-                setIsPlaying(false);
-            })
+        if (isPlaying) {
+            await service.pausePlaying();
+            setIsPlaying(false);
         } else {
-            await service.startPlaying().then(() => {
-                setIsPlaying(true);
-            })
+            await service.startPlaying();
+            setIsPlaying(true);
         }
     }
 
-    if (trackPlaying !== undefined) {
-        const { artistName, image, trackName, trackUri} = trackPlaying;
+    if (currentlyPlaying.image !== '') {
+        const { artistName, image, trackName, trackUri} = currentlyPlaying;
         return (
             <View style={styles.container}>
                 <View style={styles.player}>
@@ -40,8 +39,8 @@ const Player = ({ currentlyPlaying }) => {
                                 <Text style={styles.artist}>{artistName}</Text> 
                             </View>
                             <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                                {isPlaying ? <Ionicons name="pause-outline" size={48} color="white" /> 
-                                           : <Ionicons name="play-outline" size={48} color="white" />}
+                                {isPlaying ? <Ionicons name="pause-outline" size={48} color="white"/>
+                                           : <Ionicons name="play-outline" size={48} color="white"/> }
                             </TouchableOpacity>
                         </View>    
                     }   

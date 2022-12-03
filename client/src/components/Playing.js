@@ -7,16 +7,11 @@ const Playing = () => {
     const [currentlyPlaying, setCurrentlyPlaying] = useState();
 
     useEffect(() => {
-        const getTrackStartPlaying = () => {
-            service.getCurrentlyPlaying().then((track) => {
-                setCurrentlyPlaying(track);
-                console.log(track);
-                service.startPlaying().then(() => {
-                    console.log('Started playing from Playing.js');
-                })
-            })
+        const getTrack = async () => {
+            let track = await service.getCurrentlyPlaying();
+            setCurrentlyPlaying(track);
         }
-        getTrackStartPlaying();
+        getTrack();
     }, []);
 
     return (

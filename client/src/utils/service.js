@@ -27,15 +27,15 @@ const getDeviceId = async () => {
                 'Authorization': `Bearer ${token}`
             }
         })
-        device_id = response.data.devices.map((device) => {
-            if (device.is_active) {
-                return device.id;
-            }
-        })
-        if (device_id !== '') {
-            device_id = response.data.devices[0].id;
+        if (response.data.devices.length > 0) {
+            device_id = response.data.devices.map((device) => {
+                // Only allow smartphones for now
+                if (device.type === 'Smartphone') {
+                    return device.id;
+                }
+            })
         }
-        return device_id;
+        return device_id[0];
     } catch (error) {
         console.log(error);
     }
@@ -108,33 +108,43 @@ const service = {
 
     addTrackToQueue: async (track) => {
         const uri = track.uri;
-        if (device_id === '') {
-            device_id = await getDeviceId();
-        }
 
-        const data = {
-            uri: uri,
-            device_id: device_id
-        }
-
-        try {
-            if (device_id === '') {
-                throw new Error('No device found trying to addTrackToQueue');
+        // track already in queue
+        let trackInQueue = false;
+        queue.forEach((t) => {
+            if (t.trackUri === uri) {
+                console.log("Track already in queue");
+                trackInQueue = true;
             }
-            const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${device_id}`;
-            await axios.post(url,
-                data, 
-                {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-              },
-            });
-            console.log(`${track.title} added to queue`);
-          } catch (error) {
-            console.log(error);
-          }
+        });
+        
+        // track not in queue, add it
+        if (!trackInQueue) {
+            console.log(`Adding ${track.title} to queue`);
+            const data = {
+                uri: uri,
+                device_id: device_id
+            }
+    
+            try {
+                if (device_id === '') {
+                    throw new Error('No device found trying to addTrackToQueue');
+                }
+                const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${device_id}`;
+                await axios.post(url,
+                    data, 
+                    {
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                  },
+                });
+                console.log(`${track.title} added to queue`);
+              } catch (error) {
+                console.log(error);
+            }
+        }
     },
 
     /**
@@ -169,21 +179,13 @@ const service = {
     },
 
     getCurrentlyPlaying: async () => {
-        const url = concatUrl('me/player/currently-playing');
-        try {   
-            const response = await axios.get(url, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            if (response.data) {
-                currently_playing = {
-                    image: response.data.item.album.images[0].url,
-                    artistName: response.data.item.artists[0].name,
-                    trackName: response.data.item.name,
-                    trackUri: response.data.item.uri,
-                }
+        try {
+            let track = await spotifyApi.getMyCurrentPlayingTrack();
+            currently_playing = {
+                image: track.body.item.album.images[0].url,
+                artistName: track.body.item.artists[0].name,
+                trackName: track.body.item.name,
+                trackUri: track.body.item.uri,
             }
             return currently_playing;
         } catch (error) {
@@ -217,60 +219,25 @@ const service = {
     },
 
     startPlaying: async () => {
-        if (device_id === '') {
-            device_id = await getDeviceId();
-        }
-
-        const url = concatUrl(`me/player/play?device_id=${device_id}`);
         try {
-            if (device_id === '') {
-                throw new Error('No device found trying to startPlaying');
-            }
-            await axios.put(url, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log("Successfully playing");
+            await spotifyApi.play();
         } catch (error) {
             console.log(error);
         }
     },
-
+    
     pausePlaying: async () => {
-        if (device_id === '') {
-            device_id = await getDeviceId();
-        }
-
-        const url = concatUrl(`me/player/pause?device_id=${device_id}`);
         try {
-            if (device_id === '') {
-                throw new Error('No device found trying to startPlaying');
-            }
-            await axios.put(url, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log("Successfully paused");
+            await spotifyApi.pause();
         } catch (error) {
             console.log(error);
         }
     },
 
     getPlaybackState: async () => {
-        const url = concatUrl('me/player');
         try {
-            const response = await axios.get(url, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log("Is playing", response.data.is_playing);
-            return response.data.is_playing;
+            const result = await spotifyApi.getMyCurrentPlaybackState();
+            return result;
         } catch (error) {
             console.log(error);
         }
