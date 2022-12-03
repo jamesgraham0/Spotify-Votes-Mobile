@@ -181,12 +181,13 @@ const service = {
     getCurrentlyPlaying: async () => {
         try {
             let track = await spotifyApi.getMyCurrentPlayingTrack();
-            currently_playing = {
-                image: track.body.item.album.images[0].url,
-                artistName: track.body.item.artists[0].name,
-                trackName: track.body.item.name,
-                trackUri: track.body.item.uri,
-            }
+            console.log(track);
+            // currently_playing = {
+            //     image: track.body.item.album.images[0].url,
+            //     artistName: track.body.item.artists[0].name,
+            //     trackName: track.body.item.name,
+            //     trackUri: track.body.item.uri,
+            // }
             return currently_playing;
         } catch (error) {
             console.log(error);

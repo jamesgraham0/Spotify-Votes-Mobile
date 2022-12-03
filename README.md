@@ -1,6 +1,3 @@
-- Get Queue in the Room displaying in ScrollView
-- Get Playing in the Room working
-
 - Configure app’s State using redux reducers and actions to <br/><br/>
 
 store = Rooms[<br/>
