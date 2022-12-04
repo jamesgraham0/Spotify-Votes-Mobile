@@ -2,31 +2,49 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingVi
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
+import { createRoom } from '../reducers/reducer';
+import { useSelector, useDispatch } from 'react-redux';
+import service from '../utils/service';
 
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
-    const [password, setPassword] = useState();
+    const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
 
     
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
     
-    const validateNameAndPassword = () => {
+    const handleCreateRoom = async () => {
         Keyboard.dismiss();
-        if (roomName != '' && password != '') {
+        if (validNameAndPassword()) {
+            const room = {
+                name: roomName, 
+                password: password,
+                hostId: user.id,
+                id: uuid.v4(),
+                deviceId: await service.getDeviceId(),
+                users: [user],
+                currentlyPlaying: await service.getCurrentlyPlaying(),
+                queue: await service.getQueue(),
+            }
             navigation.navigate(
                 'Room', 
-                {room: {
-                    name: roomName, 
-                    password: password,
-                    users: [user],
-                    id: uuid.v4()
-                }}
+                {room: room,
+                user: user}
             );
+            dispatch(createRoom(room));
         }
+    }
+
+    const validNameAndPassword = () => {
+        if (roomName === '' || password === '') {
+            return false;
+        }
+        return true;
     }
 
 
@@ -68,7 +86,7 @@ const CreateRoom = ({ navigation, route }) => {
                     onChangeText={word => setPassword(word)} 
                     placeholderTextColor="#888"
                 />
-                <TouchableOpacity onPress={() => validateNameAndPassword()}>
+                <TouchableOpacity onPress={() => handleCreateRoom()}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>
                     </View>

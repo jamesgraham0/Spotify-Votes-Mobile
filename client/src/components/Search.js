@@ -2,11 +2,14 @@ import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 
 import React, { useState, useEffect } from 'react';
 import service from '../utils/service';
 import TrackSearchResult from './TrackSearchResult';
+import { pushQueue } from '../reducers/reducer';
+import { useDispatch } from 'react-redux';
 
 
-const Search = () => {
+const Search = ({ room }) => {
     const [search, setSearch] = useState("")
     const [searchResults, setSearchResults] = useState([])
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (!search) return setSearchResults([])
@@ -36,7 +39,8 @@ const Search = () => {
       }, [search]);
 
       const addTrack = (track) => {
-        service.addTrackToQueue(track)
+        dispatch(pushQueue({track: track, roomId: room.id}));
+        // service.addTrackToQueue(track);
     }
 
 

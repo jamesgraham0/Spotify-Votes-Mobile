@@ -1,18 +1,18 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 const EnterRoomPassword = ({ navigation, route }) => {
-    const [password, setPassword] = useState();
+    const [guessedPassword, setGuessedPassword] = useState('');
     const { user, room } = route.params;
-    const { name, id } = room;
+    const name = room.name;
+    const correctPassword = room.password;
     
-
+    
     const validatePassword = () => {
         Keyboard.dismiss();
-        // TODO: Check if password is correct
-        if (password === '1') {
+        if (guessedPassword === correctPassword) {
             navigation.navigate('Room', {user: user, room: room});
         } else {
             alert('Incorrect password');
@@ -42,7 +42,7 @@ const EnterRoomPassword = ({ navigation, route }) => {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.writeTaskWrapper}
             >
-                <TextInput style={styles.passwordInput} placeholder={'password...'} value={password} onChangeText={word => setPassword(word)} />
+                <TextInput style={styles.passwordInput} placeholder={'password...'} value={guessedPassword} onChangeText={word => setGuessedPassword(word)} />
                 <TouchableOpacity onPress={() => validatePassword()}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>

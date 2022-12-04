@@ -3,21 +3,21 @@ import { StyleSheet, View } from "react-native";
 import service from '../utils/service';
 import Player from "./Player";
 
-const Playing = () => {
-    const [currentlyPlaying, setCurrentlyPlaying] = useState();
+const Playing = ({ currentlyPlaying }) => {
+    // const [currentlyPlaying, setCurrentlyPlaying] = useState();
 
-    useEffect(() => {
-        const getTrack = async () => {
-            let track = await service.getCurrentlyPlaying();
-            setCurrentlyPlaying(track);
-        }
-        getTrack();
-    }, []);
+    // useEffect(() => {
+    //     const getTrack = async () => {
+    //         let track = await service.getCurrentlyPlaying();
+    //         setCurrentlyPlaying(track);
+    //     }
+    //     getTrack();
+    // }, []);
 
     return (
     <View style={styles.container}>
         <View style={styles.player}>
-            {currentlyPlaying && <Player currentlyPlaying={currentlyPlaying}/>}
+            <Player currentlyPlaying={currentlyPlaying}/>
         </View>
     </View>
   );

@@ -3,16 +3,18 @@ import React, { useEffect, useState } from "react";
 import QueueTrack from './QueueTrack';
 import service from '../utils/service';
 
-const Queue = () => {
-    const [queue, setQueue] = useState();
 
-    useEffect(() => {
-        const getQ = async () => {
-            let q = await service.getQueue();
-            setQueue(q);
-        }
-        getQ();
-    }, []);
+const Queue = ({ queue }) => {
+    console.log("QUEUE", queue);
+    // const [queue, setQueue] = useState(que);
+
+    // useEffect(() => {
+        // const getQ = async () => {
+        //     let q = await service.getQueue();
+        //     setQueue(q);
+        // }
+        // getQ();
+    // }, []);
 
     return (
         <View style={styles.container}>

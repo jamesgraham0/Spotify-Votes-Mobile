@@ -7,28 +7,16 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-nati
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import RoomToJoin from '../components/RoomToJoin';
-
+import { useSelector } from 'react-redux';
 
 const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
-    const [rooms, setRooms] = useState([
-        {name: 'Pink Pasadena RAGER 🏡', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 1}, 
-        {name: 'Super duper awesome party room', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 2}, 
-        {name: 'Project X fo real', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 3},
-        {name: 'lonely room', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 4}, 
-        {name: 'Party Rock Anthem only', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 5}, 
-        {name: '🔥', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 6},
-        {name: 'Top Secret', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 7}, 
-        {name: 'Do NOT join this', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 8}, 
-        {name: '$$$', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 9},
-        {name: 'house party', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 10}, 
-        {name: 'Shauns Seattle shake', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 11}, 
-        {name: 'da best queue', users: [{"name": "James"}, {"name": "Shaun"}], password: '1234', id: 12},
-    ]);
+    const [rooms, setRooms] = useState([]);
+    const state = useSelector(state => state.state.rooms);
+    
 
     useEffect(() => {
-        // TODO fetch rooms from state
-        // setRooms(rooms);
+        setRooms(state.rooms);
     }, []);
 
     const handleReturnToJoinOrCreateRoom = () => {
@@ -36,7 +24,7 @@ const JoinRoom = ({ navigation, route }) => {
     }
     
     const handleEnterRoomPassword = (room) => {
-        navigation.navigate('EnterRoomPassword', {user: user, room: room});
+        navigation.navigate('EnterRoomPassword', {room: room, user: user });
     }
 
     return (

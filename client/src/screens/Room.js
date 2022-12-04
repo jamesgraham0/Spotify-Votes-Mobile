@@ -1,31 +1,37 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Navbar from '../components/Navbar';
-import service from '../utils/service';
+import { useDispatch } from 'react-redux';
+import { deleteRoom } from '../reducers/reducer';
 
 const Room = ({ navigation, route }) => {
     const { user, room } = route.params;
-    const [password, setPassword] = useState('');
-    const [users, setUsers] = useState([]);
-    const [currentlyPlaying, setCurrentlyPlaying] = useState();
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isHost, setIsHost] = useState('');
-    const [queue, setQueue] = useState([]);
-    const [deviceId, setDeviceId] = useState('');
-
-    useEffect(() => {
-        setUsers(room.users);
-        async function getCurrentlyPlayingAndQueue() {
-            // might need to pass device id to get the correct queue for the room
-            let playingAndQueue = await service.getQueue();
-            setQueue(...queue, playingAndQueue);
-        }
-        getCurrentlyPlayingAndQueue();
-    }, []);
+    const { name, password, id, hostId, deviceId, users, currentlyPlaying, queue } = room;
+    const dispatch = useDispatch();
 
     const handleReturnToJoinOrCreateRoom = () => {
-        navigation.navigate('JoinOrCreateRoom', { user: user });
+        // check if it's the host leaving, if so, delete the room
+        // the host can be identified by their user id
+        if (hostId === user.id) {
+            Alert.alert(
+                "Wait!",
+                `You are the host of ${name}, if you leave, the room will be deleted`,
+                [
+                    {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                    { text: "Delete Room", onPress: () => {
+                        navigation.navigate('JoinOrCreateRoom', { user: user });
+                        dispatch(deleteRoom(room));
+                    }}
+                ]
+            );
+        } else {
+            navigation.navigate('JoinOrCreateRoom', { user: user });
+        }
     }
 
     return (
@@ -41,7 +47,7 @@ const Room = ({ navigation, route }) => {
                     <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
                 </TouchableOpacity>
             </View>
-            <Navbar/>
+            <Navbar room={room}/>
         </View>
         
     )
@@ -53,27 +59,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#040404',
     },
     headerContainer: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#040404',
-        height: 150,
-        padding: 20,
+        backgroundColor: '#0C0C0C',
+        height: 120,
     },
     roomName: {
+        position: 'absolute',
+        top: 60,
         color: '#BBB',
-        fontSize: 24,
+        fontSize: 30,
         maxWidth: '70%',
         textAlign: 'center',
-        top: 20,
-        marginLeft: 10,
     },
     returnButton: {
         position: 'absolute',
-        top: 70,
         width: 50,
         height: 50,
         left: 30,
+        top: 60,
     },
   })
   

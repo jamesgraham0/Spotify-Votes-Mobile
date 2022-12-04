@@ -30,12 +30,14 @@ const getDeviceId = async () => {
         if (response.data.devices.length > 0) {
             device_id = response.data.devices.map((device) => {
                 // Only allow smartphones for now
-                if (device.type === 'Smartphone') {
+                if (device.type !== 'Spotify Connect') {
                     return device.id;
                 }
             })
         }
-        return device_id[0];
+        if (device_id.length !== 0) {
+            return device_id[0];
+        }
     } catch (error) {
         console.log(error);
     }
@@ -59,7 +61,7 @@ const service = {
     login: async () => {
         const url = concatUrl('authorize');
         try {
-            const response = await axios.get(url, {
+            await axios.get(url, {
                 params: {
                     client_id: CLIENT_ID,
                     response_type: 'code',
@@ -74,7 +76,6 @@ const service = {
                             user-read-private"
                 }
             });
-            console.log("RESPONSE", response);
         } catch (error) {
             console.log(error);
         }
@@ -91,8 +92,15 @@ const service = {
                     'Authorization': `Bearer ${access_token}`
                 }
             });
-            console.log("User Authorized");
             return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    getDeviceId: async () => {
+        try {
+            return await getDeviceId();
         } catch (error) {
             console.log(error);
         }
@@ -181,13 +189,14 @@ const service = {
     getCurrentlyPlaying: async () => {
         try {
             let track = await spotifyApi.getMyCurrentPlayingTrack();
-            console.log(track);
-            // currently_playing = {
-            //     image: track.body.item.album.images[0].url,
-            //     artistName: track.body.item.artists[0].name,
-            //     trackName: track.body.item.name,
-            //     trackUri: track.body.item.uri,
-            // }
+            if (track.body !== null) {
+                currently_playing = {
+                    image: track.body.item.album.images[0].url,
+                    artistName: track.body.item.artists[0].name,
+                    trackName: track.body.item.name,
+                    trackUri: track.body.item.uri,
+                }
+            }
             return currently_playing;
         } catch (error) {
             console.log(error);
@@ -238,7 +247,10 @@ const service = {
     getPlaybackState: async () => {
         try {
             const result = await spotifyApi.getMyCurrentPlaybackState();
-            return result;
+            if (result.body !== null) {
+                return result.body;
+            }
+            return false;
         } catch (error) {
             console.log(error);
         }

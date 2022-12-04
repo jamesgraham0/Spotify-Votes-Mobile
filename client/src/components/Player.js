@@ -4,13 +4,13 @@ import service from "../utils/service";
 import { Ionicons } from '@expo/vector-icons'; 
 
 const Player = ({ currentlyPlaying }) => {
-    const [isPlaying, setIsPlaying] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(false);
  
     useEffect(() => {
         const initializePlayer = async () => {
             // check if the user is already playing something
             const playBackState = await service.getPlaybackState();
-            setIsPlaying(playBackState.body.is_playing);
+            setIsPlaying(playBackState.is_playing);
         }
         initializePlayer();
     }, [])
@@ -25,7 +25,7 @@ const Player = ({ currentlyPlaying }) => {
         }
     }
 
-    if (currentlyPlaying.image !== '') {
+    if (isPlaying) {
         const { artistName, image, trackName, trackUri} = currentlyPlaying;
         return (
             <View style={styles.container}>
