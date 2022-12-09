@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from "react-native";
-import service from '../utils/service';
 import Player from "./Player";
 
 const Playing = ({ currentlyPlaying }) => {
-    // const [currentlyPlaying, setCurrentlyPlaying] = useState();
-
-    // useEffect(() => {
-    //     const getTrack = async () => {
-    //         let track = await service.getCurrentlyPlaying();
-    //         setCurrentlyPlaying(track);
-    //     }
-    //     getTrack();
-    // }, []);
 
     return (
     <View style={styles.container}>

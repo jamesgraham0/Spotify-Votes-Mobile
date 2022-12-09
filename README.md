@@ -1,11 +1,4 @@
-- Configure app’s State using redux reducers and actions to <br/><br/>
-
-store = Rooms[<br/>
-{										
-	“name”: “Pink Pasadena RAGER”,
-	“password”: “1234”,
-	“deviceId”: “2dj903i1jifeodji0ej”,
-	“users”: 7,
-	“currentlyPlaying”: {track},
-	“queue”: [{track}, {track}, {track}]
-}]
+- Make a rooms' queue unique based on track uri
+- Play tracks from a room's queue when one finishes
+- Add 'votes' to a track
+- Sort a rooms' queue based on votes

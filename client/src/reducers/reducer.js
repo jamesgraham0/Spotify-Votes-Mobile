@@ -1,11 +1,12 @@
 import { combineReducers, createSlice } from '@reduxjs/toolkit';
-import { REQUEST_STATE } from '../redux/utils';
+// import { REQUEST_STATE } from '../redux/utils';
 
 
 const initialState = {
     rooms: [{"currentlyPlaying": {"artistName": "", "image": "", "trackName": "", "trackUri": ""}, "deviceId": "b166d1276412b883e0b37b6ef1112e656a5dc127", "hostId": "t1wyfo4650rthc8s0y3bmfhm8", "id": "oaijwefojewfewfaiejfojawef", "name": "1", "password": "1", "queue": [], "users": []}],
-    addRoomState: REQUEST_STATE.IDLE,
-    deleteRoomState: REQUEST_STATE.IDLE,
+    // addRoomState: REQUEST_STATE.IDLE,
+    // deleteRoomState: REQUEST_STATE.IDLE,
+    currentlyPlaying: "PLAYING",
     error: null,
 }
 
@@ -23,10 +24,26 @@ const roomsSlice = createSlice({
         pushQueue(state, action) {
             const { track, roomId } = action.payload;
             const room = state.rooms.find(room => room.id === roomId);
-            room.queue.push(track);
+            let alreadyInQueue = false;
+            room.queue.map((t) => {
+                console.log(t);
+                console.log(track);
+                if (t.trackUri === track.trackUri) {
+                    alert("Track already in queue");
+                    alreadyInQueue = true;
+                }
+            });
+            if (!alreadyInQueue) {
+                alert(`${track.title} added to queue`);
+                room.queue.push(track);
+            }
         },
         popQueue(state, action) {
-            state.queue.shift();
+            const { id } = action.payload;
+            const room = state.rooms.find(room => room.id === id);
+            if (room) {
+                console.log(room);
+            }
         },
     },
 });

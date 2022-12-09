@@ -19,6 +19,7 @@ const Search = ({ room }) => {
           if (cancel) return
           setSearchResults(
             res.body.tracks.items.map(track => {
+              let largeAlbumImage = track.album.images[1];
               const smallestAlbumImage = track.album.images.reduce(
                 (smallest, image) => {
                   if (image.height < smallest.height) return image
@@ -30,7 +31,8 @@ const Search = ({ room }) => {
                 artist: track.artists[0].name,
                 title: track.name,
                 uri: track.uri,
-                albumUrl: smallestAlbumImage.url,
+                smallImage: smallestAlbumImage.url,
+                largeImage: largeAlbumImage.url
               }
             })
           )
@@ -40,7 +42,6 @@ const Search = ({ room }) => {
 
       const addTrack = (track) => {
         dispatch(pushQueue({track: track, roomId: room.id}));
-        // service.addTrackToQueue(track);
     }
 
 

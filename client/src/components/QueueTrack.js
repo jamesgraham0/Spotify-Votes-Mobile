@@ -2,13 +2,13 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import React from 'react';
 
 const QueueTrack = ({ track }) => {
-    const { artist, albumUrl, title, uri} = track;
+    const { artist, smallImage, title, uri} = track;
 
     return (
         <View style={styles.container}>
             <Image 
                 style={styles.img}
-                source={{uri: albumUrl}}
+                source={{uri: smallImage}}
             />
             <View style={styles.titleArtistContainer}>
                 <Text style={styles.title}>{title}</Text>

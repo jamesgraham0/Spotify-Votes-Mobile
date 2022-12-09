@@ -5,55 +5,36 @@ import { Ionicons } from '@expo/vector-icons';
 
 const Player = ({ currentlyPlaying }) => {
     const [isPlaying, setIsPlaying] = useState(false);
- 
-    useEffect(() => {
-        const initializePlayer = async () => {
-            // check if the user is already playing something
-            const playBackState = await service.getPlaybackState();
-            setIsPlaying(playBackState.is_playing);
-        }
-        initializePlayer();
-    }, [])
 
     const handlePlayPause = async () => {
         if (isPlaying) {
             await service.pausePlaying();
             setIsPlaying(false);
         } else {
-            await service.startPlaying();
+            service.startPlaying();
             setIsPlaying(true);
         }
     }
 
-    if (isPlaying) {
-        const { artistName, image, trackName, trackUri} = currentlyPlaying;
+    const { artist, largeImage, title, uri } = currentlyPlaying;
+    if (uri !== "") {
         return (
             <View style={styles.container}>
                 <View style={styles.player}>
-                    <Image style={styles.image} source={{uri: image}}/>
+                    <Image style={styles.image} source={{uri: largeImage}}/>
                 </View>
-                    {trackName && artistName &&
+                    {title && artist &&
                         <View style={styles.bottomContainer}>
                             <View style={styles.trackInfoContainer}>
-                                <Text style={styles.title}>{trackName}</Text>
-                                <Text style={styles.artist}>{artistName}</Text> 
+                                <Text style={styles.title}>{title}</Text>
+                                <Text style={styles.artist}>{artist}</Text> 
                             </View>
                             <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                                 {isPlaying ? <Ionicons name="pause-outline" size={48} color="white"/>
-                                           : <Ionicons name="play-outline" size={48} color="white"/> }
+                                            : <Ionicons name="play-outline" size={48} color="white"/> }
                             </TouchableOpacity>
                         </View>    
                     }   
-            </View>
-        )
-    } else {
-        return (
-            <View style={styles.container}>
-                <View style={styles.player}>
-                        <View style={styles.trackInfoContainer}>
-
-                        </View>
-                </View>
             </View>
         )
     }

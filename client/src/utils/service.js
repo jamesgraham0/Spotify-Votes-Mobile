@@ -229,8 +229,11 @@ const service = {
     },
 
     startPlaying: async () => {
+        if (typeof(device_id) !== String) {
+            device_id = await getDeviceId();
+        }
         try {
-            await spotifyApi.play();
+            spotifyApi.play();
         } catch (error) {
             console.log(error);
         }

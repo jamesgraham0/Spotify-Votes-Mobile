@@ -9,7 +9,7 @@ const TrackSearchResult = ({ track }) => {
         >
             <Image 
                 style={styles.img}
-                source={{uri: track.albumUrl}}
+                source={{uri: track.smallImage}}
             />
             <View style={styles.titleArtistContainer}>
                 <Text style={styles.title}>{track.title}</Text>
