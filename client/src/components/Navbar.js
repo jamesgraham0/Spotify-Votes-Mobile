@@ -6,8 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Playing from './Playing';
 import Search from './Search';
 import Queue from './Queue';
-import { useSelector, useDispatch } from 'react-redux';
-import { popQueue } from '../reducers/reducer';
+import { useSelector } from 'react-redux';
 
 
 const Tab = createBottomTabNavigator();
@@ -16,7 +15,6 @@ const Tab = createBottomTabNavigator();
 const Navbar = ({ room }) => {
   const rooms = useSelector(state => state.state.rooms.rooms);
   const { id } = room;
-  let dispatch = useDispatch();
 
   // find which room we're in
   const currentRoom = rooms.find(room => room.id === id);
@@ -26,8 +24,6 @@ const Navbar = ({ room }) => {
     let queue = currentRoom.queue;
     if (currentlyPlaying.trackUri === '' && queue.length > 0) {
       currentlyPlaying = queue[0];
-      dispatch(popQueue(currentRoom.id));
-      console.log("currently playing", currentlyPlaying);
     }
 
     return (

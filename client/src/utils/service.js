@@ -31,13 +31,12 @@ const getDeviceId = async () => {
             device_id = response.data.devices.map((device) => {
                 // Only allow smartphones for now
                 if (device.type !== 'Spotify Connect') {
+                    device.is_active = true;
                     return device.id;
                 }
             })
         }
-        if (device_id.length !== 0) {
-            return device_id[0];
-        }
+        return device_id;
     } catch (error) {
         console.log(error);
     }
@@ -203,37 +202,17 @@ const service = {
         }
     },
 
-    transferPlayback: async () => {
-        if (device_id === '') {
-            device_id = await getDeviceId();
-        }
-
-        const url = concatUrl('me/player');
-        try {
-            if (device_id === '') {
-                throw new Error('No device found trying to transferPlayback');
-            }
-            const response = await axios.put(url, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                data: {
-                    "device_ids": [device_id],
-                }
-            });
-            console.log("Success", response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    },
-
-    startPlaying: async () => {
+    startPlaying: async (uri) => {
         if (typeof(device_id) !== String) {
             device_id = await getDeviceId();
         }
         try {
-            spotifyApi.play();
+            spotifyApi.transferMyPlayback(device_id).then(() => {
+                spotifyApi.getMyCurrentPlaybackState().then((state) => {
+                    // console.log(state.body.progress_ms);
+                    spotifyApi.play({uris: [uri]})
+                })
+            })
         } catch (error) {
             console.log(error);
         }

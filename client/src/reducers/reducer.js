@@ -26,16 +26,20 @@ const roomsSlice = createSlice({
             const room = state.rooms.find(room => room.id === roomId);
             let alreadyInQueue = false;
             room.queue.map((t) => {
-                console.log(t);
-                console.log(track);
-                if (t.trackUri === track.trackUri) {
+                if (t.uri === track.uri) {
                     alert("Track already in queue");
                     alreadyInQueue = true;
                 }
             });
             if (!alreadyInQueue) {
-                alert(`${track.title} added to queue`);
-                room.queue.push(track);
+                if (room.queue.length === 0) {
+                    room.currentlyPlaying = track;
+                    alert(`${track.title} is now playing`);
+                }
+                else {
+                    alert(`${track.title} added to queue`);
+                    room.queue.push(track);
+                }
             }
         },
         popQueue(state, action) {

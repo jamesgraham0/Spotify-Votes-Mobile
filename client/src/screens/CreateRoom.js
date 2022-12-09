@@ -28,8 +28,8 @@ const CreateRoom = ({ navigation, route }) => {
                 id: uuid.v4(),
                 deviceId: await service.getDeviceId(),
                 users: [user],
-                currentlyPlaying: await service.getCurrentlyPlaying(),
-                queue: await service.getQueue(),
+                currentlyPlaying: {},
+                queue: [],
             }
             navigation.navigate(
                 'Room', 

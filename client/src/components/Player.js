@@ -11,7 +11,7 @@ const Player = ({ currentlyPlaying }) => {
             await service.pausePlaying();
             setIsPlaying(false);
         } else {
-            service.startPlaying();
+            service.startPlaying(currentlyPlaying.uri);
             setIsPlaying(true);
         }
     }
