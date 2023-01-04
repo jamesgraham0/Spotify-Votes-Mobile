@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator();
 
 
 const Navbar = ({ room }) => {
-  const rooms = useSelector(state => state.state.rooms.rooms);
+  const rooms = useSelector(state => state.reducer.rooms.rooms);
   const { id } = room;
 
   // find which room we're in
@@ -56,7 +56,7 @@ const Navbar = ({ room }) => {
           />
       <Tab.Screen
         name="Playing"
-        children={() => <Playing currentlyPlaying={currentlyPlaying} />}
+        children={() => <Playing currentlyPlaying={currentlyPlaying} queue={queue} />}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

@@ -3,20 +3,20 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
 import { Ionicons } from '@expo/vector-icons'; 
 
-const Player = ({ currentlyPlaying }) => {
+const Player = ({ currentlyPlaying, queue }) => {
     const [isPlaying, setIsPlaying] = useState(false);
+    const { artist, largeImage, title, uri } = currentlyPlaying;
 
     const handlePlayPause = async () => {
         if (isPlaying) {
             await service.pausePlaying();
             setIsPlaying(false);
         } else {
-            service.startPlaying(currentlyPlaying.uri);
+            await service.startPlaying(currentlyPlaying, queue);
             setIsPlaying(true);
         }
     }
 
-    const { artist, largeImage, title, uri } = currentlyPlaying;
     if (uri !== "") {
         return (
             <View style={styles.container}>
@@ -30,8 +30,10 @@ const Player = ({ currentlyPlaying }) => {
                                 <Text style={styles.artist}>{artist}</Text> 
                             </View>
                             <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                                {isPlaying ? <Ionicons name="pause-outline" size={48} color="white"/>
-                                            : <Ionicons name="play-outline" size={48} color="white"/> }
+                                {isPlaying ? 
+                                    <Ionicons name="pause-outline" size={48} color="white"/>
+                                :   <Ionicons name="play-outline" size={48} color="white"/> 
+                                }
                             </TouchableOpacity>
                         </View>    
                     }   

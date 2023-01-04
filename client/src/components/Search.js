@@ -32,7 +32,8 @@ const Search = ({ room }) => {
                 title: track.name,
                 uri: track.uri,
                 smallImage: smallestAlbumImage.url,
-                largeImage: largeAlbumImage.url
+                largeImage: largeAlbumImage.url,
+                duration: track.duration_ms,
               }
             })
           )

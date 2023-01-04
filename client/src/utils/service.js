@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { CLIENT_ID, REDIRECT_URI } from "@env";
 import SpotifyWebApi from "spotify-web-api-node";
+import { getMyCurrentPlaybackState } from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
@@ -8,12 +9,6 @@ const spotifyApi = new SpotifyWebApi({
 
 let token = '';
 let device_id = '';
-let currently_playing = {
-    image: '',
-    artistName: '',
-    trackName: '',
-    trackUri: '',
-}
 let queue = [];
 
 const BASE_URL = "https://api.spotify.com/v1"
@@ -29,17 +24,26 @@ const getDeviceId = async () => {
         })
         if (response.data.devices.length > 0) {
             device_id = response.data.devices.map((device) => {
-                // Only allow smartphones for now
                 if (device.type !== 'Spotify Connect') {
-                    device.is_active = true;
                     return device.id;
                 }
-            })
+            });                                               
+        }
+        if (Array.isArray(device_id)) {
+            device_id = device_id[0];
         }
         return device_id;
     } catch (error) {
         console.log(error);
     }
+}
+
+const addEventListenerToSongEnd = (track) => {
+    // add an event listener for the 'ended' event
+    track.addEventListener('ended', () => {
+        console.log('The track has finished playing!');
+    });
+    console.log('track playing')
 }
 
 const service = {
@@ -185,34 +189,24 @@ const service = {
         }
     },
 
-    getCurrentlyPlaying: async () => {
-        try {
-            let track = await spotifyApi.getMyCurrentPlayingTrack();
-            if (track.body !== null) {
-                currently_playing = {
-                    image: track.body.item.album.images[0].url,
-                    artistName: track.body.item.artists[0].name,
-                    trackName: track.body.item.name,
-                    trackUri: track.body.item.uri,
-                }
-            }
-            return currently_playing;
-        } catch (error) {
-            console.log(error);
-        }
-    },
-
-    startPlaying: async (uri) => {
-        if (typeof(device_id) !== String) {
+    startPlaying: async (track, queue) => {
+        const { uri } = track;
+        let queueUris = queue.map((track) => track.uri);
+        let uris = [uri, ...queueUris];
+        if (device_id === undefined || device_id === '') {
             device_id = await getDeviceId();
         }
         try {
-            spotifyApi.transferMyPlayback(device_id).then(() => {
-                spotifyApi.getMyCurrentPlaybackState().then((state) => {
-                    // console.log(state.body.progress_ms);
-                    spotifyApi.play({uris: [uri]})
-                })
-            })
+            spotifyApi.transferMyPlayback([device_id]).then(() => {
+                spotifyApi.getMyCurrentPlaybackState({}).then((data) => {
+                    let position = data.body.progress_ms !== null ? data.body.progress_ms : 0;
+                    spotifyApi.play({
+                        uris: uris,
+                        position_ms: position  
+                    });
+                });
+            });
+            spotifyApi.getAudio
         } catch (error) {
             console.log(error);
         }
@@ -237,6 +231,19 @@ const service = {
             console.log(error);
         }
     },
+
+    // returns the current playing track as an object or an empty object
+    getCurrentlyPlaying: async () => {
+        try {
+            const result = await spotifyApi.getMyCurrentPlayingTrack();
+            if (result.body !== null) {
+                return result.body;
+            }
+            return {};
+        } catch (error) {
+            console.log(error);
+        }
+    },    
 
 }
 

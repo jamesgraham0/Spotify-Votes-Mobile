@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from "react-native";
 import Player from "./Player";
 
-const Playing = ({ currentlyPlaying }) => {
+const Playing = ({ currentlyPlaying, queue }) => {
 
     return (
     <View style={styles.container}>
         <View style={styles.player}>
-            <Player currentlyPlaying={currentlyPlaying}/>
+            <Player currentlyPlaying={currentlyPlaying} queue={queue}/>
         </View>
     </View>
   );

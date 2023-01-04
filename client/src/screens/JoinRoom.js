@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [rooms, setRooms] = useState([]);
-    const state = useSelector(state => state.state.rooms);
+    const state = useSelector(state => state.reducer.rooms);
     
 
     useEffect(() => {

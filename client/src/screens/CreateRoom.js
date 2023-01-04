@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
 import { createRoom } from '../reducers/reducer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import service from '../utils/service';
 
 
@@ -13,7 +13,6 @@ const CreateRoom = ({ navigation, route }) => {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
 
-    
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
@@ -21,6 +20,7 @@ const CreateRoom = ({ navigation, route }) => {
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
         if (validNameAndPassword()) {
+            let currentlyPlaying = await service.getCurrentlyPlaying();
             const room = {
                 name: roomName, 
                 password: password,
@@ -28,7 +28,7 @@ const CreateRoom = ({ navigation, route }) => {
                 id: uuid.v4(),
                 deviceId: await service.getDeviceId(),
                 users: [user],
-                currentlyPlaying: {},
+                currentlyPlaying: currentlyPlaying,
                 queue: [],
             }
             navigation.navigate(

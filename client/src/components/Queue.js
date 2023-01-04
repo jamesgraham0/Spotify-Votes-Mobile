@@ -5,6 +5,9 @@ import service from '../utils/service';
 
 
 const Queue = ({ queue }) => {
+
+
+    
     return (
         <View style={styles.container}>
             <Text style={styles.queueText}>Queue</Text>
