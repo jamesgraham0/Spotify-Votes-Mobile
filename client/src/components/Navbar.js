@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator();
 
 
 const Navbar = ({ room }) => {
-  const rooms = useSelector(state => state.reducer.rooms.rooms);
+  const rooms = useSelector(state => state.reducer.rooms);
   const { id } = room;
 
   // find which room we're in
@@ -25,7 +25,6 @@ const Navbar = ({ room }) => {
     if (currentlyPlaying.trackUri === '' && queue.length > 0) {
       currentlyPlaying = queue[0];
     }
-
     return (
       <Tab.Navigator
       initialRouteName="Playing"
@@ -77,7 +76,7 @@ const Navbar = ({ room }) => {
           />
     </Tab.Navigator>
   );
-  }
+}
 }
 
 export default Navbar;

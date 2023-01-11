@@ -21,6 +21,12 @@ const CreateRoom = ({ navigation, route }) => {
         Keyboard.dismiss();
         if (validNameAndPassword()) {
             let currentlyPlaying = await service.getCurrentlyPlaying();
+            if (Object.keys(currentlyPlaying).length !== 0) {
+                // if there is a track playing, pause it and set the users' currentlyPlaying to {}
+                if (currentlyPlaying.is_playing || currentlyPlaying.item.progress_ms > 0) {
+                    await service.resetPlaybackToEmptyState();
+                }
+            }
             const room = {
                 name: roomName, 
                 password: password,
@@ -28,7 +34,7 @@ const CreateRoom = ({ navigation, route }) => {
                 id: uuid.v4(),
                 deviceId: await service.getDeviceId(),
                 users: [user],
-                currentlyPlaying: currentlyPlaying,
+                currentlyPlaying: {},
                 queue: [],
             }
             navigation.navigate(
@@ -41,10 +47,7 @@ const CreateRoom = ({ navigation, route }) => {
     }
 
     const validNameAndPassword = () => {
-        if (roomName === '' || password === '') {
-            return false;
-        }
-        return true;
+        return roomName !== '' && password !== '';
     }
 
 

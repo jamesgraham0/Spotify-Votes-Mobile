@@ -38,14 +38,6 @@ const getDeviceId = async () => {
     }
 }
 
-const addEventListenerToSongEnd = (track) => {
-    // add an event listener for the 'ended' event
-    track.addEventListener('ended', () => {
-        console.log('The track has finished playing!');
-    });
-    console.log('track playing')
-}
-
 const service = {
 
     getAccessToken: () => {
@@ -244,6 +236,22 @@ const service = {
             console.log(error);
         }
     },    
+
+    // pause playback and set the users' currently playing track to {}
+    resetPlaybackToEmptyState: async () => {
+        console.log("resetting playing to default state");
+        spotifyApi.pause().then(() => {
+            //current track has been set to {}
+          }, (err) => {
+            console.log(err);
+        });
+        
+        spotifyApi.seek(0).then(() => {
+            //current track has been set to {}
+          }, (err) => {
+            console.log(err);
+          });
+    }
 
 }
 

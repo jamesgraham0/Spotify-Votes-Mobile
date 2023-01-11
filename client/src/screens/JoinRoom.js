@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [rooms, setRooms] = useState([]);
-    const state = useSelector(state => state.reducer.rooms);
+    const state = useSelector(state => state.reducer);
     
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const JoinRoom = ({ navigation, route }) => {
     }
     
     const handleEnterRoomPassword = (room) => {
-        navigation.navigate('EnterRoomPassword', {room: room, user: user });
+        navigation.navigate('EnterRoomPassword', { room: room, user: user });
     }
 
     return (

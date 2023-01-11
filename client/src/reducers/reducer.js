@@ -1,11 +1,15 @@
-import { combineReducers, createSlice } from '@reduxjs/toolkit';
-// import { REQUEST_STATE } from '../redux/utils';
+/**
+ * This reducer is only responsible for the rooms state. It maintains a list of rooms and has the ability to:
+ * 1. Create a room
+ * 2. Delete a room
+ * 3. Add a track to a room's queue
+ * 4. Remove a track from a room's queue
+ */
+
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     rooms: [{"currentlyPlaying": {"artistName": "", "image": "", "trackName": "", "trackUri": ""}, "deviceId": "b166d1276412b883e0b37b6ef1112e656a5dc127", "hostId": "t1wyfo4650rthc8s0y3bmfhm8", "id": "oaijwefojewfewfaiejfojawef", "name": "1", "password": "1", "queue": [], "users": []}],
-    // addRoomState: REQUEST_STATE.IDLE,
-    // deleteRoomState: REQUEST_STATE.IDLE,
-    // currentlyPlaying: "PLAYING",
     error: null,
 }
 
@@ -51,9 +55,5 @@ const roomsSlice = createSlice({
     },
 });
 
-const reducer = combineReducers({
-    rooms: roomsSlice.reducer,
-});
-
 export const { createRoom, deleteRoom, pushQueue, popQueue } = roomsSlice.actions;
-export default reducer; // this goes to redux/store.js
+export default roomsSlice.reducer;
