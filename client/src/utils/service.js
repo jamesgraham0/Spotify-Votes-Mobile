@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { CLIENT_ID, REDIRECT_URI } from "@env";
 import SpotifyWebApi from "spotify-web-api-node";
-import { getMyCurrentPlaybackState } from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
@@ -22,8 +21,14 @@ const getDeviceId = async () => {
                 'Authorization': `Bearer ${token}`
             }
         })
+        if (response.data.devices.length === 0) {
+            device_id = '';
+            return '';
+        }
+        let activeDevices = response.data.devices.filter((device) => device.is_active);
+        console.log("activeDevices", activeDevices);
         if (response.data.devices.length > 0) {
-            device_id = response.data.devices.map((device) => {
+            device_id = activeDevices.map((device) => {
                 if (device.type !== 'Spotify Connect') {
                     return device.id;
                 }
@@ -181,27 +186,29 @@ const service = {
         }
     },
 
-    startPlaying: async (track, queue) => {
+    startPlaying: async (track, queue, deviceId) => {
         const { uri } = track;
         let queueUris = queue.map((track) => track.uri);
         let uris = [uri, ...queueUris];
-        if (device_id === undefined || device_id === '') {
-            device_id = await getDeviceId();
-        }
         try {
-            spotifyApi.transferMyPlayback([device_id]).then(() => {
+            console.log("deviceId about to play", deviceId);
+            spotifyApi.transferMyPlayback([deviceId]).then(() => {
+                console.log("transferred playback")
                 spotifyApi.getMyCurrentPlaybackState({}).then((data) => {
-                    let position = data.body.progress_ms !== null ? data.body.progress_ms : 0;
+                    let position = 0;
+                    if (data.body !== null && data.body.progress_ms !== 0) {
+                        position = data.body.progress_ms;
+                    }
                     spotifyApi.play({
                         uris: uris,
                         position_ms: position  
                     });
                 });
             });
-            spotifyApi.getAudio
         } catch (error) {
             console.log(error);
-        }
+            }
+
     },
     
     pausePlaying: async () => {

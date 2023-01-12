@@ -37,12 +37,17 @@ const CreateRoom = ({ navigation, route }) => {
                 currentlyPlaying: {},
                 queue: [],
             }
-            navigation.navigate(
-                'Room', 
-                {room: room,
-                user: user}
-            );
-            dispatch(createRoom(room));
+            if (room.deviceId !== '' && room.deviceId !== undefined) {
+                console.log("deviceId:", room.deviceId)
+                navigation.navigate(
+                    'Room', 
+                    {room: room,
+                    user: user}
+                );
+                dispatch(createRoom(room));
+            } else {
+                alert('Please open Spotify on your device and try again.');
+            }
         }
     }
 

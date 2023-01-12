@@ -4,6 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Navbar from '../components/Navbar';
 import { useDispatch } from 'react-redux';
 import { deleteRoom } from '../reducers/reducer';
+import service from '../utils/service';
 
 const Room = ({ navigation, route }) => {
     const { user, room } = route.params;
@@ -25,6 +26,10 @@ const Room = ({ navigation, route }) => {
                     },
                     { text: "Delete Room", onPress: () => {
                         navigation.navigate('JoinOrCreateRoom', { user: user });
+                        const pause = async () => {
+                            await service.resetPlaybackToEmptyState();
+                        }
+                        pause();
                         dispatch(deleteRoom(room));
                     }}
                 ]

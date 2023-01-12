@@ -1,6 +1,11 @@
+✅ - Require active device before room can be created
+✅ - Reset plaback on device on room creation (pause track and reset the progress to beginning (this resets the player))
+✅ - Fix bug with audio playing from mobile
+✅ - When room is deleted, clear the queue and reset playback
+
 - Play tracks from a room's queue when one finishes
     Add event listener to the 
 - Add 'votes' to a track
 - Sort a rooms' queue based on votes
 - Only allow room host to play and pause music
-- Deal with synchronizing state between users
+- Synchronizing state between users

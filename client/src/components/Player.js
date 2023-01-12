@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
 import { Ionicons } from '@expo/vector-icons'; 
 
-const Player = ({ currentlyPlaying, queue }) => {
+const Player = ({ currentlyPlaying, queue, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const { artist, largeImage, title, uri } = currentlyPlaying;
+    const { name, password, id, hostId, deviceId, users } = room;
 
     const handlePlayPause = async () => {
         if (isPlaying) {
             await service.pausePlaying();
             setIsPlaying(false);
         } else {
-            await service.startPlaying(currentlyPlaying, queue);
+            await service.startPlaying(currentlyPlaying, queue, deviceId);
             setIsPlaying(true);
         }
     }
@@ -30,7 +31,7 @@ const Player = ({ currentlyPlaying, queue }) => {
                                 <Text style={styles.artist}>{artist}</Text> 
                             </View>
                             <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                                {isPlaying ? 
+                                {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
                                     <Ionicons name="pause-outline" size={48} color="white"/>
                                 :   <Ionicons name="play-outline" size={48} color="white"/> 
                                 }
