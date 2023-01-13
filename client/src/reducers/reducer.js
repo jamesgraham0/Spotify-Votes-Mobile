@@ -9,7 +9,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    rooms: [{"currentlyPlaying": {"artistName": "", "image": "", "trackName": "", "trackUri": ""}, "deviceId": "b166d1276412b883e0b37b6ef1112e656a5dc127", "hostId": "t1wyfo4650rthc8s0y3bmfhm8", "id": "oaijwefojewfewfaiejfojawef", "name": "1", "password": "1", "queue": [], "users": []}],
+    rooms: [{"currentlyPlaying": {"title": "", "uri": "", "smallImage": "", "largeImage": "", "duration": 0}, "deviceId": "b166d1276412b883e0b37b6ef1112e656a5dc127", "hostId": "t1wyfo4650rthc8s0y3bmfhm8", "id": "oaijwefojewfewfaiejfojawef", "name": "1", "password": "1", "queue": [], "users": []}],
     error: null,
 }
 
@@ -47,19 +47,19 @@ const roomsSlice = createSlice({
         },
         popQueue(state, action) {
             const id = action.payload;
-            console.log("pop queue, room id: ", id);
             const room = state.rooms.find(room => room.id === id);
             if (room) {
                 room.queue.shift();
-                console.log("queue shifted");
+            }
+            else {
+                console.log("room not found when trying to pop queue");
             }
         },
         setCurrentlyPlaying(state, action) {
-            const { currentTrack, id } = action.payload;
+            const { id, nextTrack } = action.payload;
             const room = state.rooms.find(room => room.id === id);
             if (room) {
-                room.currentlyPlaying = currentTrack;
-                console.log("currently playing: ", currentTrack);
+                room.currentlyPlaying = nextTrack;
             }
         },
     },

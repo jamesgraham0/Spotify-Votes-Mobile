@@ -185,10 +185,9 @@ const service = {
         }
     },
 
-    startPlaying: async (track, queue, deviceId, playFromBeginning) => {
+    startPlaying: async (track, deviceId, playFromBeginning) => {
         const { uri } = track;
-        let queueUris = queue.map((track) => track.uri);
-        let uris = [uri, ...queueUris];
+        console.log("about to play: ", track.title);
         try {
             spotifyApi.transferMyPlayback([deviceId]).then(() => {
                 console.log("transferred playback")

@@ -5,54 +5,69 @@ import service from "../utils/service";
 import { popQueue, setCurrentlyPlaying } from "../reducers/reducer";
 import { Ionicons } from '@expo/vector-icons'; 
 
-const Player = ({ currentlyPlaying, queue, room }) => {
+const Player = ({ currentlyPlaying, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const { name, password, id, hostId, deviceId, users } = room;
-    const [currentTrack, setCurrentTrack] = useState({});
-    let intervalCounter;
+    // const [currentTrack, setCurrentTrack] = useState({});
+    // const [queue, setQueue] = useState([]);
+    const currentTrack = useSelector(state => state.reducer.rooms.find(room => room.id === id).currentlyPlaying);
+    let queue = useSelector(state => state.reducer.rooms.find(room => room.id === id).queue);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        setCurrentTrack(currentlyPlaying);
-    }, [currentlyPlaying]);
+        console.log("Queue updated state!", queue);
+    }, [queue]);
 
-    
+    useEffect(() => {
+        console.log("Current track updated state!", currentTrack);
+    }, [currentTrack]);
+
+    let intervalCounter;
+
     const handlePlayPause = async () => {
         if (isPlaying) {
             await service.pausePlaying();
             setIsPlaying(false);
             clearInterval(intervalCounter);
         } else {
-            await service.startPlaying(currentTrack, queue, deviceId);
+            await service.startPlaying(currentTrack, deviceId, false);
             if (currentTrack.uri) {
+                setIsPlaying(true);
                 // start the interval
-                intervalCounter = setInterval(() => {
-                    service.getPlaybackState().then(async (data) => {
-                        if (data && data.is_playing) {
-                            setIsPlaying(true);
-                            try {
-                                if (data.item && data.item.duration_ms) {
-                                    console.log(data.progress_ms, data.item.duration_ms);
-                                }
-                                if (data.item.duration_ms && data.progress_ms + 5000 >= data.item.duration_ms) {
-                                    console.log("Play next track in queue");
-                                    if (queue.length > 0) {
-                                        let nextTrack = queue[0];
-                                        // dispatch(popQueue(id));
-                                        // dispatch(setCurrentlyPlaying(room, nextTrack));
-                                        setCurrentTrack(nextTrack);
-                                        await service.startPlaying(nextTrack, queue, deviceId, true);
-                                    }
-                                }
-                            } catch (error) {
-                                console.log("catching up to track...");
-                            }
-                        } else {
-                            setIsPlaying(false);
-                        }
-                    });
-                }, 1000);            
+                handleAutoPlay();
             }
         }
+    }
+
+    const handleAutoPlay = () => {
+        intervalCounter = setInterval(async () => {
+            service.getPlaybackState().then(async (data) => {
+                if (data && data.is_playing) {
+                    setIsPlaying(true);
+                    try {
+                        if (data.item && data.item.duration_ms && data.progress_ms + 2000 > data.item.duration_ms) {
+                            console.log("track has ended, updating state");
+                            if (queue.length > 0) {
+                                let nextTrack = queue[0];
+                                console.log("NEXT TRACK TO PLAY", nextTrack);
+                                dispatch(setCurrentlyPlaying({id, nextTrack}));    
+                                await service.resetPlaybackToEmptyState();
+                                dispatch(popQueue(id));
+                                await service.startPlaying(nextTrack, deviceId, true);
+                            } else {
+                                console.log("queue is empty, resetting playback to empty state");
+                                await service.resetPlaybackToEmptyState();
+                                setIsPlaying(false);
+                            }
+                        }
+                    } catch (error) {
+                        console.log("catching up to track...");
+                    }
+                } else {
+                    setIsPlaying(false);
+                }
+            });
+        }, 1000);
     }
 
     if (currentTrack.uri !== "") {

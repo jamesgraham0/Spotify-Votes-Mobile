@@ -65,7 +65,7 @@ const Navbar = ({ room }) => {
           />
       <Tab.Screen
         name="Queue"
-        children={() => <Queue queue={queue} room={room} />}
+        children={() => <Queue queue={queue} />}
         options={{
           headerShown: false,
           tabBarLabel: 'Queue',

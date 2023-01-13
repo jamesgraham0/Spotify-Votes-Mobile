@@ -3,13 +3,7 @@ import React, { useEffect, useState } from "react";
 import QueueTrack from './QueueTrack';
 import { useSelector } from 'react-redux';
 
-const Queue = ({ queue, room }) => {
-    const rooms = useSelector(state => state.reducer.rooms);
-    const { id } = room;
-
-    // find which room we're in
-    const currentRoom = rooms.find(room => room.id === id);
-    console.log("QUEUE", currentRoom.queue);
+const Queue = ({ queue }) => {
     
     return (
         <View style={styles.container}>

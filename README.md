@@ -2,8 +2,9 @@
 ✅ - Reset plaback on device on room creation (pause track and reset the progress to beginning (this resets the player))
 ✅ - Fix bug with audio playing from mobile
 ✅ - When room is deleted, clear the queue and reset playback
+✅ - Autoplay next track in queue when one finishes
 
-- Play tracks from a room's queue when one finishes
+- Pop queue when track finishes
     Add event listener to the 
 - Add 'votes' to a track
 - Sort a rooms' queue based on votes
