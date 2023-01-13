@@ -7,7 +7,7 @@ const Playing = ({ currentlyPlaying, queue, room }) => {
     return (
     <View style={styles.container}>
         <View style={styles.player}>
-            <Player currentlyPlaying={currentlyPlaying} queue={queue} room={room}/>
+            <Player room={room}/>
         </View>
     </View>
   );

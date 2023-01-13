@@ -20,11 +20,7 @@ const Navbar = ({ room }) => {
   const currentRoom = rooms.find(room => room.id === id);
   
   if (currentRoom) {
-    let currentlyPlaying = currentRoom.currentlyPlaying;
-    let queue = currentRoom.queue;
-    if (currentlyPlaying.trackUri === '' && queue.length > 0) {
-      currentlyPlaying = queue[0];
-    }
+    var { currentlyPlaying, queue } = currentRoom;
     return (
       <Tab.Navigator
       initialRouteName="Playing"
@@ -55,7 +51,7 @@ const Navbar = ({ room }) => {
           />
       <Tab.Screen
         name="Playing"
-        children={() => <Playing currentlyPlaying={currentlyPlaying} queue={queue} room={room} />}
+        children={() => <Playing room={room} />}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

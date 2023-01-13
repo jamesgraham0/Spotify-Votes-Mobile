@@ -5,24 +5,19 @@ import service from "../utils/service";
 import { popQueue, setCurrentlyPlaying } from "../reducers/reducer";
 import { Ionicons } from '@expo/vector-icons'; 
 
-const Player = ({ currentlyPlaying, room }) => {
+const Player = ({ room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const { name, password, id, hostId, deviceId, users } = room;
     // const [currentTrack, setCurrentTrack] = useState({});
     // const [queue, setQueue] = useState([]);
-    const currentTrack = useSelector(state => state.reducer.rooms.find(room => room.id === id).currentlyPlaying);
-    let queue = useSelector(state => state.reducer.rooms.find(room => room.id === id).queue);
+    const { name, password, id, hostId, deviceId, users } = room;
+    const roomState = useSelector(state => state.reducer.rooms.find(room => room.id === id));
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        console.log("Queue updated state!", queue);
-    }, [queue]);
-
-    useEffect(() => {
-        console.log("Current track updated state!", currentTrack);
-    }, [currentTrack]);
-
     let intervalCounter;
+
+    useEffect(() => {
+        console.log("ROOM state!", roomState);
+    }, [roomState]);
+
 
     const handlePlayPause = async () => {
         if (isPlaying) {
@@ -30,57 +25,50 @@ const Player = ({ currentlyPlaying, room }) => {
             setIsPlaying(false);
             clearInterval(intervalCounter);
         } else {
-            await service.startPlaying(currentTrack, deviceId, false);
-            if (currentTrack.uri) {
+            if (roomState.currentlyPlaying.uri) {
                 setIsPlaying(true);
-                // start the interval
+                await service.startPlaying(roomState.currentlyPlaying, deviceId, false);
                 handleAutoPlay();
             }
         }
     }
-
+    
     const handleAutoPlay = () => {
-        intervalCounter = setInterval(async () => {
-            service.getPlaybackState().then(async (data) => {
-                if (data && data.is_playing) {
-                    setIsPlaying(true);
-                    try {
-                        if (data.item && data.item.duration_ms && data.progress_ms + 2000 > data.item.duration_ms) {
-                            console.log("track has ended, updating state");
-                            if (queue.length > 0) {
-                                let nextTrack = queue[0];
-                                console.log("NEXT TRACK TO PLAY", nextTrack);
-                                dispatch(setCurrentlyPlaying({id, nextTrack}));    
-                                await service.resetPlaybackToEmptyState();
-                                dispatch(popQueue(id));
-                                await service.startPlaying(nextTrack, deviceId, true);
-                            } else {
-                                console.log("queue is empty, resetting playback to empty state");
-                                await service.resetPlaybackToEmptyState();
-                                setIsPlaying(false);
+            intervalCounter = setInterval(() => {
+                service.getPlaybackState().then( async (data) => {
+                    if (data && data.is_playing) {
+                        setIsPlaying(true);
+                        try {
+                            console.log(data.progress_ms, data.item.duration_ms);
+                            if (data.item && data.item.duration_ms && data.progress_ms + 2000 > data.item.duration_ms) {
+                                if (roomState.queue.length > 0) {
+                                    await service.startPlaying(roomState.queue[0], deviceId, true);
+                                    dispatch(setCurrentlyPlaying({ nextTrack: roomState.queue[0], id:id }));    
+                                    dispatch(popQueue(id));
+                                } 
                             }
+                        } catch (error) {
+                            console.log("Error: ", error);
                         }
-                    } catch (error) {
-                        console.log("catching up to track...");
+                    } else {
+                        setIsPlaying(false);
+                        clearInterval(intervalCounter);
                     }
-                } else {
-                    setIsPlaying(false);
-                }
-            });
-        }, 1000);
-    }
-
-    if (currentTrack.uri !== "") {
+                });
+            }, 3000);
+        }
+    
+        if (roomState.currentlyPlaying.uri)
         return (
             <View style={styles.container}>
                 <View style={styles.player}>
-                    <Image style={styles.image} source={{uri: currentTrack.largeImage}}/>
+                    <Image style={styles.image} source={{uri: roomState.currentlyPlaying.largeImage}}/>
                 </View>
-                    {currentTrack.title && currentTrack.artist &&
+                    {roomState.currentlyPlaying.title && roomState.currentlyPlaying.artist &&
                         <View style={styles.bottomContainer}>
                             <View style={styles.trackInfoContainer}>
-                                <Text style={styles.title}>{currentTrack.title}</Text>
-                                <Text style={styles.artist}>{currentTrack.artist}</Text> 
+                                <Text style={styles.title}>{roomState.currentlyPlaying.title}</Text>
+                                <Text style={styles.artist}>{roomState.currentlyPlaying.artist}</Text> 
                             </View>
                             <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                                 {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
@@ -91,9 +79,9 @@ const Player = ({ currentlyPlaying, room }) => {
                         </View>    
                     }   
             </View>
-        )
+        );
     }
-}
+
 
 const styles = StyleSheet.create({
     container: {

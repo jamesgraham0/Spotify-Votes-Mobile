@@ -56,7 +56,7 @@ const roomsSlice = createSlice({
             }
         },
         setCurrentlyPlaying(state, action) {
-            const { id, nextTrack } = action.payload;
+            const { nextTrack, id } = action.payload;
             const room = state.rooms.find(room => room.id === id);
             if (room) {
                 room.currentlyPlaying = nextTrack;

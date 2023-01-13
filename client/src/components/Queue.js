@@ -1,7 +1,6 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import React, { useEffect, useState } from "react";
+import React from "react";
 import QueueTrack from './QueueTrack';
-import { useSelector } from 'react-redux';
 
 const Queue = ({ queue }) => {
     
