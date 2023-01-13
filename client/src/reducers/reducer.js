@@ -46,14 +46,24 @@ const roomsSlice = createSlice({
             }
         },
         popQueue(state, action) {
-            const { id } = action.payload;
+            const id = action.payload;
+            console.log("pop queue, room id: ", id);
             const room = state.rooms.find(room => room.id === id);
             if (room) {
-                console.log(room);
+                room.queue.shift();
+                console.log("queue shifted");
+            }
+        },
+        setCurrentlyPlaying(state, action) {
+            const { currentTrack, id } = action.payload;
+            const room = state.rooms.find(room => room.id === id);
+            if (room) {
+                room.currentlyPlaying = currentTrack;
+                console.log("currently playing: ", currentTrack);
             }
         },
     },
 });
 
-export const { createRoom, deleteRoom, pushQueue, popQueue } = roomsSlice.actions;
+export const { createRoom, deleteRoom, pushQueue, popQueue, setCurrentlyPlaying } = roomsSlice.actions;
 export default roomsSlice.reducer;

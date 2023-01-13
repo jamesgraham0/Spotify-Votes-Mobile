@@ -13,10 +13,9 @@ const Search = ({ room }) => {
 
     useEffect(() => {
         if (!search) return setSearchResults([])
-    
         let cancel = false
         service.searchTrack(search).then(res => {
-          if (cancel) return
+          if (cancel || !res.body) return
           setSearchResults(
             res.body.tracks.items.map(track => {
               let largeAlbumImage = track.album.images[1];

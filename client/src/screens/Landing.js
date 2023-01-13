@@ -40,6 +40,9 @@ const Landing = ({ navigation }) => {
       .then((user) => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
       })
+      .catch((error) => {
+        console.log(error);
+      })
     }
   }, [response]);
 

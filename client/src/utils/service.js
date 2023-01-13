@@ -13,21 +13,20 @@ let queue = [];
 const BASE_URL = "https://api.spotify.com/v1"
 const concatUrl = (url) => `${BASE_URL}/${url}`;
 
+// returns device_id if the device is active
+// otherwise returns ''
 const getDeviceId = async () => {
-    const url = concatUrl("me/player/devices");
     try {
-        const response = await axios.get(url, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        if (response.data.devices.length === 0) {
+        const response = await spotifyApi.getMyDevices();
+        const devices = response.body.devices;
+        if (devices.length === 0) {
             device_id = '';
             return '';
         }
-        let activeDevices = response.data.devices.filter((device) => device.is_active);
+        console.log("devices", devices);
+        let activeDevices = devices.filter((device) => device.is_active);
         console.log("activeDevices", activeDevices);
-        if (response.data.devices.length > 0) {
+        if (devices.length > 0) {
             device_id = activeDevices.map((device) => {
                 if (device.type !== 'Spotify Connect') {
                     return device.id;
@@ -186,24 +185,25 @@ const service = {
         }
     },
 
-    startPlaying: async (track, queue, deviceId) => {
+    startPlaying: async (track, queue, deviceId, playFromBeginning) => {
         const { uri } = track;
         let queueUris = queue.map((track) => track.uri);
         let uris = [uri, ...queueUris];
         try {
-            console.log("deviceId about to play", deviceId);
             spotifyApi.transferMyPlayback([deviceId]).then(() => {
                 console.log("transferred playback")
                 spotifyApi.getMyCurrentPlaybackState({}).then((data) => {
                     let position = 0;
-                    if (data.body !== null && data.body.progress_ms !== 0) {
+                    if (!playFromBeginning && data.body !== null && data.body.progress_ms !== 0) {
                         position = data.body.progress_ms;
                     }
                     spotifyApi.play({
-                        uris: uris,
+                        uris: [uri],
                         position_ms: position  
                     });
                 });
+            }).catch((error) => {
+                console.log(error);
             });
         } catch (error) {
             console.log(error);

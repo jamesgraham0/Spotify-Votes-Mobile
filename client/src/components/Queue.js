@@ -1,12 +1,15 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import React, { useEffect, useState } from "react";
 import QueueTrack from './QueueTrack';
-import service from '../utils/service';
+import { useSelector } from 'react-redux';
 
+const Queue = ({ queue, room }) => {
+    const rooms = useSelector(state => state.reducer.rooms);
+    const { id } = room;
 
-const Queue = ({ queue }) => {
-
-
+    // find which room we're in
+    const currentRoom = rooms.find(room => room.id === id);
+    console.log("QUEUE", currentRoom.queue);
     
     return (
         <View style={styles.container}>
