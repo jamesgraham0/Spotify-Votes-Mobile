@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from "react-native";
 import Player from "./Player";
 
-const Playing = ({ currentlyPlaying, queue, room }) => {
+const Playing = ({ room }) => {
 
     return (
     <View style={styles.container}>

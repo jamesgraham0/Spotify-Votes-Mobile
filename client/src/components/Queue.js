@@ -1,9 +1,17 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import React from "react";
+import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
+import { socket } from '../utils/socket';
 
 const Queue = ({ queue }) => {
-    
+    const [q, setQ] = useState(queue);
+
+    useEffect(() => {
+        socket.on("addedTrack", (q) => {
+            setQ(q)
+        });
+    }, [socket])
+
     return (
         <View style={styles.container}>
             <Text style={styles.queueText}>Queue</Text>
@@ -12,7 +20,7 @@ const Queue = ({ queue }) => {
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
             >
-                {queue && queue.length > 0 && queue
+                {q && q.length > 0 && q
                 .map((track, index) => {
                     return (
                         <View key={index}>

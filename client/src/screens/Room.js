@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import { useDispatch } from 'react-redux';
 import { deleteRoom } from '../reducers/reducer';
 import service from '../utils/service';
+import { socket } from '../utils/socket';
 
 const Room = ({ navigation, route }) => {
     const { user, room } = route.params;
@@ -30,7 +31,8 @@ const Room = ({ navigation, route }) => {
                             await service.resetPlaybackToEmptyState();
                         }
                         pause();
-                        dispatch(deleteRoom(room));
+                        // dispatch(deleteRoom(room));
+                        socket.emit("deleteRoom", room);
                     }}
                 ]
             );

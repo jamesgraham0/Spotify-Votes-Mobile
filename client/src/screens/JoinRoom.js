@@ -4,20 +4,41 @@
  */
 
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import RoomToJoin from '../components/RoomToJoin';
 import { useSelector } from 'react-redux';
+import { socket } from '../utils/socket';
 
 const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [rooms, setRooms] = useState([]);
-    const state = useSelector(state => state.reducer);
-    
+    // const state = useSelector(state => state.reducer);
 
+    // Grabs the rooms from the socket when screen first mounts
+    useLayoutEffect(() => {
+		function fetchRooms() {
+			fetch("http://192.168.1.67:3000/rooms")
+				.then((res) => res.json())
+				.then((data) => setRooms(data))
+				.catch((err) => console.error(err));
+		}
+		fetchRooms();
+	}, []);
+
+    // Updates list of rooms everytime the socket is updated
+    // For when someone makes a new room while another user is on the joinRoom screen
     useEffect(() => {
-        setRooms(state.rooms);
-    }, []);
+        // setRooms(state.rooms);
+        socket.on('createRoom', (rooms) => {
+            setRooms(rooms);
+        });
+
+        socket.on('deleteRoom', (rooms) => {
+            setRooms(rooms);
+        })
+        
+    }, [socket]);
 
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });

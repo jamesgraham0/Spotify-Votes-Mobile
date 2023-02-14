@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 
-
 const JoinOrCreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const name = user.display_name;
