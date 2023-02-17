@@ -6,21 +6,11 @@ import { Ionicons } from '@expo/vector-icons';
 import Playing from './Playing';
 import Search from './Search';
 import Queue from './Queue';
-import { useSelector } from 'react-redux';
-
 
 const Tab = createBottomTabNavigator();
 
-
 const Navbar = ({ room }) => {
-  const rooms = useSelector(state => state.reducer.rooms);
-  const { id } = room;
-
-  // find which room we're in
-  const currentRoom = rooms.find(room => room.id === id);
-  
-  if (currentRoom) {
-    var { currentlyPlaying, queue } = currentRoom;
+  if (room) {
     return (
       <Tab.Navigator
       initialRouteName="Playing"
@@ -61,7 +51,7 @@ const Navbar = ({ room }) => {
           />
       <Tab.Screen
         name="Queue"
-        children={() => <Queue queue={queue} />}
+        children={() => <Queue queue={room.queue} roomId={room.id} />}
         options={{
           headerShown: false,
           tabBarLabel: 'Queue',

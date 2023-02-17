@@ -5,7 +5,7 @@ import uuid from 'react-native-uuid';
 import { createRoom } from '../reducers/reducer';
 import { useDispatch } from 'react-redux';
 import service from '../utils/service';
-
+import { socket } from '../utils/socket';
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
@@ -39,13 +39,13 @@ const CreateRoom = ({ navigation, route }) => {
             }
             console.log("deviceId", room.deviceId);
             if (room.deviceId !== '' && room.deviceId !== undefined) {
-                console.log("deviceId:", room.deviceId)
+                socket.emit('createRoom', room);
                 navigation.navigate(
                     'Room', 
                     {room: room,
                     user: user}
                 );
-                dispatch(createRoom(room));
+                // dispatch(createRoom(room));
             } else {
                 alert('Please open Spotify on your device and try again.');
             }

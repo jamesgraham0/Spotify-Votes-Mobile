@@ -4,6 +4,7 @@ import service from '../utils/service';
 import TrackSearchResult from './TrackSearchResult';
 import { pushQueue } from '../reducers/reducer';
 import { useDispatch } from 'react-redux';
+import { socket } from '../utils/socket';
 
 
 const Search = ({ room }) => {
@@ -41,7 +42,8 @@ const Search = ({ room }) => {
       }, [search]);
 
       const addTrack = (track) => {
-        dispatch(pushQueue({track: track, roomId: room.id}));
+        // dispatch(pushQueue({track: track, roomId: room.id}));
+        socket.emit("addTrack", {id:room.id, track:track});
     }
 
 

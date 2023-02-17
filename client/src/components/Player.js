@@ -2,85 +2,103 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
-import { popQueue, setCurrentlyPlaying } from "../reducers/reducer";
+import { handlePlayNextTrack } from "../reducers/reducer";
 import { Ionicons } from '@expo/vector-icons'; 
+import { socket } from "../utils/socket";
 
 const Player = ({ room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
-    // const [currentTrack, setCurrentTrack] = useState({});
-    // const [queue, setQueue] = useState([]);
+    const [currentlyPlaying, setCurrentlyPlaying] = useState({});
     const { name, password, id, hostId, deviceId, users } = room;
-    const roomState = useSelector(state => state.reducer.rooms.find(room => room.id === id));
-    const dispatch = useDispatch();
-    let intervalCounter;
+    let timerId = null;
+    let autoPlayTimer = 0;
+    const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
 
     useEffect(() => {
-        console.log("ROOM state!", roomState);
-    }, [roomState]);
+        socket.on("addedFirstTrack", (track) => {
+            console.log('addedFirstTrack')
+            setCurrentlyPlaying(track);
+        });
+        socket.on('playingNextTrack', (obj) => {
+            console.log("playing next track:", obj.track);
+            setCurrentlyPlaying(obj.track);
+        });
+    }, [socket]);
+
+    useEffect(() => {
+        autoPlayTimer = currentlyPlaying.duration;
+        const play = async () => {
+            await service.startPlaying(currentlyPlaying, deviceId, true);
+            setIsPlaying(true);
+            startTimer();
+        }
+        if (currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {
+            play();
+        }
+    }, [currentlyPlaying]);
+
+
+    ////////////// TIMER ///////////////////
+    const startTimer = () => {
+        console.log("starting timer");
+        timerId = setInterval(() => {
+            autoPlayTimer-= TIME_CHECKING_IF_TRACK_FINISHED;
+            console.log("Time left in track", autoPlayTimer);
+
+            if (autoPlayTimer <= 0) {
+                clearInterval(timerId);
+                socket.emit('playNextTrack', room);
+            }
+        }, 1000);
+    }
+
+    const pauseTimer = () => {
+        clearInterval(timerId);
+    }
+
+    const resumeTimer = () => {
+        startTimer();
+    }
+    ////////////////////////////////////////
 
 
     const handlePlayPause = async () => {
         if (isPlaying) {
             await service.pausePlaying();
             setIsPlaying(false);
-            clearInterval(intervalCounter);
+            pauseTimer();
         } else {
-            if (roomState.currentlyPlaying.uri) {
+            if (currentlyPlaying?.uri) {
                 setIsPlaying(true);
-                await service.startPlaying(roomState.currentlyPlaying, deviceId, false);
-                handleAutoPlay();
+                await service.startPlaying(currentlyPlaying, deviceId, false);
+                resumeTimer();
             }
         }
     }
     
-    const handleAutoPlay = () => {
-            intervalCounter = setInterval(() => {
-                service.getPlaybackState().then( async (data) => {
-                    if (data && data.is_playing) {
-                        setIsPlaying(true);
-                        try {
-                            console.log(data.progress_ms, data.item.duration_ms);
-                            if (data.item && data.item.duration_ms && data.progress_ms + 2000 > data.item.duration_ms) {
-                                if (roomState.queue.length > 0) {
-                                    await service.startPlaying(roomState.queue[0], deviceId, true);
-                                    dispatch(setCurrentlyPlaying({ nextTrack: roomState.queue[0], id:id }));    
-                                    dispatch(popQueue(id));
-                                } 
-                            }
-                        } catch (error) {
-                            console.log("Error: ", error);
-                        }
-                    } else {
-                        setIsPlaying(false);
-                        clearInterval(intervalCounter);
-                    }
-                });
-            }, 3000);
-        }
-    
-        if (roomState.currentlyPlaying.uri)
-        return (
-            <View style={styles.container}>
-                <View style={styles.player}>
-                    <Image style={styles.image} source={{uri: roomState.currentlyPlaying.largeImage}}/>
-                </View>
-                    {roomState.currentlyPlaying.title && roomState.currentlyPlaying.artist &&
-                        <View style={styles.bottomContainer}>
-                            <View style={styles.trackInfoContainer}>
-                                <Text style={styles.title}>{roomState.currentlyPlaying.title}</Text>
-                                <Text style={styles.artist}>{roomState.currentlyPlaying.artist}</Text> 
-                            </View>
-                            <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                                {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
-                                    <Ionicons name="pause-outline" size={48} color="white"/>
-                                :   <Ionicons name="play-outline" size={48} color="white"/> 
-                                }
-                            </TouchableOpacity>
-                        </View>    
-                    }   
+    if (currentlyPlaying?.uri)
+    return (
+        <View style={styles.container}>
+            <View style={styles.player}>
+                <Image style={styles.image} source={{uri: currentlyPlaying.largeImage}}/>
             </View>
-        );
-    }
+                {currentlyPlaying.title && currentlyPlaying.artist &&
+                    <View style={styles.bottomContainer}>
+                        <View style={styles.trackInfoContainer}>
+                            <Text style={styles.title}>{currentlyPlaying.title}</Text>
+                            <Text style={styles.artist}>{currentlyPlaying.artist}</Text> 
+                        </View>
+                        <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
+                            {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
+                                <Ionicons name="pause-outline" size={48} color="white"/>
+                            :   <Ionicons name="play-outline" size={48} color="white"/> 
+                            }
+                        </TouchableOpacity>
+                    </View>    
+                }   
+        </View>
+    );
+}
 
 
 const styles = StyleSheet.create({

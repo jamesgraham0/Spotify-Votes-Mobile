@@ -19,7 +19,6 @@ const roomsSlice = createSlice({
     reducers: {
         createRoom(state, action) {
             state.rooms.push(action.payload);
-            console.log(`Created room: ${action.payload.name}`);
         },
         deleteRoom(state, action) {
             state.rooms = state.rooms.filter(room => room.id !== action.payload.id);
@@ -45,25 +44,36 @@ const roomsSlice = createSlice({
                 }
             }
         },
-        popQueue(state, action) {
-            const id = action.payload;
-            const room = state.rooms.find(room => room.id === id);
-            if (room) {
-                room.queue.shift();
-            }
-            else {
-                console.log("room not found when trying to pop queue");
-            }
-        },
-        setCurrentlyPlaying(state, action) {
+        // popQueue(state, action) {
+        //     const id = action.payload;
+        //     const room = state.rooms.find(room => room.id === id);
+        //     if (room) {
+        //         room.queue.shift();
+        //     }
+        //     else {
+        //         console.log("room not found when trying to pop queue");
+        //     }
+        // },
+        // setCurrentlyPlaying(state, action) {
+        //     const { nextTrack, id } = action.payload;
+        //     const room = state.rooms.find(room => room.id === id);
+        //     if (room) {
+        //         room.currentlyPlaying = nextTrack;
+        //     }
+        // },
+        handlePlayNextTrack(state, action) {
             const { nextTrack, id } = action.payload;
             const room = state.rooms.find(room => room.id === id);
             if (room) {
+                room.queue.shift();
                 room.currentlyPlaying = nextTrack;
+                console.log("Room --- ", room);
+            } else {
+                console.log("room not found when handling autoplay")
             }
-        },
+        }
     },
 });
 
-export const { createRoom, deleteRoom, pushQueue, popQueue, setCurrentlyPlaying } = roomsSlice.actions;
+export const { createRoom, deleteRoom, pushQueue, handlePlayNextTrack } = roomsSlice.actions;
 export default roomsSlice.reducer;
