@@ -3,12 +3,16 @@ import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
 import { socket } from '../utils/socket';
 
-const Queue = ({ queue }) => {
+const Queue = ({ queue, roomId }) => {
     const [q, setQ] = useState(queue);
 
     useEffect(() => {
         socket.on("addedTrack", (q) => {
             setQ(q)
+        });
+        socket.on('playingNextTrack', (obj) => {
+            // socket.emit('addTrack', {id:roomId, track:obj.track});
+            setQ(obj.queue);
         });
     }, [socket])
 

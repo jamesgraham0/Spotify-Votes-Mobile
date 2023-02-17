@@ -6,7 +6,9 @@
 **SOCKETS**
 - 🟡 Create room (updates state of list of joinable rooms) -> emit to everyone 
 - 🟡 Delete room (updates state of list of joinable rooms) -> emit to everyone
+- 🛑 Adding the first track to queue sets it to currentlyPlaying -> emit to everyone in room 
 - 🛑 Adding track to queue -> emit to everyone in room
+
 
 
 **FUNCTIONALITY**

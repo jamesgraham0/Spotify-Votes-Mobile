@@ -25,21 +25,21 @@ let rooms = [
 ];
 
 io.on('connection', socket => {
-  console.log('client socketid: ' + socket.id);
-  
-  socket.on('createRoom', (room) => {
-	console.log("creating room", room.name);
-	rooms.unshift(room);
-	socket.emit('createRoom', rooms);
-  });
+	console.log('client socketid: ' + socket.id);
 
-  socket.on('deleteRoom', (room) => {
-	let i = rooms.findIndex((r) => r.id === room.id)
-	if (i > -1) {
-		rooms.splice(i, 1);
-	}
-	socket.emit('deleteRoom', rooms);
-  });
+	socket.on('createRoom', (room) => {
+		console.log("creating room", room.name);
+		rooms.unshift(room);
+		socket.emit('createRoom', rooms);
+	});
+
+	socket.on('deleteRoom', (room) => {
+		let i = rooms.findIndex((r) => r.id === room.id)
+		if (i > -1) {
+			rooms.splice(i, 1);
+		}
+		socket.emit('deleteRoom', rooms);
+	});
 
 	socket.on("findRoom", (room) => {
 		let i = rooms.findIndex((r) => r.id === room.id)
@@ -49,14 +49,44 @@ io.on('connection', socket => {
 	socket.on("addTrack", (obj) => {
 		const {id, track} = obj;
 		const room = rooms.find(room => room.id === id);
-		room.queue.push(track);
-		socket.emit("addedTrack", room.queue);
+		
+		// If currentlyPlaying == {}: currentlyPlaying = track
+		if (room) {
+			if (Object.keys(room.currentlyPlaying).length === 0) {
+				room.currentlyPlaying = track;
+				socket.emit('addedFirstTrack', track);
+			}
+			else {
+				// Else: add track to queue
+				room.queue.push(track);
+				socket.emit("addedTrack", room.queue);
+			}
+		}
 	});
 
-  socket.on('disconnect', () => {
-	socket.disconnect();
-	console.log('user ' + socket.id + ' disconnected');
-  })
+	// play the next track in the queue
+	// if there's no tracks in the queue, set the track to {}
+	socket.on('playNextTrack', (room) => {
+		// find what room this is
+		const {id} = room;
+		const r = rooms.find(rm => rm.id === id);
+
+		// pop the first track in the room.queue
+		let nextTrack = {};
+		if (r.queue.length > 0) {
+			nextTrack = r.queue.shift();
+		}
+
+		r.currentlyPlaying = nextTrack;
+
+		// return {track:<first_track_in_queue>, queue:<room.queue>}
+		socket.emit("playingNextTrack", {track:nextTrack, queue:r.queue})
+	});
+
+	socket.on('disconnect', () => {
+		socket.disconnect();
+		console.log('user ' + socket.id + ' disconnected');
+	})
 });
 
 app.get("/rooms", (req, res) => {
