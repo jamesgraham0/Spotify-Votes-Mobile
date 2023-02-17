@@ -11,9 +11,11 @@ const Queue = ({ queue, roomId }) => {
             setQ(q)
         });
         socket.on('playingNextTrack', (obj) => {
-            // socket.emit('addTrack', {id:roomId, track:obj.track});
             setQ(obj.queue);
         });
+        socket.on('vote', (q) => {
+            setQ(q);
+        })
     }, [socket])
 
     return (
@@ -23,12 +25,13 @@ const Queue = ({ queue, roomId }) => {
                 style={styles.scrollView}
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
+                
             >
                 {q && q.length > 0 && q
                 .map((track, index) => {
                     return (
                         <View key={index}>
-                            <QueueTrack track={track}/>
+                            <QueueTrack track={track} roomId={roomId}/>
                         </View>
                     )
                 })}

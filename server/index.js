@@ -59,6 +59,8 @@ io.on('connection', socket => {
 			else {
 				// Else: add track to queue
 				room.queue.push(track);
+				// sort queue by votes
+				room.queue.sort((a, b) => b.votes - a.votes);
 				socket.emit("addedTrack", room.queue);
 			}
 		}
@@ -83,10 +85,22 @@ io.on('connection', socket => {
 		socket.emit("playingNextTrack", {track:nextTrack, queue:r.queue})
 	});
 
+	socket.on('vote', (room) => {
+		const { id, track } = room;
+		const r = rooms.find(rm => rm.id === id);
+		const t = r.queue.find(t => t.uri === track.uri);
+
+		// Increment the vote count
+		t.votes += 1;
+		console.log(`${t.name} has ${t.votes} votes`);
+		r.queue.sort((a, b) => b.votes - a.votes);
+		socket.emit('vote', r.queue);
+	});
+
 	socket.on('disconnect', () => {
 		socket.disconnect();
 		console.log('user ' + socket.id + ' disconnected');
-	})
+	});
 });
 
 app.get("/rooms", (req, res) => {

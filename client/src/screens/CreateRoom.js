@@ -37,7 +37,6 @@ const CreateRoom = ({ navigation, route }) => {
                 currentlyPlaying: {},
                 queue: [],
             }
-            console.log("deviceId", room.deviceId);
             if (room.deviceId !== '' && room.deviceId !== undefined) {
                 socket.emit('createRoom', room);
                 navigation.navigate(

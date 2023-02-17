@@ -23,9 +23,7 @@ const getDeviceId = async () => {
             device_id = '';
             return '';
         }
-        console.log("devices", devices);
         let activeDevices = devices.filter((device) => device.is_active);
-        console.log("activeDevices", activeDevices);
         if (devices.length > 0) {
             device_id = activeDevices.map((device) => {
                 if (device.type !== 'Spotify Connect') {

@@ -40,10 +40,9 @@ const Player = ({ room }) => {
 
     ////////////// TIMER ///////////////////
     const startTimer = () => {
-        console.log("starting timer");
         timerId = setInterval(() => {
             autoPlayTimer-= TIME_CHECKING_IF_TRACK_FINISHED;
-            console.log("Time left in track", autoPlayTimer);
+            console.log(`Percent of track done: ${100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration)}%`);
 
             if (autoPlayTimer <= 0) {
                 clearInterval(timerId);

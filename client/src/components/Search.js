@@ -34,6 +34,7 @@ const Search = ({ room }) => {
                 smallImage: smallestAlbumImage.url,
                 largeImage: largeAlbumImage.url,
                 duration: track.duration_ms,
+                votes: 0,
               }
             })
           )
