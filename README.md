@@ -14,6 +14,7 @@
 - 🛑 Kick users from room when host leaves
 - 🛑 Maintain the green colour of the #votes to let the user know which tracks they've voted for
 - 🛑 Flash green on the 'users' icon in the room when someone joins
+- 🛑 Set newly joined user's currently playing to what the room has currently playing
 
 
 **FUNCTIONALITY**

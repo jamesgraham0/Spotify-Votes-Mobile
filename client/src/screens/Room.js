@@ -7,6 +7,7 @@ import { deleteRoom } from '../reducers/reducer';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 const Room = ({ navigation, route }) => {
     const { user } = route.params;
@@ -62,12 +63,12 @@ const Room = ({ navigation, route }) => {
                     >
                         <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={styles.roomName}>{room.name}</Text>
+                        <Text numberOfLines={1} style={styles.roomName}>{room.name}</Text>
                     <TouchableOpacity
                         onPress={() => {
                             setUserModalVisible(!userModalVisible);
                         }}
-                    >
+                        >
                         <FontAwesome5 name="users" size={24} color="grey" />
                     </TouchableOpacity>
                         <Modal
@@ -75,35 +76,55 @@ const Room = ({ navigation, route }) => {
                             transparent={true}
                             visible={userModalVisible}
                             onRequestClose={() => {
-                            setUserModalVisible(!userModalVisible);
+                                setUserModalVisible(!userModalVisible);
                             }}>
-                            <View style={styles.modalView}>
-                            <ScrollView
-                                bounces='true'
-                                contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
-                            >
-                                <View>
-                                {
-                                    room.users.map((user) => {
-                                    return (
-                                        <View key={user.id}>
-                                            let count = 0;
-                                            <View style={styles.userContainer}>
-                                                <Text>{count++}</Text>
-                                                <Text numberOfLines={1} style={styles.user}>{user.display_name}</Text>
-                                            </View>
-                                        </View>
-                                    )
-                                    })
-                                }
+                            <BlurView intensity={30} tint={'dark'} style={styles.blur}>
+                                <View style={styles.modalView}>
+                                    <Text style={styles.numUsers}>
+                                        {room.users.length === 1
+                                            ? <Text>{room.users.length} Person</Text>
+                                            : <Text>{room.users.length} People</Text>
+                                        }                                    
+                                        </Text>
+                                    <ScrollView
+                                        bounces='true'
+                                        contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
+                                        style={styles.scrollView}
+                                        >
+                                        <View>
+                                        {
+                                            room.users.map((user) => {
+                                                let count = 0;
+                                                return (
+                                                    <View key={user.id}>
+                                                    <View style={styles.userContainer}>
+                                                        <Text style={styles.count}>{++count}</Text>
+                                                        {
+                                                            count === 1 
+                                                                ? <Text>Host</Text>
+                                                                : <Text>not host</Text>    
+                                                        }
+                                                        <Text numberOfLines={1} style={styles.user}>
+                                                            <Text>{user.display_name}</Text>
+                                                        </Text>
+                                                    </View>
+                                                    <View style={styles.userContainer}>
+                                                        <Text style={styles.count}>2</Text>
+                                                        <Text style={styles.user}>Shaun</Text>  
+                                                    </View>
+                                                </View>
+                                            )
+                                        })
+                                    }
+                                    </View>
+                                    </ScrollView>
+                                    <TouchableOpacity
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => setUserModalVisible(!userModalVisible)}>
+                                        <Text style={styles.buttonText}>Hide Users</Text>
+                                    </TouchableOpacity>
                                 </View>
-                            </ScrollView>
-                                <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setUserModalVisible(!userModalVisible)}>
-                                    <Text style={styles.textStyle}>Hide Users</Text>
-                                </TouchableOpacity>
-                            </View>
+                            </BlurView>
                         </Modal>
                 </View>
                 <Navbar user={user} room={room}/>
@@ -140,12 +161,12 @@ const styles = StyleSheet.create({
         height: 40,
     },
     modalView: {
-        top: 200,
-        height: 400,
+        top: 150,
+        height: 500,
         margin: 20,
-        backgroundColor: 'rgba(30, 30, 30, 0.3)',
+        backgroundColor: 'rgba(20, 20, 20, 0.9)',
         borderRadius: 20,
-        padding: 35,
+        padding: 15,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
@@ -157,17 +178,27 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     userContainer: {
-        width: 250,
         height: 50,
-        justifyContent: 'center',
+        margin: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        borderColor: 'rgb(30, 30, 30)',
+        borderColor: 'rgba(30, 30, 30, 0.5)',
         borderWidth: 1,
         borderRadius: 20,
+        borderTopWidth: 0,
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        boxShadow: 'rgba(255, 255, 255, 0.5)',
     },
     user: {
         fontSize: 30,
         color: 'white',
+        marginRight: 50,
+    },
+    count: {
+        color: 'white',
+        marginLeft: 30,
     },
     button: {
         borderRadius: 20,
@@ -175,9 +206,9 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     buttonClose: {
-        backgroundColor: 'rgba(176, 38, 255, 0.3)',
+        backgroundColor: 'rgba(0, 50, 100, 1)',
     },
-    textStyle: {
+    buttonText: {
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
@@ -185,6 +216,27 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
+    },
+    blur: {
+        height: 2000,
+        backgroundColor: 'rgba(0, 50, 100, 0.1)',
+    },
+    scrollView: {
+        width: '90%',
+        margin: 15,
+        borderColor: 'rgba(0, 50, 100, 1)',
+        borderWidth: 3,
+        borderTopColor: 'rgba(0, 0, 0, 0)',
+        borderBottomColor: 'rgba(0, 0, 0, 0)',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+    numUsers: {
+        color: 'white',
+        fontSize: 30,
+        fontWeight: 'bold',
     },
   })
   
