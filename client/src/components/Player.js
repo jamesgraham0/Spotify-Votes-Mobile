@@ -6,7 +6,7 @@ import { handlePlayNextTrack } from "../reducers/reducer";
 import { Ionicons } from '@expo/vector-icons'; 
 import { socket } from "../utils/socket";
 
-const Player = ({ room }) => {
+const Player = ({ user, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = useState({});
     const { name, password, id, hostId, deviceId, users } = room;
@@ -26,14 +26,16 @@ const Player = ({ room }) => {
     }, [socket]);
 
     useEffect(() => {
-        autoPlayTimer = currentlyPlaying.duration;
-        const play = async () => {
-            await service.startPlaying(currentlyPlaying, deviceId, true);
-            setIsPlaying(true);
-            startTimer();
-        }
-        if (currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {
-            play();
+        if (user.id === hostId) {
+            autoPlayTimer = currentlyPlaying.duration;
+            const play = async () => {
+                await service.startPlaying(currentlyPlaying, deviceId, true);
+                setIsPlaying(true);
+                startTimer();
+            }
+            if (currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {
+                play();
+            }
         }
     }, [currentlyPlaying]);
 
@@ -62,22 +64,25 @@ const Player = ({ room }) => {
 
 
     const handlePlayPause = async () => {
-        if (isPlaying) {
-            await service.pausePlaying();
-            setIsPlaying(false);
-            pauseTimer();
-        } else {
-            if (currentlyPlaying?.uri) {
-                setIsPlaying(true);
-                await service.startPlaying(currentlyPlaying, deviceId, false);
-                resumeTimer();
+        if (user.id === hostId) {
+            console.log("this is the host:", user.name);
+            if (isPlaying) {
+                await service.pausePlaying();
+                setIsPlaying(false);
+                pauseTimer();
+            } else {
+                if (currentlyPlaying?.uri) {
+                    setIsPlaying(true);
+                    await service.startPlaying(currentlyPlaying, deviceId, false);
+                    resumeTimer();
+                }
             }
         }
     }
     
-    if (currentlyPlaying?.uri)
-    return (
-        <View style={styles.container}>
+    if (currentlyPlaying?.uri) {
+        return (
+            <View style={styles.container}>
             <View style={styles.player}>
                 <Image style={styles.image} source={{uri: currentlyPlaying.largeImage}}/>
             </View>
@@ -90,13 +95,14 @@ const Player = ({ room }) => {
                         <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                             {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
                                 <Ionicons name="pause-outline" size={48} color="white"/>
-                            :   <Ionicons name="play-outline" size={48} color="white"/> 
+                                :   <Ionicons name="play-outline" size={48} color="white"/> 
                             }
                         </TouchableOpacity>
                     </View>    
                 }   
-        </View>
-    );
+            </View>
+        );
+    }
 }
 
 

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { socket } from '../utils/socket';
 
@@ -12,7 +12,7 @@ const QueueTrack = ({ track, roomId }) => {
         if (isPressed) {
         timerId = setTimeout(() => {
             setIsPressed(false);
-        }, 1000);
+        }, 200);
         }
 
         return () => clearTimeout(timerId);
@@ -30,7 +30,7 @@ const QueueTrack = ({ track, roomId }) => {
 
     return (
         <View>
-            <TouchableWithoutFeedback 
+            <TouchableOpacity 
                 key={track.uri}
                 onPress={() => {
                     vote();
@@ -42,15 +42,15 @@ const QueueTrack = ({ track, roomId }) => {
                         source={{uri: smallImage}}
                         />
                     <View style={styles.titleArtistContainer}>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text style={styles.artist}>{artist}</Text>
+                        <Text numberOfLines={3} style={styles.title}>{title}</Text>
+                        <Text numberOfLines={1} style={styles.artist}>{artist}</Text>
                     </View>
                     <View style={styles.voteContainer}>
                         <Text style={[styles.voteNumber, { color: textColor }]}>{votes}</Text>
                         <Text style={[styles.votes, { color: textColor }]}> votes</Text>
                     </View>
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
         </View>
     );
 };

@@ -9,7 +9,7 @@ import Queue from './Queue';
 
 const Tab = createBottomTabNavigator();
 
-const Navbar = ({ room }) => {
+const Navbar = ({ user, room }) => {
   if (room) {
     return (
       <Tab.Navigator
@@ -41,7 +41,7 @@ const Navbar = ({ room }) => {
           />
       <Tab.Screen
         name="Playing"
-        children={() => <Playing room={room} />}
+        children={() => <Playing user={user} room={room} />}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

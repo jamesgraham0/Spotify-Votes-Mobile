@@ -20,13 +20,7 @@ const CreateRoom = ({ navigation, route }) => {
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
         if (validNameAndPassword()) {
-            let currentlyPlaying = await service.getCurrentlyPlaying();
-            if (Object.keys(currentlyPlaying).length !== 0) {
-                // if there is a track playing, pause it and set the users' currentlyPlaying to {}
-                if (currentlyPlaying.is_playing || currentlyPlaying.item.progress_ms > 0) {
-                    await service.resetPlaybackToEmptyState();
-                }
-            }
+            await service.resetPlaybackToEmptyState();
             const room = {
                 name: roomName, 
                 password: password,

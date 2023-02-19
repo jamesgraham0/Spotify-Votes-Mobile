@@ -11,7 +11,7 @@
    return (
      <View style={styles.container}>
         <Text style={styles.numberOfUsers}>{users.length} people</Text>
-        <Text style={styles.name}>{name}</Text>
+        <Text numberOfLines={1} style={styles.name}>{name}</Text>
      </View>
    )
  }
