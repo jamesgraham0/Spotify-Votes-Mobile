@@ -16,7 +16,7 @@ const Room = ({ navigation, route }) => {
     const [userModalVisible, setUserModalVisible] = useState(false);
     const dispatch = useDispatch();
     const plusValue = useState(new Animated.Value(0))[0];
-    const [iconColor, setIconColor] = useState('white');
+    const [iconColor, setIconColor] = useState('#BBB');
 
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const Room = ({ navigation, route }) => {
             friction: 3,
             useNativeDriver: false,
         }).start(() => {
-            setIconColor('white');
+            setIconColor('#BBB');
             setNewPersonInRoom(false);
             Animated.spring(plusValue, {
                 toValue: 0,
@@ -43,12 +43,12 @@ const Room = ({ navigation, route }) => {
                 useNativeDriver: false,
             }).start();
         });
-        setIconColor('green');
+        setIconColor('#1DB954');
         setNewPersonInRoom(false);
     }
     
     useEffect(() => {
-        setIconColor(newPersonInRoom ? 'green' : 'white');
+        setIconColor(newPersonInRoom ? '#1DB954' : '#BBB');
     }, [newPersonInRoom]);
 
     const handleReturnToJoinOrCreateRoom = () => {
@@ -251,11 +251,11 @@ const styles = StyleSheet.create({
     },
     user: {
         fontSize: 30,
-        color: 'white',
+        color: '#BBB',
         marginRight: 50,
     },
     count: {
-        color: 'white',
+        color: '#BBB',
         marginLeft: 30,
     },
     button: {
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 50, 100, 1)',
     },
     buttonText: {
-        color: 'white',
+        color: '#BBB',
         fontWeight: 'bold',
         textAlign: 'center',
     },
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 20,
     },
     numUsers: {
-        color: 'white',
+        color: '#BBB',
         fontSize: 30,
         fontWeight: 'bold',
     },

@@ -14,6 +14,11 @@ const Tab = createBottomTabNavigator();
 const Navbar = ({ user, room }) => {
   const [trackAddedToQueue, setTrackAddedToQueue] = useState(false);
   const [queueIconColor, setQueueIconColor] = useState('#BBB');
+  const moveUp = useState(new Animated.Value(0))[0];
+
+  const [trackAddedToPlaying, setTrackAddedToPlaying] = useState(false);
+  const [playIconColor, setPlayIconColor] = useState('#BBB');
+  const moveUpPlaying = useState(new Animated.Value(0))[0];
 
 
   useEffect(() => {
@@ -21,22 +26,60 @@ const Navbar = ({ user, room }) => {
       setTrackAddedToQueue(true);
       queueIconNotification();
     }); 
+    socket.on("addedFirstTrack", (t) => {
+      setTrackAddedToPlaying(true);
+      playIconNotification();
+    })
   }, [socket]);
 
-  const queueIconNotification = () => {
-    let intervalId;
-    if (trackAddedToQueue) {
-      setQueueIconColor('#1DB954');
-      intervalId = setInterval(() => {
+  function queueIconNotification() {
+    setQueueIconColor('#1DB954');
+    Animated.spring(moveUp, {
+      toValue: -5,
+      duration: 100,
+      tension: 50,
+      useNativeDriver: false,
+    }).start(() => {
+      setTrackAddedToQueue(false);
+      Animated.spring(moveUp, {
+        toValue: 0,
+        duration: 100,
+        tension: 50,
+        useNativeDriver: false,
+      }).start(() => {
         setQueueIconColor('#BBB');
-        setTrackAddedToQueue(false);
-      }, 500);
-    }
-    else {
-      setQueueIconColor('#BBB');
-    }
-    return () => clearInterval(intervalId);
+      });
+    });
   }
+
+  useEffect(() => {
+      setQueueIconColor(trackAddedToQueue ? '#1DB954' : '#BBB');
+  }, [trackAddedToQueue]);
+
+
+  function playIconNotification() {
+    setPlayIconColor('#1DB954');
+    Animated.spring(moveUpPlaying, {
+      toValue: -5,
+      duration: 100,
+      tension: 50,
+      useNativeDriver: false,
+    }).start(() => {
+      setTrackAddedToPlaying(false);
+      Animated.spring(moveUpPlaying, {
+        toValue: 0,
+        duration: 100,
+        tension: 50,
+        useNativeDriver: false,
+      }).start(() => {
+        setPlayIconColor('#BBB');
+      });
+    });
+  }
+
+  useEffect(() => {
+      setPlayIconColor(trackAddedToPlaying ? '#1DB954' : '#BBB');
+  }, [trackAddedToPlaying]);
 
   if (room) {
     return (
@@ -73,7 +116,13 @@ const Navbar = ({ user, room }) => {
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="music-note-plus" color={'#BBB'} size={size} />
+            <Animated.View
+              style={[{
+                  marginTop: moveUpPlaying,
+              }]}
+          >
+              <MaterialCommunityIcons name="music-note-plus" color={playIconColor} size={size} />
+            </Animated.View>
           ),
         }}
       />
@@ -84,7 +133,13 @@ const Navbar = ({ user, room }) => {
           headerShown: false,
           tabBarLabel: 'Queue',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="queue" color={queueIconColor} size={size} />
+            <Animated.View
+              style={[{
+                  marginTop: moveUp,
+              }]}
+          >
+              <MaterialIcons size={size} name="queue" color={queueIconColor}></MaterialIcons>
+            </Animated.View>
           ),
         }}
       />
