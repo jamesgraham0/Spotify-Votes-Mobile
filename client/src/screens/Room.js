@@ -109,7 +109,7 @@ const Room = ({ navigation, route }) => {
                                 <Text></Text>
                             }
                             <FontAwesome5 style={styles.usersIcon} name="users" size={24} color={iconColor} />
-                        </TouchableOpacity>
+                        
                         <Animated.View
                             style={[{
                                 width: 20,
@@ -121,15 +121,14 @@ const Room = ({ navigation, route }) => {
                                     opacity: 1,
                                     position: 'absolute',
                                     alignSelf: 'center',
-                                    top: -14,
+                                    top: -24,
                                     left: 9,
                             }]}>
                                 <Ionicons color={iconColor} name="add-circle-outline"></Ionicons>
                             </View>
                         </Animated.View>
+                        </TouchableOpacity>
                     </View>
-
-
 
                         <Modal
                             animationType="fade"
@@ -301,13 +300,11 @@ const styles = StyleSheet.create({
     iconContainer: {
         position: 'relative',
         width: 35,
-        height: 30,
+        height: 35,
         padding: 2,
-    },
-    usersIcon: {
-        position: 'absolute',
-        width: 70,
-        height: 70,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
   })
   
