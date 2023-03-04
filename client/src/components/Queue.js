@@ -20,7 +20,6 @@ const Queue = ({ queue, roomId }) => {
 
     useEffect(() => {
         socket.on("addedTrackToQueue", (q) => {
-            console.log('animate queue icon')
             setQ(q)
         });
         socket.on('playingNextTrack', (obj) => {

@@ -1,8 +1,10 @@
-import React from 'react';
+import { Animated, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons'; 
+import { socket } from '../utils/socket';
 import Playing from './Playing';
 import Search from './Search';
 import Queue from './Queue';
@@ -10,6 +12,32 @@ import Queue from './Queue';
 const Tab = createBottomTabNavigator();
 
 const Navbar = ({ user, room }) => {
+  const [trackAddedToQueue, setTrackAddedToQueue] = useState(false);
+  const [queueIconColor, setQueueIconColor] = useState('#BBB');
+
+
+  useEffect(() => {
+    socket.on("addedTrackToQueue", (q) => {
+      setTrackAddedToQueue(true);
+      queueIconNotification();
+    }); 
+  }, [socket]);
+
+  const queueIconNotification = () => {
+    let intervalId;
+    if (trackAddedToQueue) {
+      setQueueIconColor('#1DB954');
+      intervalId = setInterval(() => {
+        setQueueIconColor('#BBB');
+        setTrackAddedToQueue(false);
+      }, 500);
+    }
+    else {
+      setQueueIconColor('#BBB');
+    }
+    return () => clearInterval(intervalId);
+  }
+
   if (room) {
     return (
       <Tab.Navigator
@@ -35,20 +63,20 @@ const Navbar = ({ user, room }) => {
           headerShown: false,
           tabBarLabel: 'Search',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search" color={color} size={size} />
-            ),
-          }}
-          />
+            <Ionicons name="search" color={'#BBB'} size={size} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Playing"
         children={() => <Playing user={user} room={room} />}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="music-note-plus" color={color} size={size} />
-            ),
-          }}
-          />
+            <MaterialCommunityIcons name="music-note-plus" color={'#BBB'} size={size} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Queue"
         children={() => <Queue queue={room.queue} roomId={room.id} />}
@@ -56,10 +84,10 @@ const Navbar = ({ user, room }) => {
           headerShown: false,
           tabBarLabel: 'Queue',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="queue" color={color} size={size} />
-            ),
-          }}
-          />
+            <MaterialIcons name="queue" color={queueIconColor} size={size} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

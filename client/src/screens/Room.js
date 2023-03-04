@@ -47,7 +47,6 @@ const Room = ({ navigation, route }) => {
         setNewPersonInRoom(false);
     }
     
-
     useEffect(() => {
         setIconColor(newPersonInRoom ? 'green' : 'white');
     }, [newPersonInRoom]);
