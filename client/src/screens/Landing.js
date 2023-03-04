@@ -2,8 +2,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Button, Linking } from 'react
 // import LoginButton from './LoginButton';
 import React, { useState, useEffect } from "react";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
-import { CLIENT_ID, CLIENT_SECRET } from "@env"; 
 import service from '../utils/service';
+import {CLIENT_ID, CLIENT_SECRET} from 'react-native-dotenv';
 
 const Landing = ({ navigation }) => {
   const [token, setToken] = useState('');

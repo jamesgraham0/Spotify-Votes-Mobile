@@ -16,12 +16,15 @@ const Player = ({ user, room }) => {
 
     useEffect(() => {
         socket.on("addedFirstTrack", (track) => {
-            console.log('addedFirstTrack')
+            console.log('animate playing icon');
             setCurrentlyPlaying(track);
         });
         socket.on('playingNextTrack', (obj) => {
             console.log("playing next track:", obj.track);
             setCurrentlyPlaying(obj.track);
+        });
+        socket.on('joinRoom', (room) => {
+            setCurrentlyPlaying(room.currentlyPlaying);
         });
     }, [socket]);
 

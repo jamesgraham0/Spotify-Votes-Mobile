@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { CLIENT_ID, REDIRECT_URI } from "@env";
 import SpotifyWebApi from "spotify-web-api-node";
+import {CLIENT_ID, REDIRECT_URI} from 'react-native-dotenv';
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
-})
+});
 
 let token = '';
 let device_id = '';

@@ -14,6 +14,7 @@ const EnterRoomPassword = ({ navigation, route }) => {
     const validatePassword = () => {
         Keyboard.dismiss();
         if (guessedPassword === correctPassword) {
+            console.log("Joining Room: ", room);
             socket.emit('joinRoom', room);
             navigation.navigate('Room', {user: user, room: room});
         } else {

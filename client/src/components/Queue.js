@@ -5,9 +5,22 @@ import { socket } from '../utils/socket';
 
 const Queue = ({ queue, roomId }) => {
     const [q, setQ] = useState(queue);
+    
+    // Grabs the queue from the socket when screen first mounts
+    useEffect(() => {
+        function fetchQueue() {
+          console.log("fetching queue");
+          fetch(`http://192.168.1.67:3000/queue/${roomId}`)
+            .then((res) => res.json())
+            .then((data) => setQ(data))
+            .catch((err) => console.error(err));
+        }
+        fetchQueue();
+      }, []);
 
     useEffect(() => {
-        socket.on("addedTrack", (q) => {
+        socket.on("addedTrackToQueue", (q) => {
+            console.log('animate queue icon')
             setQ(q)
         });
         socket.on('playingNextTrack', (obj) => {
@@ -16,6 +29,9 @@ const Queue = ({ queue, roomId }) => {
         socket.on('vote', (q) => {
             setQ(q);
         })
+        socket.on('joinRoom', (room) => {
+            setQ(room.queue);
+        });
     }, [socket])
 
     return (

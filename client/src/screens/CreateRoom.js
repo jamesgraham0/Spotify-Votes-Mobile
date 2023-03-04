@@ -6,6 +6,7 @@ import { createRoom } from '../reducers/reducer';
 import { useDispatch } from 'react-redux';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
+import { Linking } from 'expo';
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
@@ -20,7 +21,6 @@ const CreateRoom = ({ navigation, route }) => {
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
         if (validNameAndPassword()) {
-            await service.resetPlaybackToEmptyState();
             const room = {
                 name: roomName, 
                 password: password,
@@ -38,9 +38,10 @@ const CreateRoom = ({ navigation, route }) => {
                     {room: room,
                     user: user}
                 );
+                await service.resetPlaybackToEmptyState();
                 // dispatch(createRoom(room));
             } else {
-                alert('Please open Spotify on your device and try again.');
+                alert("Open the Spotify app to create a room");
             }
         }
     }
@@ -48,7 +49,6 @@ const CreateRoom = ({ navigation, route }) => {
     const validNameAndPassword = () => {
         return roomName !== '' && password !== '';
     }
-
 
     return (
         <View style={styles.outerContainer}>

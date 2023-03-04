@@ -37,6 +37,14 @@ io.on('connection', socket => {
 	});
 
 	socket.on('joinRoom', (room) => {
+		const r = rooms.find(rm => rm.id === room.id);
+
+		// Update the whole room for the user that just joined
+		socket.emit('joinRoom', r)
+		
+		// Let everyone in the room know that another person has joined the room
+		socket.to(room.id).emit('joinRoom', r);
+		
 		// Join the users' socket to the roomId
 		socket.join(room.id);
 	});
@@ -47,11 +55,6 @@ io.on('connection', socket => {
 			rooms.splice(i, 1);
 		}
 		socket.broadcast.emit('deleteRoom', rooms);
-	});
-
-	socket.on("findRoom", (room) => {
-		let i = rooms.findIndex((r) => r.id === room.id)
-		socket.emit("foundRoom", rooms[i]);
 	});
 
 	socket.on("addTrack", (obj) => {
@@ -69,7 +72,7 @@ io.on('connection', socket => {
 				room.queue.push(track);
 				// sort queue by votes
 				room.queue.sort((a, b) => b.votes - a.votes);
-				io.in(room.id).emit("addedTrack", room.queue);
+				io.in(room.id).emit("addedTrackToQueue", room.queue);
 			}
 		}
 	});
@@ -112,6 +115,12 @@ io.on('connection', socket => {
 
 app.get("/rooms", (req, res) => {
 	res.json(rooms);
+});
+
+app.get('/queue/:id', (req, res) => {
+	const { id } = req.params;
+	const r = rooms.find((rm) => rm.id === id);
+	res.json(r.queue);
 });
 
 server.listen(PORT, () => {
