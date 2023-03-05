@@ -10,6 +10,7 @@ const Player = ({ user, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = useState({});
     const { name, password, id, hostId, deviceId, users } = room;
+    const [progress, setProgress] = useState(0);
     let timerId = null;
     let autoPlayTimer = 0;
     const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
@@ -46,8 +47,8 @@ const Player = ({ user, room }) => {
     ////////////// TIMER ///////////////////
     const startTimer = () => {
         timerId = setInterval(() => {
-            autoPlayTimer-= TIME_CHECKING_IF_TRACK_FINISHED;
-            console.log(`Percent of track done: ${100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration)}%`);
+            autoPlayTimer -= TIME_CHECKING_IF_TRACK_FINISHED;
+            setProgress(100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration));
 
             if (autoPlayTimer <= 0) {
                 clearInterval(timerId);
@@ -65,10 +66,8 @@ const Player = ({ user, room }) => {
     }
     ////////////////////////////////////////
 
-
     const handlePlayPause = async () => {
         if (user.id === hostId) {
-            console.log("this is the host:", user.name);
             if (isPlaying) {
                 await service.pausePlaying();
                 setIsPlaying(false);
@@ -94,6 +93,9 @@ const Player = ({ user, room }) => {
                         <View style={styles.trackInfoContainer}>
                             <Text style={styles.title}>{currentlyPlaying.title}</Text>
                             <Text style={styles.artist}>{currentlyPlaying.artist}</Text> 
+                        </View>
+                        <View style={styles.progress}>
+                            <View style={[styles.progressFill, { width: `${progress}%` }]} />
                         </View>
                         <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                             {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 350,
         width: '80%',
-        height: 220,
+        height: 250,
     },
     trackInfoContainer: {
         position: 'absolute',
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
         color: '#BBB',
         fontSize: 30,
         marginHorizontal: 20,
-        marginTop: 20,
+        marginTop: 50,
         fontStyle: 'italic',
         fontWeight: 'bold',
     },
@@ -166,6 +168,22 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         color: '#1DB954',
         fontSize: 18,
+    },
+    progress: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        alignSelf: 'center',
+        borderRadius: 10,
+        width: '80%',
+        height: 5,
+        shadowColor: 'rgba(176, 38, 255, 0.5)',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+    },
+    progressFill: {
+        height: '100%',
+        borderRadius: 10,
+        backgroundColor: 'rgba(176, 38, 255, 0.5)',
     },
 })
 

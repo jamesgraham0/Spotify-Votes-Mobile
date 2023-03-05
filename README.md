@@ -18,17 +18,17 @@
 - 🛑 Set newly joined user's currently playing to what the room has currently playing
 
 **FUNCTIONALITY**
+- ✅ Progress bar for track
 - 🛑 Add a countdown timer in the queue screen where the next track gets progressively more green.
-- 🛑 ^^^ when the next track is popped from the queue, slide it to the right and fade it away
-- 🛑 Queue can only be added to once mounted. Should be able to add right away
+- 🛑 ^^^ when the next track is popped from the queue, slide it to the left and fade it away
+- ✅ Queue can only be added to once mounted. Should be able to add right away
 - ✅ Add votes to every track
+- 🛑 Only allow a single vote to every track (see below)
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
 - 🛑 Add small photo on the queue card of who chose the track (or name)
 - 🛑 List of user names in a room once in the room
 - 🛑 Only allow room host to play and pause music
-- 🛑 Progress bar for track
 - 🛑 When a track is added to the queue, show a small popup over the queue tab indicating that the track has been added.
-- 🛑 Crashed with 403 error when another Spotify account was being authenticated
 
 **OTHER**
 - 🟡 Refactor and organize client-side code into one folder
@@ -37,3 +37,11 @@
 <a href="https://socket.io/docs/v4/rooms/" target="_blank">Socket.IO Documentation</a>
 
 Run expo r -c to clear expo cache and rebuild the project when getting "non-std C++ exception"
+
+
+- 🛑 Only allow a single vote to every track
+When a user votes for a track:
+    emit to the room to add one to the votes of that track
+    emit back to that specific user that they've voted for 
+        add that users id to the tracks usersVoted[] array
+    change the background of QueueTrack to usersVoted[].includes(user.id) ? 'green' : 'grey';

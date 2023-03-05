@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@motify/components": "^0.18.0",
+    "@react-native-community/progress-view": "^1.4.0",
     "@react-navigation/bottom-tabs": "^6.4.1",
     "@react-navigation/native": "^6.0.14",
     "@react-navigation/native-stack": "^6.9.1",
@@ -22,6 +23,7 @@
     "expo-auth-session": "^4.0.3",
     "expo-blur": "~12.2.2",
     "expo-cli": "^6.3.2",
+    "expo-linking": "~4.0.1",
     "expo-random": "~13.1.1",
     "expo-status-bar": "~1.4.2",
     "fs": "^0.0.1-security",
@@ -38,8 +40,7 @@
     "react-spotify-web-playback": "^0.10.0",
     "socket.io-client": "^4.6.0",
     "spotify-web-api-js": "^1.5.2",
-    "spotify-web-api-node": "^5.0.2",
-    "expo-linking": "~4.0.1"
+    "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
     "@types/react-native": "^0.71.3",

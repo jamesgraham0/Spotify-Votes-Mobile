@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         color: '#BBB',
         fontSize: 30,
-        height: 30,
+        height: 33,
         width: '90%',
     },
     scrollView: {
