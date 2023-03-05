@@ -34,6 +34,7 @@ const Search = ({ room }) => {
                 smallImage: smallestAlbumImage.url,
                 largeImage: largeAlbumImage.url,
                 duration: track.duration_ms,
+                votes: 0,
               }
             })
           )
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         color: '#BBB',
         fontSize: 30,
-        height: 30,
+        height: 33,
         width: '90%',
     },
     scrollView: {

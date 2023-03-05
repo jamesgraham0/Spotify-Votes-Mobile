@@ -5,14 +5,31 @@ import { socket } from '../utils/socket';
 
 const Queue = ({ queue, roomId }) => {
     const [q, setQ] = useState(queue);
+    
+    // Grabs the queue from the socket when screen first mounts
+    useEffect(() => {
+        function fetchQueue() {
+          console.log("fetching queue");
+          fetch(`http://192.168.1.67:3000/queue/${roomId}`)
+            .then((res) => res.json())
+            .then((data) => setQ(data))
+            .catch((err) => console.error(err));
+        }
+        fetchQueue();
+      }, []);
 
     useEffect(() => {
-        socket.on("addedTrack", (q) => {
+        socket.on("addedTrackToQueue", (q) => {
             setQ(q)
         });
         socket.on('playingNextTrack', (obj) => {
-            // socket.emit('addTrack', {id:roomId, track:obj.track});
             setQ(obj.queue);
+        });
+        socket.on('vote', (q) => {
+            setQ(q);
+        })
+        socket.on('joinRoom', (room) => {
+            setQ(room.queue);
         });
     }, [socket])
 
@@ -23,12 +40,13 @@ const Queue = ({ queue, roomId }) => {
                 style={styles.scrollView}
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
+                
             >
                 {q && q.length > 0 && q
                 .map((track, index) => {
                     return (
                         <View key={index}>
-                            <QueueTrack track={track}/>
+                            <QueueTrack track={track} roomId={roomId}/>
                         </View>
                     )
                 })}

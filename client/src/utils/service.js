@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { CLIENT_ID, REDIRECT_URI } from "@env";
 import SpotifyWebApi from "spotify-web-api-node";
+import {CLIENT_ID, REDIRECT_URI} from 'react-native-dotenv';
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
-})
+});
 
 let token = '';
 let device_id = '';
@@ -23,9 +23,7 @@ const getDeviceId = async () => {
             device_id = '';
             return '';
         }
-        console.log("devices", devices);
         let activeDevices = devices.filter((device) => device.is_active);
-        console.log("activeDevices", activeDevices);
         if (devices.length > 0) {
             device_id = activeDevices.map((device) => {
                 if (device.type !== 'Spotify Connect') {

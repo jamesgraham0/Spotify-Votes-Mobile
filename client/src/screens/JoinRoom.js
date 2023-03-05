@@ -16,8 +16,9 @@ const JoinRoom = ({ navigation, route }) => {
     // const state = useSelector(state => state.reducer);
 
     // Grabs the rooms from the socket when screen first mounts
-    useLayoutEffect(() => {
+    useEffect(() => {
 		function fetchRooms() {
+            console.log("fetching rooms");
 			fetch("http://192.168.1.67:3000/rooms")
 				.then((res) => res.json())
 				.then((data) => setRooms(data))
@@ -29,15 +30,15 @@ const JoinRoom = ({ navigation, route }) => {
     // Updates list of rooms everytime the socket is updated
     // For when someone makes a new room while another user is on the joinRoom screen
     useEffect(() => {
-        // setRooms(state.rooms);
+        console.log('socket updated');
         socket.on('createRoom', (rooms) => {
+            console.log('creating room');
             setRooms(rooms);
         });
-
         socket.on('deleteRoom', (rooms) => {
+            console.log('deleting room');
             setRooms(rooms);
-        })
-        
+        });
     }, [socket]);
 
     const handleReturnToJoinOrCreateRoom = () => {

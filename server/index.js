@@ -30,7 +30,23 @@ io.on('connection', socket => {
 	socket.on('createRoom', (room) => {
 		console.log("creating room", room.name);
 		rooms.unshift(room);
-		socket.emit('createRoom', rooms);
+		// Update every client about the new room
+		socket.broadcast.emit('createRoom', rooms);
+		// Join the host socket to the by roomId
+		socket.join(room.id);
+	});
+
+	socket.on('joinRoom', (room) => {
+		const r = rooms.find(rm => rm.id === room.id);
+
+		// Update the whole room for the user that just joined
+		socket.emit('joinRoom', r)
+		
+		// Let everyone in the room know that another person has joined the room
+		socket.to(room.id).emit('joinRoom', r);
+		
+		// Join the users' socket to the roomId
+		socket.join(room.id);
 	});
 
 	socket.on('deleteRoom', (room) => {
@@ -38,28 +54,25 @@ io.on('connection', socket => {
 		if (i > -1) {
 			rooms.splice(i, 1);
 		}
-		socket.emit('deleteRoom', rooms);
-	});
-
-	socket.on("findRoom", (room) => {
-		let i = rooms.findIndex((r) => r.id === room.id)
-		socket.emit("foundRoom", rooms[i]);
+		socket.broadcast.emit('deleteRoom', rooms);
 	});
 
 	socket.on("addTrack", (obj) => {
 		const {id, track} = obj;
 		const room = rooms.find(room => room.id === id);
-		
-		// If currentlyPlaying == {}: currentlyPlaying = track
 		if (room) {
+			// if there's no track playing: play it now
+			// If currentlyPlaying == {}: currentlyPlaying = track
 			if (Object.keys(room.currentlyPlaying).length === 0) {
 				room.currentlyPlaying = track;
-				socket.emit('addedFirstTrack', track);
+				io.in(room.id).emit('addedFirstTrack', track);
 			}
 			else {
 				// Else: add track to queue
 				room.queue.push(track);
-				socket.emit("addedTrack", room.queue);
+				// sort queue by votes
+				room.queue.sort((a, b) => b.votes - a.votes);
+				io.in(room.id).emit("addedTrackToQueue", room.queue);
 			}
 		}
 	});
@@ -80,17 +93,34 @@ io.on('connection', socket => {
 		r.currentlyPlaying = nextTrack;
 
 		// return {track:<first_track_in_queue>, queue:<room.queue>}
-		socket.emit("playingNextTrack", {track:nextTrack, queue:r.queue})
+		io.in(room.id).emit("playingNextTrack", {track:nextTrack, queue:r.queue})
+	});
+
+	socket.on('vote', (room) => {
+		const { id, track } = room;
+		const r = rooms.find(rm => rm.id === id);
+		const t = r.queue.find(t => t.uri === track.uri);
+
+		// Increment the vote count
+		t.votes += 1;
+		r.queue.sort((a, b) => b.votes - a.votes);
+		io.in(room.id).emit('vote', r.queue);
 	});
 
 	socket.on('disconnect', () => {
 		socket.disconnect();
 		console.log('user ' + socket.id + ' disconnected');
-	})
+	});
 });
 
 app.get("/rooms", (req, res) => {
 	res.json(rooms);
+});
+
+app.get('/queue/:id', (req, res) => {
+	const { id } = req.params;
+	const r = rooms.find((rm) => rm.id === id);
+	res.json(r.queue);
 });
 
 server.listen(PORT, () => {
