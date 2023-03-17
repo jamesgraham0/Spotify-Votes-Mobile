@@ -29,9 +29,15 @@
 - 🛑 Add small photo on the queue card of who chose the track (or name)
 - 🛑 List of user names in a room once in the room
 <!-- Progress bar for track (removed) -->
+- 
 
-**OTHER**
-- 🟡 Refactor and organize client-side code into one folder
+**Errors using other devices**
+- Song starts from beginning when new user joins
+- When someone tries to create room this error:
+Cannot read property 'error' of null
+at node_modules/spotify-web-api-node/src/http-manager.js:34:56 in _toError
+at node_modules/spotify-web-api-node/src/http-manager.js:71:32 in req.end$argument_0
+... 14 more stack frames from framework internals
 
 
 <a href="https://socket.io/docs/v4/rooms/" target="_blank">Socket.IO Documentation</a>

@@ -97,9 +97,10 @@ const Player = ({ user, room }) => {
                             <View style={[styles.progressFill, { width: `${progress}%` }]} />
                         </View> */}
                         <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                            {user.id === hostId && isPlaying ? // TODO if the id === hostId, then show the play/pause button 
+                            {user.id === hostId ? isPlaying ?
                                 <Ionicons name="pause-outline" size={48} color="white"/>
                                 :   <Ionicons name="play-outline" size={48} color="white"/> 
+                                : <Text>Hello</Text>
                             }
                         </TouchableOpacity>
                     </View>    

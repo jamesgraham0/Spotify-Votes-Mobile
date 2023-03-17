@@ -3,8 +3,8 @@ import React from 'react';
 
 const JoinOrCreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
-    const name = user.display_name;
-
+    let name = user?.display_name;
+    
 
     const handleCreateRoom = () => {
         navigation.navigate('CreateRoom', { user: user });

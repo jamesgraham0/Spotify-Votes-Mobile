@@ -36,9 +36,14 @@ const Landing = ({ navigation }) => {
 
   useEffect(() => {
     if (response?.type === "success") {
+      setToken(response.params.access_token);
       service.getUserCredentials(response)
       .then((user) => {
-        navigation.navigate('JoinOrCreateRoom', { user: user });
+        if (user) {
+          navigation.navigate('JoinOrCreateRoom', { user: user });
+        } else {
+          alert("Error, try logging in again");
+        }
       })
       .catch((error) => {
         console.log(error);
