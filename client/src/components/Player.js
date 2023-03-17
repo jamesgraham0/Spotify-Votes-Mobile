@@ -13,6 +13,7 @@ const Player = ({ user, room }) => {
     const [progress, setProgress] = useState(0);
     let timerId = null;
     let autoPlayTimer = 0;
+    let savedTimerValue = 0;
     const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
 
     useEffect(() => {
@@ -48,7 +49,7 @@ const Player = ({ user, room }) => {
     const startTimer = () => {
         timerId = setInterval(() => {
             autoPlayTimer -= TIME_CHECKING_IF_TRACK_FINISHED;
-            setProgress(100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration));
+            // setProgress(100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration));
 
             if (autoPlayTimer <= 0) {
                 clearInterval(timerId);
@@ -57,27 +58,25 @@ const Player = ({ user, room }) => {
         }, 1000);
     }
 
-    const pauseTimer = () => {
-        clearInterval(timerId);
-    }
+    // const pauseTimer = () => {
+    //     clearInterval(timerId);
+    // }
 
-    const resumeTimer = () => {
-        startTimer();
-    }
+    // const resumeTimer = () => {
+    //     startTimer();
+    // }
     ////////////////////////////////////////
 
     const handlePlayPause = async () => {
-        if (user.id === hostId) {
-            if (isPlaying) {
-                await service.pausePlaying();
-                setIsPlaying(false);
-                pauseTimer();
-            } else {
-                if (currentlyPlaying?.uri) {
-                    setIsPlaying(true);
-                    await service.startPlaying(currentlyPlaying, deviceId, false);
-                    resumeTimer();
-                }
+        if (isPlaying) {
+            await service.pausePlaying();
+            setIsPlaying(false);
+            // pauseTimer();
+        } else {
+            if (currentlyPlaying?.uri) {
+                setIsPlaying(true);
+                await service.startPlaying(currentlyPlaying, deviceId, false);
+                // resumeTimer();
             }
         }
     }
@@ -94,11 +93,11 @@ const Player = ({ user, room }) => {
                             <Text style={styles.title}>{currentlyPlaying.title}</Text>
                             <Text style={styles.artist}>{currentlyPlaying.artist}</Text> 
                         </View>
-                        <View style={styles.progress}>
+                        {/* <View style={styles.progress}>
                             <View style={[styles.progressFill, { width: `${progress}%` }]} />
-                        </View>
+                        </View> */}
                         <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                            {isPlaying ? // TODO if the id === hostId, then show the play/pause button 
+                            {user.id === hostId && isPlaying ? // TODO if the id === hostId, then show the play/pause button 
                                 <Ionicons name="pause-outline" size={48} color="white"/>
                                 :   <Ionicons name="play-outline" size={48} color="white"/> 
                             }
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
     },
     bottomContainer: {
         position: 'absolute',
-        top: 350,
+        top: 300,
         width: '80%',
         height: 250,
     },

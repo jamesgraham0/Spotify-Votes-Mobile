@@ -4,25 +4,7 @@ import { socket } from '../utils/socket';
 
 const QueueTrack = ({ track, roomId }) => {
     const { artist, smallImage, title, uri, votes} = track;
-    const [isPressed, setIsPressed] = useState(false);
-
-    useEffect(() => {
-        let timerId;
-
-        if (isPressed) {
-        timerId = setTimeout(() => {
-            setIsPressed(false);
-        }, 200);
-        }
-
-        return () => clearTimeout(timerId);
-    }, [isPressed]);
-
-    const textColor = isPressed ? '#00ff00' : '#ffffff';
-
-    function handleColor() {
-        setIsPressed(true);
-    }
+    let greenLevel = 0;
 
     const vote = () => {
         socket.emit('vote', {track:track, id: roomId});
@@ -34,9 +16,8 @@ const QueueTrack = ({ track, roomId }) => {
                 key={track.uri}
                 onPress={() => {
                     vote();
-                    handleColor();
                 }}>
-                <View style={styles.container}>
+                <View style={[styles.container, {backgroundColor: `rgba(0, ${Math.min(votes * 5, 150)}, 100, ${Math.min(votes / 50, 0.5)}))`}]}>
                     <Image 
                         style={styles.img}
                         source={{uri: smallImage}}
@@ -46,8 +27,8 @@ const QueueTrack = ({ track, roomId }) => {
                         <Text numberOfLines={1} style={styles.artist}>{artist}</Text>
                     </View>
                     <View style={styles.voteContainer}>
-                        <Text style={[styles.voteNumber, { color: textColor }]}>{votes}</Text>
-                        <Text style={[styles.votes, { color: textColor }]}> votes</Text>
+                        <Text style={styles.voteNumber}>{votes}</Text>
+                        <Text style={styles.votes}> votes</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -68,11 +49,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         height: 80,
         overflow: 'hidden',
+        shadowColor: 'rgba(29, 185, 84, 0.5)',
+        shadowOffset: {width: 0, height: 0},
+        shadowOpacity: 0.7,
+        shadowRadius: 60,
     },
     titleArtistContainer: {
         width: '60%',
         height: 70,
-        backgroundColor: '#111',
+        backgroundColor: '#050505',
         borderRadius: 5,
         margin: 5,
         padding: 5,
@@ -101,9 +86,12 @@ const styles = StyleSheet.create({
     },  
     voteNumber: {
         fontSize: 14,
+        color: 'white',
+        fontWeight: 'bold',
     },
     votes: {
         fontSize: 10,
+        color: 'white'
     },
 });
 

@@ -18,17 +18,17 @@
 - 🛑 Set newly joined user's currently playing to what the room has currently playing
 
 **FUNCTIONALITY**
-- ✅ Progress bar for track
-- 🛑 Add a countdown timer in the queue screen where the next track gets progressively more green.
-- 🛑 ^^^ when the next track is popped from the queue, slide it to the left and fade it away
 - ✅ Queue can only be added to once mounted. Should be able to add right away
 - ✅ Add votes to every track
+- ✅ Only allow room host to play and pause music
+- ✅ When a track is added to the queue, show a small popup over the queue tab indicating that the track has been added.
+- 🛑 Add a countdown timer in the queue screen where the next track gets progressively more green.
+- 🛑 ^^^ when the next track is popped from the queue, slide it to the left and fade it away
 - 🛑 Only allow a single vote to every track (see below)
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
 - 🛑 Add small photo on the queue card of who chose the track (or name)
 - 🛑 List of user names in a room once in the room
-- 🛑 Only allow room host to play and pause music
-- 🛑 When a track is added to the queue, show a small popup over the queue tab indicating that the track has been added.
+<!-- Progress bar for track (removed) -->
 
 **OTHER**
 - 🟡 Refactor and organize client-side code into one folder
