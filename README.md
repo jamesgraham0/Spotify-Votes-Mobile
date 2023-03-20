@@ -15,30 +15,39 @@
 - 🛑 room to stop the timer when a room is deleted
 - 🛑 Maintain the green colour of the #votes to let the user know which tracks they've voted for
 - ✅ Flash green on the 'users' icon in the room when someone joins + Animation's lookin gooooood
-- 🛑 Set newly joined user's currently playing to what the room has currently playing
+- 🟡 Set newly joined user's currently playing to what the room has currently playing ** restarts the track**
 
 **FUNCTIONALITY**
-- ✅ Queue can only be added to once mounted. Should be able to add right away
+- ✅ Make the queue unique
+- ✅ Queue available to add to before mounted #sick
 - ✅ Add votes to every track
 - ✅ Only allow room host to play and pause music
 - ✅ When a track is added to the queue, show a small popup over the queue tab indicating that the track has been added.
-- 🛑 Add a countdown timer in the queue screen where the next track gets progressively more green.
-- 🛑 ^^^ when the next track is popped from the queue, slide it to the left and fade it away
+- 🛑 Add haptic feedback for button presses
+- 🛑 Pause the timer when the track is paused. Otherwise remove the pause feature alltogether.
+- 🛑 Add a countdown timer in the queue screen.
 - 🛑 Only allow a single vote to every track (see below)
+- 🛑 Allow the host to remove tracks from the queue
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
 - 🛑 Add small photo on the queue card of who chose the track (or name)
 - 🛑 List of user names in a room once in the room
+- 🛑 Set any track being searched for that's currently in the queue to have a blurred front with text saying "Track already in queue"
 <!-- Progress bar for track (removed) -->
-- 
 
-**Errors using other devices**
+**ANIMATION**
+- 🛑 When the next track is popped from the queue, slide it to the left and fade it away
+- 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
+
+
+**Errors**
+- ✅ Trim search string so that api calls to search for tracks aren't made with empty strings
 - Song starts from beginning when new user joins
 - When someone tries to create room this error:
 Cannot read property 'error' of null
 at node_modules/spotify-web-api-node/src/http-manager.js:34:56 in _toError
 at node_modules/spotify-web-api-node/src/http-manager.js:71:32 in req.end$argument_0
 ... 14 more stack frames from framework internals
-
+- Handle when search bar only contains " "
 
 <a href="https://socket.io/docs/v4/rooms/" target="_blank">Socket.IO Documentation</a>
 

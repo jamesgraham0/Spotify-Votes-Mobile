@@ -5,12 +5,36 @@ import TrackSearchResult from './TrackSearchResult';
 import { pushQueue } from '../reducers/reducer';
 import { useDispatch } from 'react-redux';
 import { socket } from '../utils/socket';
-
+import * as Haptics from 'expo-haptics';
 
 const Search = ({ room }) => {
     const [search, setSearch] = useState("")
     const [searchResults, setSearchResults] = useState([])
     const dispatch = useDispatch();
+    const [q, setQ] = useState(room.queue);
+    
+    // Grabs the queue from the socket when screen first mounts
+    useEffect(() => {
+        function fetchQueue() {
+          fetch(`http://192.168.1.67:3000/queue/${room.id}`)
+            .then((res) => res.json())
+            .then((data) => setQ(data))
+            .catch((err) => console.error(err));
+        }
+        fetchQueue();
+      }, []);
+
+    useEffect(() => {
+        socket.on("addedTrackToQueue", (q) => {
+            setQ(q)
+        });
+        socket.on('playingNextTrack', (obj) => {
+            setQ(obj.queue);
+        });
+        socket.on('joinRoom', (room) => {
+            setQ(room.queue);
+        });
+    }, [socket])
 
     useEffect(() => {
         if (!search) return setSearchResults([])
@@ -43,8 +67,10 @@ const Search = ({ room }) => {
       }, [search]);
 
       const addTrack = (track) => {
-        // dispatch(pushQueue({track: track, roomId: room.id}));
-        socket.emit("addTrack", {id:room.id, track:track});
+        // dispatch(pushQueue({track: track, id: room.id}));
+        if (!q.some(t => t.uri === track.uri)) {
+          socket.emit("addTrack", {id:room.id, track:track});
+        }
     }
 
 
@@ -56,19 +82,26 @@ const Search = ({ room }) => {
                 placeholder="Search..."
                 placeholderTextColor="#555"
                 returnKeyType="search"
-                onChangeText={input => setSearch(input)}
+                onChangeText={input => {
+                  setSearch(input.replace(/^\s+/, ''));
+              }}
             />
             <ScrollView
                 style={styles.scrollView}
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
+                keyboardShouldPersistTaps='handled'
             >
                 {searchResults.map(track => (
                     <TouchableOpacity 
                         key={track.uri}
-                        onPress={() => addTrack(track)}>
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                          addTrack(track)
+                        }}>
                         <TrackSearchResult
                             track={track}
+                            inQueue={q.some(t => t.uri === track.uri)}
                         />
                     </TouchableOpacity>
                 ))}

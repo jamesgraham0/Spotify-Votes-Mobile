@@ -243,17 +243,22 @@ const service = {
     // pause playback and set the users' currently playing track to {}
     resetPlaybackToEmptyState: async () => {
         console.log("resetting playing to default state");
-        spotifyApi.pause().then(() => {
-            //current track has been set to {}
-          }, (err) => {
-            console.log(err);
+        spotifyApi.getMyCurrentPlayingTrack().then((track) => {
+            let isPlaying = track.body.is_playing;
+            if (isPlaying) { // reset player
+                spotifyApi.pause().then(() => {
+                    //current track has been set to {}
+                  }, (err) => {
+                    console.log(err);
+                });
+                
+                spotifyApi.seek(0).then(() => {
+                    //current track has been set to {}
+                  }, (err) => {
+                    console.log(err);
+                  });
+            }
         });
-        
-        spotifyApi.seek(0).then(() => {
-            //current track has been set to {}
-          }, (err) => {
-            console.log(err);
-          });
     }
 
 }

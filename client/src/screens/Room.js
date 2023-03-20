@@ -8,6 +8,7 @@ import service from '../utils/service';
 import { socket } from '../utils/socket';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
 
 const Room = ({ navigation, route }) => {
     const { user } = route.params;
@@ -22,7 +23,6 @@ const Room = ({ navigation, route }) => {
     useEffect(() => {
         socket.on('joinRoom', (room) => {
             setNewPersonInRoom(true);
-            console.log('setting room');
             setRoom(room);
         });
     }, [socket]);
@@ -87,6 +87,7 @@ const Room = ({ navigation, route }) => {
                 <View style={styles.headerContainer}>
                     <TouchableOpacity 
                     onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         handleReturnToJoinOrCreateRoom();
                     }} 
                     style={styles.returnButton}
@@ -99,6 +100,7 @@ const Room = ({ navigation, route }) => {
                     <View style={styles.iconContainer}>
                         <TouchableOpacity
                             onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                                 setUserModalVisible(!userModalVisible);
                             }}
                             >
@@ -178,7 +180,10 @@ const Room = ({ navigation, route }) => {
                                     </ScrollView>
                                     <TouchableOpacity
                                     style={[styles.button, styles.buttonClose]}
-                                    onPress={() => setUserModalVisible(!userModalVisible)}>
+                                    onPress={() => {
+                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                        setUserModalVisible(!userModalVisible)
+                                    }}>
                                         <Text style={styles.buttonText}>Hide Users</Text>
                                     </TouchableOpacity>
                                 </View>

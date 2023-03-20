@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
+import * as Haptics from 'expo-haptics';
 
 const JoinOrCreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
@@ -20,6 +21,7 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
             <Text style={styles.HiMessage}> Hi, {name}! </Text>
             <TouchableOpacity 
             onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
                 handleCreateRoom();
             }} 
             style={styles.createRoomButton}>
@@ -28,6 +30,7 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
             
             <TouchableOpacity 
             onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
                 handleJoinRoom();
             }} 
             style={styles.joinRoomButton}>

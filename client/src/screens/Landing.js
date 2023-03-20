@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
 import service from '../utils/service';
 import {CLIENT_ID, CLIENT_SECRET} from 'react-native-dotenv';
+import * as Haptics from 'expo-haptics';
 
 const Landing = ({ navigation }) => {
   const [token, setToken] = useState('');
@@ -28,7 +29,7 @@ const Landing = ({ navigation }) => {
         "user-read-email",
         "user-read-private",
       ],
-      usePKCE: true,
+      usePKCE: false,
       redirectUri: "exp://127.0.0.1:19000/",
     },
     discovery
@@ -57,9 +58,11 @@ const Landing = ({ navigation }) => {
         {/* <LoginButton> */}
           <TouchableOpacity 
             onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
               promptAsync();
             }} 
-            style={styles.roundButton} />
+            style={styles.roundButton} 
+          />
         {/* </LoginButton> */}
     </View>
   );

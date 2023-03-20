@@ -9,24 +9,25 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import RoomToJoin from '../components/RoomToJoin';
 import { useSelector } from 'react-redux';
 import { socket } from '../utils/socket';
+import * as Haptics from 'expo-haptics';
 
 const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [rooms, setRooms] = useState([]);
     // const state = useSelector(state => state.reducer);
-
+    
     // Grabs the rooms from the socket when screen first mounts
     useEffect(() => {
-		function fetchRooms() {
+        function fetchRooms() {
             console.log("fetching rooms");
 			fetch("http://192.168.1.67:3000/rooms")
-				.then((res) => res.json())
-				.then((data) => setRooms(data))
-				.catch((err) => console.error(err));
+            .then((res) => res.json())
+            .then((data) => setRooms(data))
+            .catch((err) => console.error(err));
 		}
 		fetchRooms();
 	}, []);
-
+    
     // Updates list of rooms everytime the socket is updated
     // For when someone makes a new room while another user is on the joinRoom screen
     useEffect(() => {
@@ -40,7 +41,7 @@ const JoinRoom = ({ navigation, route }) => {
             setRooms(rooms);
         });
     }, [socket]);
-
+    
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
@@ -48,7 +49,7 @@ const JoinRoom = ({ navigation, route }) => {
     const handleEnterRoomPassword = (room) => {
         navigation.navigate('EnterRoomPassword', { room: room, user: user });
     }
-
+    
     return (
         <View style={styles.outerContainer}>
             <View style={styles.container}>
@@ -56,6 +57,7 @@ const JoinRoom = ({ navigation, route }) => {
             </View>
             <TouchableOpacity 
                 onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     handleReturnToJoinOrCreateRoom();
                 }} 
                 style={styles.returnButton}
@@ -75,7 +77,10 @@ const JoinRoom = ({ navigation, route }) => {
                 {
                     rooms.map((room) => {
                     return (
-                        <TouchableOpacity key={room.id}  onPress={() => handleEnterRoomPassword(room)}>
+                        <TouchableOpacity key={room.id}  onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                            handleEnterRoomPassword(room)
+                        }}>
                             <RoomToJoin room={room} />
                         </TouchableOpacity>
                     )

@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { socket } from '../utils/socket';
+import * as Haptics from 'expo-haptics';
 
 const QueueTrack = ({ track, roomId }) => {
     const { artist, smallImage, title, uri, votes} = track;
-    let greenLevel = 0;
 
     const vote = () => {
         socket.emit('vote', {track:track, id: roomId});
@@ -15,9 +15,10 @@ const QueueTrack = ({ track, roomId }) => {
             <TouchableOpacity 
                 key={track.uri}
                 onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                     vote();
                 }}>
-                <View style={[styles.container, {backgroundColor: `rgba(0, ${Math.min(votes * 5, 150)}, 100, ${Math.min(votes / 50, 0.5)}))`}]}>
+                <View style={[styles.container, {backgroundColor: `rgba(0, ${Math.min(votes * 5, 200)}, 50, ${Math.min(votes / 10, 0.3)}))`}]}>
                     <Image 
                         style={styles.img}
                         source={{uri: smallImage}}

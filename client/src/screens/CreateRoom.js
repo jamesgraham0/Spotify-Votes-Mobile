@@ -2,18 +2,19 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingVi
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
-import { createRoom } from '../reducers/reducer';
-import { useDispatch } from 'react-redux';
+// import { createRoom } from '../reducers/reducer';
+// import { useDispatch } from 'react-redux';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
-import { Linking } from 'expo';
+// import { Linking } from 'expo';
+import * as Haptics from 'expo-haptics';
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useDispatch();
-
+    // const dispatch = useDispatch();
+    
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
@@ -31,25 +32,27 @@ const CreateRoom = ({ navigation, route }) => {
                 currentlyPlaying: {},
                 queue: [],
             }
-            if (room.deviceId !== '' && room.deviceId !== undefined) {
-                socket.emit('createRoom', room);
-                navigation.navigate(
-                    'Room', 
-                    {room: room,
+        if (room.deviceId !== '' && room.deviceId !== undefined) {
+            socket.emit('createRoom', room);
+            navigation.navigate(
+                'Room', 
+                {room: room,
                     user: user}
-                );
-                await service.resetPlaybackToEmptyState();
-                // dispatch(createRoom(room));
+                    );
+            await service.resetPlaybackToEmptyState();
+            // dispatch(createRoom(room));
             } else {
                 alert("Open the Spotify app to create a room");
             }
+        } else {
+            alert("Enter a room name and password to continue");
         }
     }
-
+            
     const validNameAndPassword = () => {
         return roomName !== '' && password !== '';
     }
-
+            
     return (
         <View style={styles.outerContainer}>
             <View style={styles.container}>
@@ -58,6 +61,7 @@ const CreateRoom = ({ navigation, route }) => {
             <Text style={styles.instructionText}>Give your room a name and password. Others will use this password to join your room!</Text>
             <TouchableOpacity 
             onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 handleReturnToJoinOrCreateRoom();
             }} 
             style={styles.returnButton}
@@ -65,21 +69,17 @@ const CreateRoom = ({ navigation, route }) => {
                 <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
             </TouchableOpacity>
 
-
-
             <KeyboardAvoidingView 
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.inputWrapper}
-            >
+                >
                 <TextInput 
                     style={styles.textInput} 
                     placeholder={'Project X 2.0...'} 
                     value={roomName} 
                     onChangeText={word => setRoomName(word)}
                     placeholderTextColor="#888" 
-                />
-                <TouchableOpacity onPress={() => validatePassword()}>
-                </TouchableOpacity>
+                    />
             
                 <TextInput 
                     style={styles.textInput} 
@@ -88,7 +88,10 @@ const CreateRoom = ({ navigation, route }) => {
                     onChangeText={word => setPassword(word)} 
                     placeholderTextColor="#888"
                 />
-                <TouchableOpacity onPress={() => handleCreateRoom()}>
+                <TouchableOpacity onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                    handleCreateRoom()
+                }}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>
                     </View>
