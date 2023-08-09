@@ -15,12 +15,11 @@ const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [rooms, setRooms] = useState([]);
     // const state = useSelector(state => state.reducer);
-    
     // Grabs the rooms from the socket when screen first mounts
     useEffect(() => {
         function fetchRooms() {
             console.log("fetching rooms");
-			fetch("http://192.168.1.67:3000/rooms")
+			fetch("http://10.0.0.22:4000/rooms")
             .then((res) => res.json())
             .then((data) => setRooms(data))
             .catch((err) => console.error(err));

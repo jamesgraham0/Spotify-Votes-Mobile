@@ -5,9 +5,9 @@ import { ResponseType, useAuthRequest } from "expo-auth-session";
 import service from '../utils/service';
 import {CLIENT_ID, CLIENT_SECRET} from 'react-native-dotenv';
 import * as Haptics from 'expo-haptics';
+import { socket } from '../utils/socket';
 
 const Landing = ({ navigation }) => {
-  const [token, setToken] = useState('');
 
   const discovery = {
     authorizationEndpoint: "https://accounts.spotify.com/authorize",
@@ -29,7 +29,7 @@ const Landing = ({ navigation }) => {
         "user-read-email",
         "user-read-private",
       ],
-      usePKCE: false,
+      usePKCE: true,
       redirectUri: "exp://127.0.0.1:19000/",
     },
     discovery
@@ -37,14 +37,9 @@ const Landing = ({ navigation }) => {
 
   useEffect(() => {
     if (response?.type === "success") {
-      setToken(response.params.access_token);
       service.getUserCredentials(response)
       .then((user) => {
-        if (user) {
-          navigation.navigate('JoinOrCreateRoom', { user: user });
-        } else {
-          alert("Error, try logging in again");
-        }
+        navigation.navigate('JoinOrCreateRoom', { user: user });
       })
       .catch((error) => {
         console.log(error);

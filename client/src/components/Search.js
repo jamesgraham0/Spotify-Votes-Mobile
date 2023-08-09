@@ -16,7 +16,7 @@ const Search = ({ room }) => {
     // Grabs the queue from the socket when screen first mounts
     useEffect(() => {
         function fetchQueue() {
-          fetch(`http://192.168.1.67:3000/queue/${room.id}`)
+          fetch(`http://10.0.0.22:4000/queue/${room.id}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));

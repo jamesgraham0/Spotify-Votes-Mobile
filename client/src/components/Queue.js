@@ -10,7 +10,7 @@ const Queue = ({ queue, roomId }) => {
     useEffect(() => {
         function fetchQueue() {
           console.log("fetching queue");
-          fetch(`http://192.168.1.67:3000/queue/${roomId}`)
+          fetch(`http://10.0.0.22:4000/queue/${roomId}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));

@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 
 const JoinOrCreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
-    let name = user?.display_name;
+    const name = user.display_name;
     
 
     const handleCreateRoom = () => {

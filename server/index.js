@@ -1,10 +1,18 @@
-const http = require('http');
-const express = require('express');
-const socketIO = require('socket.io');
-const PORT = 3000;
+const express = require("express");
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+const http = require("http").Server(app);
+const cors = require("cors");
+const PORT = 4000;
+const io = require("socket.io")(http, {
+	cors: {
+		origin: "http://localhost:3000",
+	},
+});
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors());
+
 let rooms = [
 	{
 		"currentlyPlaying": {
@@ -24,8 +32,8 @@ let rooms = [
 	},
 ];
 
-io.on('connection', socket => {
-	console.log('client socketid: ' + socket.id);
+io.on("connection", (socket) => {
+	console.log(`⚡: ${socket.id} user just connected!`);
 
 	socket.on('createRoom', (room) => {
 		console.log("creating room", room.name);
@@ -114,15 +122,17 @@ io.on('connection', socket => {
 });
 
 app.get("/rooms", (req, res) => {
+	console.log("getting rooms");
 	res.json(rooms);
 });
 
 app.get('/queue/:id', (req, res) => {
+	console.log("getting queue");
 	const { id } = req.params;
 	const r = rooms.find((rm) => rm.id === id);
 	res.json(r.queue);
 });
 
-server.listen(PORT, () => {
-  console.log('server started and listening on port ' + PORT);
+http.listen(PORT, () => {
+	console.log(`Server listening on ${PORT}`);
 });
