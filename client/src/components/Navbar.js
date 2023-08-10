@@ -101,7 +101,7 @@ const Navbar = ({ user, room }) => {
       >
       <Tab.Screen
         name="Search"
-        children={() => <Search room={room}/>}
+        children={() => <Search room={room} user={user}/>}
         options={{
           headerShown: false,
           tabBarLabel: 'Search',

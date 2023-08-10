@@ -7,11 +7,12 @@ import { useDispatch } from 'react-redux';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
 
-const Search = ({ room }) => {
+const Search = ({ room, user }) => {
     const [search, setSearch] = useState("")
     const [searchResults, setSearchResults] = useState([])
     const dispatch = useDispatch();
     const [q, setQ] = useState(room.queue);
+    const isPremiumAccount = user.product !== "free";
     
     // Grabs the queue from the socket when screen first mounts
     useEffect(() => {
@@ -76,16 +77,23 @@ const Search = ({ room }) => {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.search}
-                value={search}
-                placeholder="Search..."
-                placeholderTextColor="#555"
-                returnKeyType="search"
-                onChangeText={input => {
-                  setSearch(input.replace(/^\s+/, ''));
-              }}
-            />
+            {isPremiumAccount ? <TextInput
+                  style={styles.search}
+                  value={search}
+                  placeholder="Search..."
+                  placeholderTextColor="#555"
+                  returnKeyType="search"
+                  onChangeText={input => {
+                    setSearch(input.replace(/^\s+/, ''));
+                }}
+              /> 
+              :
+              <TextInput
+                  style={styles.searchDisabled}
+                  placeholder="Need premium account to search"
+                  placeholderTextColor="#555"
+              /> 
+            }
             <ScrollView
                 style={styles.scrollView}
                 bounces='true'
@@ -126,6 +134,16 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         color: '#BBB',
         fontSize: 30,
+        height: 33,
+        width: '90%',
+    },
+    searchDisabled: {
+        position: 'absolute',
+        top: 3,
+        left: 20,
+        marginVertical: 20,
+        color: '#BBB',
+        fontSize: 22,
         height: 33,
         width: '90%',
     },

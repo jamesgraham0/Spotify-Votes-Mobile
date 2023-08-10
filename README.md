@@ -11,11 +11,11 @@
 - ✅ Autoplay next track in queue
 - ✅ Pop queue when track finishes
 - ✅ Sort queue by votes
+- ✅ Flash green on the 'users' icon in the room when someone joins
+- 🟡 Set newly joined user's currently playing to what the room has currently playing ** restarts the track**
 - 🛑 Kick users from room when host leaves and stop any timers, will have to add a 'playing': true || false attribute to every rm
 - 🛑 room to stop the timer when a room is deleted
 - 🛑 Maintain the green colour of the #votes to let the user know which tracks they've voted for
-- ✅ Flash green on the 'users' icon in the room when someone joins + Animation's lookin gooooood
-- 🟡 Set newly joined user's currently playing to what the room has currently playing ** restarts the track**
 
 **FUNCTIONALITY**
 - ✅ Make the queue unique
@@ -23,15 +23,16 @@
 - ✅ Add votes to every track
 - ✅ Only allow room host to play and pause music
 - ✅ When a track is added to the queue, show a small popup over the queue tab indicating that the track has been added.
-- 🛑 Add haptic feedback for button presses
-- 🛑 Pause the timer when the track is paused. Otherwise remove the pause feature alltogether.
+- ✅ Add haptic feedback for button presses
+- ✅ Set any track being searched for that's currently in the queue to have a blurred front with text saying "Track already in queue" 
+- ✅ For users without Spotify Premium, restrict them from creating rooms (only joining), and searching for tracks (only voting on the queue)
+- 🛑 Pause the timer when the track is paused. Otherwise remove the pause feature altogether.
 - 🛑 Add a countdown timer in the queue screen.
 - 🛑 Only allow a single vote to every track (see below)
 - 🛑 Allow the host to remove tracks from the queue
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
 - 🛑 Add small photo on the queue card of who chose the track (or name)
 - 🛑 List of user names in a room once in the room
-- 🛑 Set any track being searched for that's currently in the queue to have a blurred front with text saying "Track already in queue"
 <!-- Progress bar for track (removed) -->
 
 **ANIMATION**
@@ -40,6 +41,7 @@
 
 
 **Errors**
+- 🛑 Fix bug where non-hosts can't search (value of type null when API call is made)
 - ✅ Trim search string so that api calls to search for tracks aren't made with empty strings
 - Song starts from beginning when new user joins
 - When someone tries to create room this error:

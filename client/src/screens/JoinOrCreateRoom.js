@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 const JoinOrCreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const name = user.display_name;
-    
+    const isPremiumAccount = user.product !== "free";
 
     const handleCreateRoom = () => {
         navigation.navigate('CreateRoom', { user: user });
@@ -20,14 +20,18 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
             <Text style={styles.title}> Spotify Votes </Text>
             <Text style={styles.HiMessage}> Hi, {name}! </Text>
             <TouchableOpacity 
-            onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
-                handleCreateRoom();
-            }} 
-            style={styles.createRoomButton}>
-                <Text style={styles.createRoomText}>Create Room</Text>
+                disabled={!isPremiumAccount}
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
+                    handleCreateRoom();
+                }} 
+                style={!isPremiumAccount ? styles.createRoomButtonDisabled : styles.createRoomButton}>
+                    {isPremiumAccount ? 
+                        <Text style={styles.createRoomText}>Create Room</Text> 
+                        :
+                        <Text style={styles.createRoomTextDisabled}>Need premium account to create room</Text>
+                    }
             </TouchableOpacity>
-            
             <TouchableOpacity 
             onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
@@ -55,6 +59,21 @@ const styles = StyleSheet.create({
         top: 200,
         color: '#fff',
         fontSize: 30,
+    },
+    createRoomButtonDisabled: {
+        top: 400,
+        borderWidth: 2,
+        borderColor: '#444',
+        width: 300,
+        height: 80,
+        borderRadius: 50,
+        shadowOpacity: 1,
+        shadowColor: '#444',
+        shadowOffset: { width: 0, height: 0 },
+        shadowRadius: 5,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     createRoomButton: {
         top: 400,
@@ -87,6 +106,12 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    createRoomTextDisabled: {
+        position: 'absolute',
+        color: '#444',
+        textAlign: 'center',
+        fontSize: 20,
     },
     createRoomText: {
         position: 'absolute',
