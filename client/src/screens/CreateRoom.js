@@ -1,4 +1,14 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { 
+    StyleSheet, 
+    Text, 
+    View, 
+    TouchableOpacity, 
+    TextInput, 
+    KeyboardAvoidingView, 
+    Keyboard, 
+    Linking,
+    Alert
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
@@ -13,7 +23,7 @@ const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
-    // const dispatch = useDispatch();
+    const url = 'https://open.spotify.com';
     
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
@@ -32,17 +42,30 @@ const CreateRoom = ({ navigation, route }) => {
                 currentlyPlaying: {},
                 queue: [],
             }
-        if (room.deviceId !== '' && room.deviceId !== undefined) {
-            socket.emit('createRoom', room);
-            navigation.navigate(
-                'Room', 
-                {room: room,
+            if (room.deviceId !== '' && room.deviceId !== undefined) {
+                socket.emit('createRoom', room);
+                navigation.navigate(
+                    'Room', 
+                    {room: room,
                     user: user}
-                    );
-            await service.resetPlaybackToEmptyState();
-            // dispatch(createRoom(room));
+                );
+                await service.resetPlaybackToEmptyState();
             } else {
-                alert("Open the Spotify app to create a room");
+                const supported = await Linking.canOpenURL(url);
+                if (supported) {
+                    Alert.alert(
+                        'Wait',
+                        "Redirecting you to Spotify, toggle the play/pause button and then try creating a room again",
+                        [
+                            {
+                                text: "Open Spotify",
+                                onPress: async () => await Linking.openURL(url),
+                            }
+                        ]
+                    );
+                } else {
+                    alert(`Open ${url} in your browser before creating a room`);
+                }
             }
         } else {
             alert("Enter a room name and password to continue");

@@ -69,9 +69,7 @@ const Room = ({ navigation, route }) => {
                         const pause = async () => {
                             await service.resetPlaybackToEmptyState();
                         }
-                        pause();
-                        // dispatch(deleteRoom(room));
-                        
+                        pause();                        
                         socket.emit("deleteRoom", room);
                     }}
                 ]

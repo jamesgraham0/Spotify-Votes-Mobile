@@ -26,22 +26,21 @@
 - ✅ Add haptic feedback for button presses
 - ✅ Set any track being searched for that's currently in the queue to have a blurred front with text saying "Track already in queue" 
 - ✅ For users without Spotify Premium, restrict them from creating rooms (only joining), and searching for tracks (only voting on the queue)
-- 🛑 Pause the timer when the track is paused. Otherwise remove the pause feature altogether.
+- 🛑 When creating a room, find another way to activate the users' device
+    - 1. Redirect to Spotify app (if they have it, otherwise redirect to http://spotify.com)
+    - 2. Redirect back to Spotify Votes
 - 🛑 Add a countdown timer in the queue screen.
 - 🛑 Only allow a single vote to every track (see below)
 - 🛑 Allow the host to remove tracks from the queue
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
 - 🛑 Add small photo on the queue card of who chose the track (or name)
 - 🛑 List of user names in a room once in the room
-<!-- Progress bar for track (removed) -->
 
 **ANIMATION**
 - 🛑 When the next track is popped from the queue, slide it to the left and fade it away
 - 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
 
-
 **Errors**
-- 🛑 Fix bug where non-hosts can't search (value of type null when API call is made)
 - ✅ Trim search string so that api calls to search for tracks aren't made with empty strings
 - Song starts from beginning when new user joins
 - When someone tries to create room this error:
