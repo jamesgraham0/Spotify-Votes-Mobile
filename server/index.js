@@ -115,6 +115,10 @@ io.on("connection", (socket) => {
 		io.in(room.id).emit('vote', r.queue);
 	});
 
+	socket.on('startCountdownForNextTrack', (room) => {
+		io.in(room.id).emit('startCountdownForNextTrack');
+	});
+
 	socket.on('disconnect', () => {
 		socket.disconnect();
 		console.log('user ' + socket.id + ' disconnected');

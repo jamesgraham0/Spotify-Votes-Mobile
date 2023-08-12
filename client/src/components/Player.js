@@ -50,7 +50,9 @@ const Player = ({ user, room }) => {
         timerId = setInterval(() => {
             autoPlayTimer -= TIME_CHECKING_IF_TRACK_FINISHED;
             // setProgress(100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration));
-
+            if (autoPlayTimer <= 5000) {
+                socket.emit('startCountdownForNextTrack', room);
+            }
             if (autoPlayTimer <= 0) {
                 clearInterval(timerId);
                 socket.emit('playNextTrack', room);
