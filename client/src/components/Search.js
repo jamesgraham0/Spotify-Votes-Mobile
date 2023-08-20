@@ -41,7 +41,10 @@ const Search = ({ room, user }) => {
         if (!search) return setSearchResults([])
         let cancel = false
         service.searchTrack(search).then(res => {
-          if (cancel || !res.body) return
+          if (res === null) {
+            console.log("res was null");
+          }
+          if (cancel || res === null) return
           setSearchResults(
             res.body.tracks.items.map(track => {
               let largeAlbumImage = track.album.images[1];
@@ -60,6 +63,7 @@ const Search = ({ room, user }) => {
                 largeImage: largeAlbumImage.url,
                 duration: track.duration_ms,
                 votes: 0,
+                usersVoted: {}
               }
             })
           )

@@ -17,6 +17,7 @@ const concatUrl = (url) => `${BASE_URL}/${url}`;
 // otherwise returns ''
 const getDeviceId = async () => {
     try {
+        device_id = '';
         const response = await spotifyApi.getMyDevices();
         const devices = response.body.devices;
         if (devices.length === 0) {
@@ -107,8 +108,9 @@ const service = {
         try {
             return await spotifyApi.searchTracks(search);
         } catch (error) {
-            console.log(error);
+            console.log("Error while searching for track", error);
         }
+        return null;
     },
 
     addTrackToQueue: async (track) => {
@@ -185,33 +187,38 @@ const service = {
 
     startPlaying: async (track, deviceId, playFromBeginning) => {
         const { uri } = track;
-        try {
-            spotifyApi.transferMyPlayback([deviceId]).then(() => {
-                console.log("transferred playback")
-                spotifyApi.getMyCurrentPlaybackState({}).then((data) => {
-                    let position = 0;
-                    if (!playFromBeginning && data.body !== null && data.body.progress_ms !== 0) {
-                        position = data.body.progress_ms;
-                    }
-                    spotifyApi.play({
+        if (deviceId !== '' && deviceId !== null) {
+            try {
+                console.log("before transferring playback to device: ", deviceId);
+                await spotifyApi.transferMyPlayback([deviceId]);
+                console.log("transferred playback");
+    
+                const playbackState = await spotifyApi.getMyCurrentPlaybackState();
+            
+                let position = 0;
+                if (!playFromBeginning && playbackState.body !== null && playbackState?.body.progress_ms !== 0) {
+                    position = playbackState.body.progress_ms;
+                }
+                
+                try {
+                    await spotifyApi.play({
                         uris: [uri],
                         position_ms: position  
                     });
-                });
-            }).catch((error) => {
-                console.log(error);
-            });
-        } catch (error) {
-            console.log(error);
+                } catch (error) {
+                    console.log("Error trying to play track");
+                }
+            } catch (error) {
+                console.log("Error trying to getMyCurrentPlaybackState:", error);
             }
-
+        }
     },
     
     pausePlaying: async () => {
         try {
             await spotifyApi.pause();
         } catch (error) {
-            console.log(error);
+            console.log("Error when trying to pause:", error);
         }
     },
 
@@ -223,7 +230,7 @@ const service = {
             }
             return false;
         } catch (error) {
-            console.log(error);
+            console.log("Error getting playback state from serparate functinon", error);
         }
     },
 

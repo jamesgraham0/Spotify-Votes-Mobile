@@ -71,18 +71,26 @@ const Player = ({ user, room }) => {
 
     const handlePlayPause = async () => {
         if (isPlaying) {
-            await service.pausePlaying();
-            setIsPlaying(false);
-            // pauseTimer();
+            await handlePause();
         } else {
-            if (currentlyPlaying?.uri) {
-                setIsPlaying(true);
-                await service.startPlaying(currentlyPlaying, deviceId, false);
-                // resumeTimer();
-            }
+            await handlePlay();
         }
     }
+
+    const handlePause = async () => {
+        await service.pausePlaying();
+            setIsPlaying(false);
+            // pauseTimer();
+    }
     
+    const handlePlay = async () => {
+        if (currentlyPlaying?.uri) {
+            setIsPlaying(true);
+            await service.startPlaying(currentlyPlaying, deviceId, false);
+            // resumeTimer();
+        }
+    }
+
     if (currentlyPlaying?.uri) {
         return (
             <View style={styles.container}>
@@ -134,6 +142,7 @@ const styles = StyleSheet.create({
         shadowRadius: 40,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#191414',
     },
     image: {
         width: 250,
@@ -181,6 +190,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 5,
+        backgroundColor: '#191414',
     },
     progressFill: {
         height: '100%',

@@ -8,10 +8,11 @@ const io = require("socket.io")(http, {
 		origin: "http://localhost:3000",
 	},
 });
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+
+DEFAULT_PROFILE_IMAGE = "http://www.gravatar.com/avatar/?d=mp";
 
 let rooms = [
 	{
@@ -20,7 +21,7 @@ let rooms = [
 			"uri": "", 
 			"smallImage": "", 
 			"largeImage": "", 
-			"duration": 0
+			"duration": 0,
 		}, 
 		"deviceId": "b166d1276412b883e0b37b6ef1112e656a5dc127", 
 		"hostId": "t1wyfo4650rthc8s0y3bmfhm8", 
@@ -40,7 +41,7 @@ io.on("connection", (socket) => {
 		rooms.unshift(room);
 		// Update every client about the new room
 		socket.broadcast.emit('createRoom', rooms);
-		// Join the host socket to the by roomId
+		// Join the host socket to the  roomId
 		socket.join(room.id);
 	});
 
@@ -59,7 +60,7 @@ io.on("connection", (socket) => {
 
 	socket.on('deleteRoom', (room) => {
 		let i = rooms.findIndex((r) => r.id === room.id)
-		if (i > -1) {
+		if (i >= 0) {
 			rooms.splice(i, 1);
 		}
 		socket.broadcast.emit('deleteRoom', rooms);
@@ -88,11 +89,9 @@ io.on("connection", (socket) => {
 	// play the next track in the queue
 	// if there's no tracks in the queue, set the track to {}
 	socket.on('playNextTrack', (room) => {
-		// find what room this is
-		const {id} = room;
+		const { id } = room;
 		const r = rooms.find(rm => rm.id === id);
 
-		// pop the first track in the room.queue
 		let nextTrack = {};
 		if (r.queue.length > 0) {
 			nextTrack = r.queue.shift();
@@ -100,18 +99,29 @@ io.on("connection", (socket) => {
 
 		r.currentlyPlaying = nextTrack;
 
-		// return {track:<first_track_in_queue>, queue:<room.queue>}
 		io.in(room.id).emit("playingNextTrack", {track:nextTrack, queue:r.queue})
 	});
 
 	socket.on('vote', (room) => {
-		const { id, track } = room;
+		const { id, track, user } = room;
 		const r = rooms.find(rm => rm.id === id);
 		const t = r.queue.find(t => t.uri === track.uri);
 
-		// Increment the vote count
-		t.votes += 1;
-		r.queue.sort((a, b) => b.votes - a.votes);
+		if (!(user.id in t.usersVoted)) {
+			t.votes += 1;
+			r.queue.sort((a, b) => b.votes - a.votes);
+			if (user.images > 0) {
+				t.usersVoted[user.id] = {
+					name: user.name,
+					image: user.images[0],
+				};
+			} else {
+				t.usersVoted[user.id] = {
+					name: user.name,
+					image: DEFAULT_PROFILE_IMAGE,
+				}
+			}
+		}
 		io.in(room.id).emit('vote', r.queue);
 	});
 

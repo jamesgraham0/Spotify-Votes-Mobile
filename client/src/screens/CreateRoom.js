@@ -16,7 +16,6 @@ import uuid from 'react-native-uuid';
 // import { useDispatch } from 'react-redux';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
-// import { Linking } from 'expo';
 import * as Haptics from 'expo-haptics';
 
 const CreateRoom = ({ navigation, route }) => {
@@ -28,27 +27,32 @@ const CreateRoom = ({ navigation, route }) => {
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
+
+    const createNewRoom = async () => {
+        return {
+            name: roomName, 
+            password: password,
+            hostId: user.id,
+            id: uuid.v4(),
+            deviceId: await service.getDeviceId(),
+            users: [user],
+            currentlyPlaying: {},
+            queue: [],
+        }
+    }
     
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
         if (validNameAndPassword()) {
-            const room = {
-                name: roomName, 
-                password: password,
-                hostId: user.id,
-                id: uuid.v4(),
-                deviceId: await service.getDeviceId(),
-                users: [user],
-                currentlyPlaying: {},
-                queue: [],
-            }
+            const room = await createNewRoom();
             if (room.deviceId !== '' && room.deviceId !== undefined) {
+                console.log(room);
+                console.log(user);
                 socket.emit('createRoom', room);
                 navigation.navigate(
                     'Room', 
-                    {room: room,
-                    user: user}
-                );
+                    {room: room, user: user}
+                    );
                 await service.resetPlaybackToEmptyState();
             } else {
                 const supported = await Linking.canOpenURL(url);
@@ -195,10 +199,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 2,
         borderColor: '#1DB954',
-        shadowOpacity: 1,
+        shadowOpacity: 0.5,
         shadowColor: '#1DB954',
         shadowOffset: { width: 0, height: 0 },
         shadowRadius: 5,
+        backgroundColor: '#191414',
     },
     addText: {
         color: '#fff',

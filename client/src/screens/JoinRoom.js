@@ -19,7 +19,7 @@ const JoinRoom = ({ navigation, route }) => {
     useEffect(() => {
         function fetchRooms() {
             console.log("fetching rooms");
-			fetch("http://10.0.0.22:4000/rooms")
+			fetch("http://192.168.1.75:4000/rooms")
             .then((res) => res.json())
             .then((data) => setRooms(data))
             .catch((err) => console.error(err));

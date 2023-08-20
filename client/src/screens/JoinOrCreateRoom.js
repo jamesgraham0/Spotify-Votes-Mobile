@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#191414',
     },
     createRoomButton: {
         top: 400,
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#191414',
     },
     joinRoomButton: {
         marginTop: 25,
@@ -106,6 +108,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#191414',
     },
     createRoomTextDisabled: {
         position: 'absolute',

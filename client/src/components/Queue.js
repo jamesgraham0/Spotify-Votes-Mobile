@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
 import { socket } from '../utils/socket';
 
-const Queue = ({ queue, roomId }) => {
+const Queue = ({ queue, roomId, user }) => {
     const [q, setQ] = useState(queue);
     const [countdownForNextTrack, setCountdownForNextTrack] = useState(5);
     const [countdownStarted, setCountdownStarted] = useState(false);
@@ -12,7 +12,7 @@ const Queue = ({ queue, roomId }) => {
     useEffect(() => {
         function fetchQueue() {
           console.log("fetching queue");
-          fetch(`http://10.0.0.22:4000/queue/${roomId}`)
+          fetch(`http://192.168.1.75:4000/queue/${roomId}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));
@@ -48,12 +48,12 @@ const Queue = ({ queue, roomId }) => {
         let countdown = countdownForNextTrack;
         const intervalId = setInterval(() => {
             if (countdown > 0) {
-            countdown--;
-            setCountdownForNextTrack(countdown);
+                countdown--;
+                setCountdownForNextTrack(countdown);
             } else {
-            setCountdownStarted(false);
-            clearInterval(intervalId);
-            setCountdownForNextTrack(5);
+                setCountdownStarted(false);
+                clearInterval(intervalId);
+                setCountdownForNextTrack(5);
             }
         }, 1000);
     }
@@ -73,7 +73,7 @@ const Queue = ({ queue, roomId }) => {
                 .map((track, index) => {
                     return (
                         <View key={index}>
-                            <QueueTrack track={track} roomId={roomId}/>
+                            <QueueTrack track={track} roomId={roomId} user={user}/>
                         </View>
                     )
                 })}

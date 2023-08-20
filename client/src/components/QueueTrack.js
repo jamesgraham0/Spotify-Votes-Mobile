@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
+import UsersVoted from './UsersVoted';
 
-const QueueTrack = ({ track, roomId }) => {
-    const { artist, smallImage, title, uri, votes} = track;
+const QueueTrack = ({ track, roomId, user }) => {
+    const { artist, smallImage, title, votes} = track;
 
     const vote = () => {
-        socket.emit('vote', {track:track, id: roomId});
+        socket.emit('vote', {track: track, id: roomId, user: user});
     }
 
     return (
@@ -22,7 +23,7 @@ const QueueTrack = ({ track, roomId }) => {
                     <Image 
                         style={styles.img}
                         source={{uri: smallImage}}
-                        />
+                    />
                     <View style={styles.titleArtistContainer}>
                         <Text numberOfLines={3} style={styles.title}>{title}</Text>
                         <Text numberOfLines={1} style={styles.artist}>{artist}</Text>
@@ -30,6 +31,7 @@ const QueueTrack = ({ track, roomId }) => {
                     <View style={styles.voteContainer}>
                         <Text style={styles.voteNumber}>{votes}</Text>
                         <Text style={styles.votes}> votes</Text>
+                        <UsersVoted track={track}/>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -54,6 +56,7 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 0},
         shadowOpacity: 0.7,
         shadowRadius: 60,
+        backgroundColor: '#191414',
     },
     titleArtistContainer: {
         width: '60%',
@@ -84,6 +87,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
+        height: '100%',
     },  
     voteNumber: {
         fontSize: 14,

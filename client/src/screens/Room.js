@@ -237,6 +237,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+        backgroundColor: '#191414',
     },
     userContainer: {
         height: 50,
@@ -272,10 +273,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#BBB',
         fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    modalText: {
-        marginBottom: 15,
         textAlign: 'center',
     },
     blur: {

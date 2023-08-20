@@ -26,9 +26,8 @@
 - ✅ Add haptic feedback for button presses
 - ✅ Set any track being searched for that's currently in the queue to have a blurred front with text saying "Track already in queue" 
 - ✅ For users without Spotify Premium, restrict them from creating rooms (only joining), and searching for tracks (only voting on the queue)
-- ✅ When creating a room, Redirect to Spotify app if there's no deviceId
-- 🛑 Cannot create a room unless there is an active deviceId
-- 🛑 Add a countdown timer in the queue screen.
+- ✅ When creating a room, Redirect to Spotify app if there's no active deviceId
+- ✅ Add a countdown timer in the queue screen.
 - 🛑 Only allow a single vote to every track (see below)
 - 🛑 Allow the host to remove tracks from the queue
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
@@ -38,6 +37,7 @@
 **ANIMATION**
 - 🛑 When the next track is popped from the queue, slide it to the left and fade it away
 - 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
+- 🛑 Animate queue timer
 
 **Errors**
 - ✅ Trim search string so that api calls to search for tracks aren't made with empty strings
