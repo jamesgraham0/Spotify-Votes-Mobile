@@ -1,25 +1,23 @@
 /**
  * JoinRoom is a screen where a user can select a room to join from a list of rooms.
  * When the user clicks on a room, it navigates to the EnterRoomPassword screen.
- */
+*/
 
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import RoomToJoin from '../components/RoomToJoin';
-import { useSelector } from 'react-redux';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
+import Constants from '../utils/constants';
 
 const JoinRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [rooms, setRooms] = useState([]);
-    // const state = useSelector(state => state.reducer);
-    // Grabs the rooms from the socket when screen first mounts
+
     useEffect(() => {
         function fetchRooms() {
-            console.log("fetching rooms");
-			fetch("http://192.168.1.75:4000/rooms")
+			fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/rooms`)
             .then((res) => res.json())
             .then((data) => setRooms(data))
             .catch((err) => console.error(err));
@@ -27,16 +25,11 @@ const JoinRoom = ({ navigation, route }) => {
 		fetchRooms();
 	}, []);
     
-    // Updates list of rooms everytime the socket is updated
-    // For when someone makes a new room while another user is on the joinRoom screen
     useEffect(() => {
-        console.log('socket updated');
         socket.on('createRoom', (rooms) => {
-            console.log('creating room');
             setRooms(rooms);
         });
         socket.on('deleteRoom', (rooms) => {
-            console.log('deleting room');
             setRooms(rooms);
         });
     }, [socket]);
@@ -64,7 +57,6 @@ const JoinRoom = ({ navigation, route }) => {
                 <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
             </TouchableOpacity>
 
-
             <ScrollView
                 style={styles.scrollView}
                 bounces='true'
@@ -86,7 +78,6 @@ const JoinRoom = ({ navigation, route }) => {
                     })
                 }
                 </View>
-                
             </ScrollView>
         </View>
     )

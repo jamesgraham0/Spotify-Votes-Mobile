@@ -6,6 +6,7 @@ import { pushQueue } from '../reducers/reducer';
 import { useDispatch } from 'react-redux';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
+import Constants from '../utils/constants';
 
 const Search = ({ room, user }) => {
     const [search, setSearch] = useState("")
@@ -17,7 +18,7 @@ const Search = ({ room, user }) => {
     // Grabs the queue from the socket when screen first mounts
     useEffect(() => {
         function fetchQueue() {
-          fetch(`http://10.0.0.22:4000/queue/${room.id}`)
+          fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/queue/${room.id}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));
@@ -72,9 +73,8 @@ const Search = ({ room, user }) => {
       }, [search]);
 
       const addTrack = (track) => {
-        // dispatch(pushQueue({track: track, id: room.id}));
         if (!q.some(t => t.uri === track.uri)) {
-          socket.emit("addTrack", {id:room.id, track:track});
+          socket.emit("addTrack", {roomId:room.id, track:track});
         }
     }
 

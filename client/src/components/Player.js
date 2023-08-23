@@ -1,49 +1,44 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
-import { handlePlayNextTrack } from "../reducers/reducer";
 import { Ionicons } from '@expo/vector-icons'; 
 import { socket } from "../utils/socket";
 
 const Player = ({ user, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = useState({});
-    const { name, password, id, hostId, deviceId, users } = room;
-    const [progress, setProgress] = useState(0);
+    const { hostId, deviceId } = room;
+    const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
     let timerId = null;
     let autoPlayTimer = 0;
-    let savedTimerValue = 0;
-    const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
+    // const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         socket.on("addedFirstTrack", (track) => {
-            console.log('animate playing icon');
             setCurrentlyPlaying(track);
         });
         socket.on('playingNextTrack', (obj) => {
-            console.log("playing next track:", obj.track);
             setCurrentlyPlaying(obj.track);
         });
         socket.on('joinRoom', (room) => {
+            console.log(room);
             setCurrentlyPlaying(room.currentlyPlaying);
-        });
+        })
     }, [socket]);
 
     useEffect(() => {
-        if (user.id === hostId) {
+        const play = async () => {
             autoPlayTimer = currentlyPlaying.duration;
-            const play = async () => {
-                await service.startPlaying(currentlyPlaying, deviceId, true);
-                setIsPlaying(true);
-                startTimer();
-            }
-            if (currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {
-                play();
-            }
+            await service.startPlaying(currentlyPlaying, deviceId, true);
+            setIsPlaying(true);
+            startTimer();
+        }
+        if (user.id === hostId && currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {
+            console.log("about to fail");
+            play();
+            console.log("after fail");
         }
     }, [currentlyPlaying]);
-
 
     ////////////// TIMER ///////////////////
     const startTimer = () => {
@@ -84,10 +79,12 @@ const Player = ({ user, room }) => {
     }
     
     const handlePlay = async () => {
-        if (currentlyPlaying?.uri) {
+        if (currentlyPlaying?.uri && deviceId && deviceId !== '') {
             setIsPlaying(true);
             await service.startPlaying(currentlyPlaying, deviceId, false);
             // resumeTimer();
+        } else {
+            alert("There was an issue finding an active spotify device, reload the app and try again.")
         }
     }
 

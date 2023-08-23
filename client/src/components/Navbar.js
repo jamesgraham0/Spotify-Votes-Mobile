@@ -1,4 +1,4 @@
-import { Animated, View } from 'react-native';
+import { Animated } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

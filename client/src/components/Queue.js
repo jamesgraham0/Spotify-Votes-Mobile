@@ -2,6 +2,7 @@ import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
 import { socket } from '../utils/socket';
+import Constants from '../utils/constants';
 
 const Queue = ({ queue, roomId, user }) => {
     const [q, setQ] = useState(queue);
@@ -12,7 +13,7 @@ const Queue = ({ queue, roomId, user }) => {
     useEffect(() => {
         function fetchQueue() {
           console.log("fetching queue");
-          fetch(`http://192.168.1.75:4000/queue/${roomId}`)
+          fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/queue/${roomId}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));
@@ -69,7 +70,7 @@ const Queue = ({ queue, roomId, user }) => {
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
             >
-                {q && q.length > 0 && q
+                {q?.length > 0 && q
                 .map((track, index) => {
                     return (
                         <View key={index}>

@@ -1,11 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity, Button, Linking } from 'react-native';
-// import LoginButton from './LoginButton';
-import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect } from "react";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
 import service from '../utils/service';
 import {CLIENT_ID, CLIENT_SECRET} from 'react-native-dotenv';
 import * as Haptics from 'expo-haptics';
-import { socket } from '../utils/socket';
 
 const Landing = ({ navigation }) => {
 
@@ -50,15 +48,13 @@ const Landing = ({ navigation }) => {
   return (
     <View style={styles.container}>
         <Text style={styles.title}> Spotify Votes </Text>
-        {/* <LoginButton> */}
           <TouchableOpacity 
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
               promptAsync();
-            }} 
-            style={styles.roundButton} 
+            }}
+            style={styles.roundButton}
           />
-        {/* </LoginButton> */}
     </View>
   );
 }

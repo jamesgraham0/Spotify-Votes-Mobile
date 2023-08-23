@@ -9,11 +9,10 @@ import {
     Linking,
     Alert
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
-// import { createRoom } from '../reducers/reducer';
-// import { useDispatch } from 'react-redux';
+import Constants from '../utils/constants';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
@@ -22,7 +21,6 @@ const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
-    const url = 'https://open.spotify.com';
     
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
@@ -43,19 +41,17 @@ const CreateRoom = ({ navigation, route }) => {
     
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
-        if (validNameAndPassword()) {
+        if (validateNameAndPassword()) {
             const room = await createNewRoom();
             if (room.deviceId !== '' && room.deviceId !== undefined) {
-                console.log(room);
-                console.log(user);
+                Object.keys(room).forEach((key) => {
+                    console.log(`${key}: ${room[key]}`);
+                });
                 socket.emit('createRoom', room);
-                navigation.navigate(
-                    'Room', 
-                    {room: room, user: user}
-                    );
+                navigation.navigate('Room', {room: room, user: user});
                 await service.resetPlaybackToEmptyState();
             } else {
-                const supported = await Linking.canOpenURL(url);
+                const supported = await Linking.canOpenURL(Constants.SPOTIFY_URL);
                 if (supported) {
                     Alert.alert(
                         'Wait',
@@ -63,20 +59,20 @@ const CreateRoom = ({ navigation, route }) => {
                         [
                             {
                                 text: "Open Spotify",
-                                onPress: async () => await Linking.openURL(url),
+                                onPress: async () => await Linking.openURL(Constants.SPOTIFY_URL),
                             }
                         ]
                     );
                 } else {
-                    alert(`Open ${url} in your browser before creating a room`);
+                    alert(`Open ${Constants.SPOTIFY_URL} in your browser before creating a room`);
                 }
             }
         } else {
             alert("Enter a room name and password to continue");
         }
-    }
+    };
             
-    const validNameAndPassword = () => {
+    const validateNameAndPassword = () => {
         return roomName !== '' && password !== '';
     }
             
@@ -101,12 +97,12 @@ const CreateRoom = ({ navigation, route }) => {
                 style={styles.inputWrapper}
                 >
                 <TextInput 
-                    style={styles.textInput} 
+                    style={styles.textInput}
                     placeholder={'Project X 2.0...'} 
                     value={roomName} 
                     onChangeText={word => setRoomName(word)}
                     placeholderTextColor="#888" 
-                    />
+                />
             
                 <TextInput 
                     style={styles.textInput} 

@@ -6,7 +6,7 @@
  import { View, Text, StyleSheet } from 'react-native';
  
  const RoomToJoin = ({ room }) => {
-      const { name, users, password, id } = room;
+      const { name, users } = room;
 
    return (
      <View style={styles.container}>

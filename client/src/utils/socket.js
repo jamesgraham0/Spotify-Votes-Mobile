@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
-// Change this url to the expo go url exp://192.168.1.75:19000
-export const socket = io('http://192.168.1.75:4000', {
+import Constants from './constants';
+
+export const socket = io(`http://${Constants.EXPO_IP}:${Constants.PORT}`, {
   transports: ['websocket'],
   jsonp: false
 });

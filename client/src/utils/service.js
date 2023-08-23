@@ -209,7 +209,7 @@ const service = {
                     console.log("Error trying to play track");
                 }
             } catch (error) {
-                console.log("Error trying to getMyCurrentPlaybackState:", error);
+                console.log("Error trying do something with playback:", error);
             }
         }
     },
@@ -251,7 +251,7 @@ const service = {
     resetPlaybackToEmptyState: async () => {
         console.log("resetting playing to default state");
         spotifyApi.getMyCurrentPlayingTrack().then((track) => {
-            let isPlaying = track.body.is_playing;
+            let isPlaying = track?.body.is_playing;
             if (isPlaying) { // reset player
                 spotifyApi.pause().then(() => {
                     //current track has been set to {}

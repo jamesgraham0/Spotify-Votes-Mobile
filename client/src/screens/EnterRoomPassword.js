@@ -11,16 +11,15 @@ const EnterRoomPassword = ({ navigation, route }) => {
     const correctPassword = room.password;
     
     
-    const validatePassword = () => {
+    const validatePasswordAndJoinRoom = () => {
         Keyboard.dismiss();
         if (guessedPassword === correctPassword) {
-            console.log("Joining Room: ", room);
             socket.emit('joinRoom', room);
             navigation.navigate('Room', {user: user, room: room});
         } else {
             alert('Incorrect password');
         }
-      }
+    }
 
     const handleReturnToJoinRoom = () => {
         navigation.navigate('JoinRoom', { user: user });
@@ -46,7 +45,7 @@ const EnterRoomPassword = ({ navigation, route }) => {
                 style={styles.writeTaskWrapper}
             >
                 <TextInput style={styles.passwordInput} placeholder={'password...'} value={guessedPassword} onChangeText={word => setGuessedPassword(word)} />
-                <TouchableOpacity onPress={() => validatePassword()}>
+                <TouchableOpacity onPress={() => validatePasswordAndJoinRoom()}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>
                     </View>

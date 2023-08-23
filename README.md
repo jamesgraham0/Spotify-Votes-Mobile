@@ -28,11 +28,13 @@
 - ✅ For users without Spotify Premium, restrict them from creating rooms (only joining), and searching for tracks (only voting on the queue)
 - ✅ When creating a room, Redirect to Spotify app if there's no active deviceId
 - ✅ Add a countdown timer in the queue screen.
+- 🛑 Change playing and pausing to server-side
 - 🛑 Only allow a single vote to every track (see below)
 - 🛑 Allow the host to remove tracks from the queue
 - 🛑 Display number of users in each room both in the list of joinable rooms, and in room
-- 🛑 Add small photo on the queue card of who chose the track (or name)
+- 🛑 Add small photo on the queue card of who chose the track (Fix children with the same key)
 - 🛑 List of user names in a room once in the room
+- 🛑 Don't countdown before next track if there's no track in the queue
 
 **ANIMATION**
 - 🛑 When the next track is popped from the queue, slide it to the left and fade it away
