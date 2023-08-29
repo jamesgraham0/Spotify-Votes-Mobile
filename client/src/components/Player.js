@@ -7,7 +7,7 @@ import { socket } from "../utils/socket";
 const Player = ({ user, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = useState({});
-    const { hostId, deviceId } = room;
+    const { hostId, deviceId, queue } = room;
     const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
     let timerId = null;
     let autoPlayTimer = 0;
@@ -34,9 +34,7 @@ const Player = ({ user, room }) => {
             startTimer();
         }
         if (user.id === hostId && currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {
-            console.log("about to fail");
             play();
-            console.log("after fail");
         }
     }, [currentlyPlaying]);
 
@@ -45,7 +43,7 @@ const Player = ({ user, room }) => {
         timerId = setInterval(() => {
             autoPlayTimer -= TIME_CHECKING_IF_TRACK_FINISHED;
             // setProgress(100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration));
-            if (autoPlayTimer <= 5000) {
+            if (queue.length > 0 && autoPlayTimer <= 5000) {
                 socket.emit('startCountdownForNextTrack', room);
             }
             if (autoPlayTimer <= 0) {

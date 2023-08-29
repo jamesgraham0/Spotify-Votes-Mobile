@@ -31,11 +31,13 @@ let rooms = [
 		"hostId": "t1wyfo4650rthc8s0y3bmfhm8", 
 		"id": "oaijwefojewfewfaiejfojawef", 
 		"name": "1", 
-		"password": "1", 
+		"code": "00000",
 		"queue": [], 
 		"users": []
 	},
 ]
+
+let roomCodeToIdMap = {};
 
 const DEFAULT_PROFILE_IMAGE = "http://www.gravatar.com/avatar/?d=mp";
 
@@ -43,11 +45,25 @@ const findRoomById = (roomId) => {
 	return rooms.find(room => room.id === roomId)
 };
 
+const generateRandomString = () => {
+    const characters = '0123456789';
+    let result = '';
+    for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+    }
+    return result;
+};
+
 ///////////////// SOCKET OPERATIONS /////////////////
 io.on("connection", (socket) => {
 	console.log(`User connected to socket with ID: ${socket.id}`);
 
 	socket.on('createRoom', (room) => {
+		const { id } = room;
+		const code = generateRandomString();
+		roomCodeToIdMap[code] = id;
+		console.log(roomCodeToIdMap);
 		rooms.unshift(room);
 		socket.broadcast.emit('createRoom', rooms);
 		socket.join(room.id);
@@ -55,9 +71,8 @@ io.on("connection", (socket) => {
 
 	socket.on('joinRoom', (room) => {
 		const roomToJoin = findRoomById(room.id);
-		// This should emit to only the user that joined
-		socket.emit('joinRoom', roomToJoin);
-		// socket.to(room.id).emit('joinRoom', roomToJoin);
+		io.in(room.id).emit('newUserJoinedRoom', roomToJoin); // To trigger animation of new user joined
+		socket.emit('joinRoom', roomToJoin); // To update new users' room
 		socket.join(room.id);
 	});
 
@@ -66,6 +81,8 @@ io.on("connection", (socket) => {
 		if (roomIndex >= 0) {
 			rooms.splice(roomIndex, 1);
 		}
+		delete roomCodeToIdMap[room.code];
+		io.in(room.id).emit('kickUsersFromRoom');
 		socket.broadcast.emit('deleteRoom', rooms);
 	});
 
@@ -120,6 +137,16 @@ io.on("connection", (socket) => {
 
 	socket.on('startCountdownForNextTrack', (room) => {
 		io.in(room.id).emit('startCountdownForNextTrack');
+	});
+
+	socket.on('checkRoomCode', (guessedCode, callback) => {
+		if (roomCodeToIdMap.hasOwnProperty(guessedCode)) {
+			const roomId = roomCodeToIdMap[guessedCode];
+			const room = findRoomById(roomId);
+			callback({ room: room, isCorrectCode: true });
+		} else {
+			callback({ room: {}, isCorrectCode: false });
+		}
 	});
 
 	socket.on('disconnect', () => {

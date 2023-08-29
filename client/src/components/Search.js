@@ -1,9 +1,7 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import service from '../utils/service';
 import TrackSearchResult from './TrackSearchResult';
-import { pushQueue } from '../reducers/reducer';
-import { useDispatch } from 'react-redux';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
 import Constants from '../utils/constants';
@@ -11,7 +9,6 @@ import Constants from '../utils/constants';
 const Search = ({ room, user }) => {
     const [search, setSearch] = useState("")
     const [searchResults, setSearchResults] = useState([])
-    const dispatch = useDispatch();
     const [q, setQ] = useState(room.queue);
     const isPremiumAccount = user.product !== "free";
     

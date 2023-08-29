@@ -12,7 +12,7 @@ const Constants = {
             "hostId": "t1wyfo4650rthc8s0y3bmfhm8", 
             "id": "oaijwefojewfewfaiejfojawef", 
             "name": "1", 
-            "password": "1", 
+            "code": '00000', 
             "queue": [], 
             "users": []
         },

@@ -12,7 +12,7 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
     }
 
     const handleJoinRoom = () => {
-        navigation.navigate('JoinRoom', { user: user });
+        navigation.navigate('EnterRoomCode', { user: user });
     }
 
     return (

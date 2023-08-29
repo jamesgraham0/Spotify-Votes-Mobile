@@ -6,39 +6,38 @@ import * as Haptics from 'expo-haptics';
 const UsersVoted = ({ track }) => {
     const { usersVoted } = track;
     const [userModalVisible, setUserModalVisible] = useState(false);
+    const USERS_VOTED_TO_SHOW_ELLIPSES = 3;
     let usersVotedValues = Object.values(usersVoted);
 
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity 
-                key={track.uri}
-                onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const renderUsers = () => {
+        return usersVotedValues.map((userVoted, index) => {
+            const uniqueKey = `${userVoted.id}_${index}`;
+            return (
+                <View key={uniqueKey}>
+                    <View style={styles.userContainer}>
+                        <Text style={styles.count}>{index + 1}</Text>
+                        {index === 0 ? <Text style={{ color: '#1DB954' }}>Host</Text> : null}
+                        <Text numberOfLines={1} style={styles.user}>
+                            {userVoted.name}
+                        </Text>
+                    </View>
+                    <View style={styles.userContainer}>
+                        <Text style={styles.count}>{index}</Text>
+                        <Text style={styles.user}>{userVoted.name}</Text>
+                    </View>
+                </View>
+            );
+        });
+    };
+
+    const modalWithListOfUsers = () => {
+        return <Modal
+                animationType="fade"
+                transparent={true}
+                visible={userModalVisible}
+                onRequestClose={() => {
                     setUserModalVisible(!userModalVisible);
-            }}>
-                    {usersVotedValues.map((userVoted) => {
-                        return (
-                            <Image 
-                                key={track.uri}
-                                style={styles.img}
-                                source={{uri: userVoted.image}}
-                            />
-                        )
-                    })}
-                {
-                    usersVotedValues.length > 3 &&
-                    <Text style={styles.ellipses}>
-                        ...
-                    </Text>
-                }
-            </TouchableOpacity>
-            <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={userModalVisible}
-                    onRequestClose={() => {
-                        setUserModalVisible(!userModalVisible);
-                    }}>
+                }}>
                     <BlurView intensity={30} tint={'dark'} style={styles.blur}>
                         <View style={styles.modalView}>
                             <Text style={styles.numUsers}>
@@ -49,32 +48,7 @@ const UsersVoted = ({ track }) => {
                                 contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
                                 style={styles.scrollView}
                                 >
-                                <View>
-                                {
-                                    usersVotedValues.map((userVoted) => {
-                                        let count = 0;
-                                        return (
-                                            <View key={track.uri}>
-                                            <View style={styles.userContainer}>
-                                                <Text style={styles.count}>{++count}</Text>
-                                                {
-                                                    count === 1 
-                                                        ? <Text style={[{color: '#1DB954'}]}>Host</Text>
-                                                        : <Text></Text>    
-                                                }
-                                                <Text numberOfLines={1} style={styles.user}>
-                                                    <Text>{userVoted.name}</Text>
-                                                </Text>
-                                            </View>
-                                            <View style={styles.userContainer}>
-                                                <Text style={styles.count}>2</Text>
-                                                <Text style={styles.user}>Shaun</Text>  
-                                            </View>
-                                        </View>
-                                    )
-                                })
-                            }
-                            </View>
+                                <View>{renderUsers()}</View>
                             </ScrollView>
                             <TouchableOpacity
                             style={[styles.button, styles.buttonClose]}
@@ -87,40 +61,48 @@ const UsersVoted = ({ track }) => {
                         </View>
                     </BlurView>
                 </Modal>
+    }
+
+    return (
+        <View style={styles.container}>
+            <TouchableOpacity
+                key={track.uri}
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setUserModalVisible(!userModalVisible);
+                }}
+                style={styles.imageContainer}
+            >
+                {usersVotedValues.slice(0, 3).map((userVoted, index) => (
+                    <Image
+                        key={`${userVoted.id}_${index}`}
+                        style={[
+                            styles.img,
+                            { zIndex: index === 0 ? USERS_VOTED_TO_SHOW_ELLIPSES + 1 : USERS_VOTED_TO_SHOW_ELLIPSES - index },
+                        ]}
+                        source={{ uri: userVoted.image }}
+                    />
+                ))}
+                {usersVotedValues.length >= USERS_VOTED_TO_SHOW_ELLIPSES && (
+                    <Text style={styles.ellipses}>...</Text>
+                )}
+            </TouchableOpacity>
+            {modalWithListOfUsers()}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        margin: 5,
-        height: 30,
-        width: 32,
         flexDirection: 'row',
-        justifyContent: 'center',
         alignItems: 'center',
+        height: 30,
     },
     img: {
         width: 10,
         height: 10,
         borderRadius: 50,
-        margin: 2,
-    },
-    voteContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '100%',
-    },  
-    voteNumber: {
-        fontSize: 14,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    votes: {
-        fontSize: 10,
-        color: 'white'
+        marginHorizontal: -2,
     },
     modalView: {
         top: 150,
@@ -196,6 +178,15 @@ const styles = StyleSheet.create({
         color: '#BBB',
         fontSize: 30,
         fontWeight: 'bold',
+    },
+    ellipses: {
+        color: 'white',
+        fontSize: 10,
+        marginLeft: 3,
+    },
+    imageContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
 

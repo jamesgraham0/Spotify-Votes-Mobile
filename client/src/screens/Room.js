@@ -2,8 +2,6 @@ import { StyleSheet, Text, View, TouchableOpacity, Alert, Modal, ScrollView, Ani
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Navbar from '../components/Navbar';
-import { useDispatch } from 'react-redux';
-import { deleteRoom } from '../reducers/reducer';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -15,26 +13,44 @@ const Room = ({ navigation, route }) => {
     const [room, setRoom] = useState(route.params.room)
     const [newPersonInRoom, setNewPersonInRoom] = useState(false);
     const [userModalVisible, setUserModalVisible] = useState(false);
-    const dispatch = useDispatch();
     const plusValue = useState(new Animated.Value(0))[0];
     const [iconColor, setIconColor] = useState('#BBB');
-
-
+    
     useEffect(() => {
-        socket.on('joinRoom', (room) => {
+        socket.on('newUserJoinedRoom', (room) => {
             setNewPersonInRoom(true);
             setRoom(room);
         });
+        socket.on('kickUsersFromRoom', () => {
+            if (user.id !== hostId) {
+                Alert.alert(
+                    "Uh oh",
+                    `The host has left the room. All members are being kicked.`,
+                    [
+                        {
+                            text: "OK",
+                            onPress: () => {
+                                navigation.navigate('JoinOrCreateRoom', { user: user });
+                            }
+                        }
+                    ]
+                )
+            }
+        });
     }, [socket]);
 
-    function handleUserJoinAnimation() {
-        Animated.spring(plusValue, {
-            toValue: -15,
-            duration: 200,
-            friction: 3,
-            useNativeDriver: false,
-        }).start(() => {
-            setIconColor('#BBB');
+        useEffect(() => {
+            setIconColor(newPersonInRoom ? '#1DB954' : '#BBB');
+        }, [newPersonInRoom]);
+        
+        function handleUserJoinAnimation() {
+            Animated.spring(plusValue, {
+                toValue: -15,
+                duration: 200,
+                friction: 3,
+                useNativeDriver: false,
+            }).start(() => {
+                setIconColor('#BBB');
             setNewPersonInRoom(false);
             Animated.spring(plusValue, {
                 toValue: 0,
@@ -47,31 +63,29 @@ const Room = ({ navigation, route }) => {
         setNewPersonInRoom(false);
     }
     
-    useEffect(() => {
-        setIconColor(newPersonInRoom ? '#1DB954' : '#BBB');
-    }, [newPersonInRoom]);
 
     const handleReturnToJoinOrCreateRoom = () => {
-        // check if it's the host leaving, if so, delete the room
-        // the host can be identified by their user id
         if (room.hostId === user.id) {
             Alert.alert(
                 "Wait!",
-                `You are the host of ${room.name}, if you leave, the room will be deleted`,
+                `You are the host of ${room.name}, if you leave, the room will be deleted and all members will be kicked.`,
                 [
                     {
                         text: "Cancel",
                         onPress: () => console.log("Cancel Pressed"),
                         style: "cancel"
                     },
-                    { text: "Delete Room", onPress: () => {
-                        navigation.navigate('JoinOrCreateRoom', { user: user });
-                        const pause = async () => {
-                            await service.resetPlaybackToEmptyState();
+                    { 
+                        text: "Delete Room", 
+                        onPress: () => {
+                            navigation.navigate('JoinOrCreateRoom', { user: user });
+                            const pause = async () => {
+                                await service.resetPlaybackToEmptyState();
+                            }
+                            pause();
+                            socket.emit('deleteRoom', room);
                         }
-                        pause();                        
-                        socket.emit("deleteRoom", room);
-                    }}
+                    }
                 ]
             );
         } else {
@@ -108,27 +122,25 @@ const Room = ({ navigation, route }) => {
                                 <Text></Text>
                             }
                             <FontAwesome5 style={styles.usersIcon} name="users" size={24} color={iconColor} />
-                        
-                        <Animated.View
-                            style={[{
-                                width: 20,
-                                height: 20,
-                                marginTop: plusValue,
-                            }]}
-                        >
-                            <View style={[{
-                                    opacity: 1,
-                                    position: 'absolute',
-                                    alignSelf: 'center',
-                                    top: -24,
-                                    left: 9,
-                            }]}>
-                                <Ionicons color={iconColor} name="add-circle-outline"></Ionicons>
-                            </View>
-                        </Animated.View>
+                            <Animated.View
+                                style={[{
+                                    width: 20,
+                                    height: 20,
+                                    marginTop: plusValue,
+                                }]}
+                            >
+                                <View style={[{
+                                        opacity: 1,
+                                        position: 'absolute',
+                                        alignSelf: 'center',
+                                        top: -24,
+                                        left: 9,
+                                }]}>
+                                <Ionicons color={iconColor} name="add-circle-outline" />
+                                </View>
+                            </Animated.View>
                         </TouchableOpacity>
                     </View>
-
                         <Modal
                             animationType="fade"
                             transparent={true}
@@ -150,26 +162,19 @@ const Room = ({ navigation, route }) => {
                                         style={styles.scrollView}
                                         >
                                         <View>
+                                            <Text style={styles.roomCode}>Room code: {room.code}</Text>
                                         {
                                             room.users.map((user) => {
-                                                let count = 0;
+                                                let count = 1;
                                                 return (
                                                     <View key={user.id}>
-                                                    <View style={styles.userContainer}>
-                                                        <Text style={styles.count}>{++count}</Text>
-                                                        {
-                                                            count === 1 
-                                                                ? <Text style={[{color: '#1DB954'}]}>Host</Text>
-                                                                : <Text></Text>    
-                                                        }
-                                                        <Text numberOfLines={1} style={styles.user}>
-                                                            <Text>{user.display_name}</Text>
-                                                        </Text>
-                                                    </View>
-                                                    <View style={styles.userContainer}>
-                                                        <Text style={styles.count}>2</Text>
-                                                        <Text style={styles.user}>Shaun</Text>  
-                                                    </View>
+                                                        <View style={styles.userContainer}>
+                                                            <Text style={styles.count}>{count}</Text>
+                                                            {user.id === room.hostId && <Text style={[{color: '#1DB954'}]}>Host</Text>}
+                                                            <Text numberOfLines={1} style={styles.user}>
+                                                                <Text>{user.display_name}</Text>
+                                                            </Text>
+                                                        </View>
                                                 </View>
                                             )
                                         })
@@ -304,6 +309,12 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    roomCode: {
+        position: 'relative',
+        color: '#191414',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
   })
   

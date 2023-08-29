@@ -8,8 +8,7 @@ const Queue = ({ queue, roomId, user }) => {
     const [q, setQ] = useState(queue);
     const [countdownForNextTrack, setCountdownForNextTrack] = useState(5);
     const [countdownStarted, setCountdownStarted] = useState(false);
-    
-    // Grabs the queue from the socket when screen first mounts
+
     useEffect(() => {
         function fetchQueue() {
           console.log("fetching queue");

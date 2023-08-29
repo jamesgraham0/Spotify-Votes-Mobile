@@ -258,7 +258,6 @@ const service = {
                   }, (err) => {
                     console.log(err);
                 });
-                
                 spotifyApi.seek(0).then(() => {
                     //current track has been set to {}
                   }, (err) => {

@@ -20,7 +20,6 @@ import * as Haptics from 'expo-haptics';
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
-    const [password, setPassword] = useState('');
     
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
@@ -29,7 +28,7 @@ const CreateRoom = ({ navigation, route }) => {
     const createNewRoom = async () => {
         return {
             name: roomName, 
-            password: password,
+            code: '00000',
             hostId: user.id,
             id: uuid.v4(),
             deviceId: await service.getDeviceId(),
@@ -41,12 +40,9 @@ const CreateRoom = ({ navigation, route }) => {
     
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
-        if (validateNameAndPassword()) {
+        if (validateRoomName()) {
             const room = await createNewRoom();
             if (room.deviceId !== '' && room.deviceId !== undefined) {
-                Object.keys(room).forEach((key) => {
-                    console.log(`${key}: ${room[key]}`);
-                });
                 socket.emit('createRoom', room);
                 navigation.navigate('Room', {room: room, user: user});
                 await service.resetPlaybackToEmptyState();
@@ -68,20 +64,21 @@ const CreateRoom = ({ navigation, route }) => {
                 }
             }
         } else {
-            alert("Enter a room name and password to continue");
+            alert(`Room name must be at most 20 characters but is currently ${roomName.length}`);
         }
     };
-            
-    const validateNameAndPassword = () => {
-        return roomName !== '' && password !== '';
-    }
+
+    const validateRoomName = () => {
+        const trimmedRoomName = roomName.trim();
+        return trimmedRoomName.length <= 20;
+    };
             
     return (
         <View style={styles.outerContainer}>
             <View style={styles.container}>
                 <Text style={styles.createRoomText}>Create Room</Text>
             </View>
-            <Text style={styles.instructionText}>Give your room a name and password. Others will use this password to join your room!</Text>
+            <Text style={styles.instructionText}>Give your room a name!</Text>
             <TouchableOpacity 
             onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -102,14 +99,6 @@ const CreateRoom = ({ navigation, route }) => {
                     value={roomName} 
                     onChangeText={word => setRoomName(word)}
                     placeholderTextColor="#888" 
-                />
-            
-                <TextInput 
-                    style={styles.textInput} 
-                    placeholder={'Password123...'} 
-                    value={password} 
-                    onChangeText={word => setPassword(word)} 
-                    placeholderTextColor="#888"
                 />
                 <TouchableOpacity onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);

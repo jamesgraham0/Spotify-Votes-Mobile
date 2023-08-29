@@ -28,10 +28,14 @@ const QueueTrack = ({ track, roomId, user }) => {
                         <Text numberOfLines={3} style={styles.title}>{title}</Text>
                         <Text numberOfLines={1} style={styles.artist}>{artist}</Text>
                     </View>
-                    <View style={styles.voteContainer}>
-                        <Text style={styles.voteNumber}>{votes}</Text>
-                        <Text style={styles.votes}> votes</Text>
-                        <UsersVoted track={track}/>
+                    <View style={styles.votesContainer}>
+                        <View style={styles.voteContainerVotes}>
+                            <Text style={styles.voteNumber}>{votes}</Text>
+                            <Text style={styles.votes}> votes</Text>
+                        </View>
+                        <View style={styles.voteContainerUsers}>
+                            <UsersVoted track={track}/>
+                        </View>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -83,12 +87,23 @@ const styles = StyleSheet.create({
         height: 70,
         borderRadius: 5,
     },
-    voteContainer: {
+    votesContainer: {
+        flex: 1,
+        flexDirection: 'column',
+    },
+    voteContainerVotes: {
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
         height: '100%',
-    },  
+        borderBottomWidth: 1,
+    },
+    voteContainerUsers: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: '100%',
+    },
     voteNumber: {
         fontSize: 14,
         color: 'white',
