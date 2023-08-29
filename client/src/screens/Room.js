@@ -7,6 +7,7 @@ import { socket } from '../utils/socket';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import Constants from '../utils/constants';
 
 const Room = ({ navigation, route }) => {
     const { user } = route.params;
@@ -15,6 +16,20 @@ const Room = ({ navigation, route }) => {
     const [userModalVisible, setUserModalVisible] = useState(false);
     const plusValue = useState(new Animated.Value(0))[0];
     const [iconColor, setIconColor] = useState('#BBB');
+    const [code, setRoomCode] = useState('00000');
+
+    useEffect(() => {
+        function fetchRoomCode() {
+            fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/code/${room.id}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data);
+                    setRoomCode(data);
+                })
+                .catch((err) => console.error(err));
+        }
+        fetchRoomCode();
+    }, []);
     
     useEffect(() => {
         socket.on('newUserJoinedRoom', (room) => {
@@ -155,14 +170,14 @@ const Room = ({ navigation, route }) => {
                                             ? <Text>{room.users.length} Person</Text>
                                             : <Text>{room.users.length} People</Text>
                                         }                                    
-                                        </Text>
+                                    </Text>
+                                    <Text style={styles.roomCode}>Room code: {code}</Text>
                                     <ScrollView
                                         bounces='true'
                                         contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
                                         style={styles.scrollView}
                                         >
                                         <View>
-                                            <Text style={styles.roomCode}>Room code: {room.code}</Text>
                                         {
                                             room.users.map((user) => {
                                                 let count = 1;
@@ -311,10 +326,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     roomCode: {
-        position: 'relative',
-        color: '#191414',
+        color: '#BBB',
         fontSize: 20,
-        fontWeight: 'bold',
     },
   })
   

@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
 		const { id } = room;
 		const code = generateRandomString();
 		roomCodeToIdMap[code] = id;
-		console.log(roomCodeToIdMap);
+		room["code"] = code;
 		rooms.unshift(room);
 		socket.broadcast.emit('createRoom', rooms);
 		socket.join(room.id);
@@ -164,4 +164,12 @@ app.get('/queue/:id', (req, res) => {
 	const { id } = req.params;
 	const room = findRoomById(id);
 	res.json(room.queue);
+});
+
+app.get('/code/:id', (req, res) => {
+	const { id } = req.params;
+	const room = findRoomById(id);
+	console.log(room);
+	console.log("room code", room.code);
+	res.json(room.code);
 });

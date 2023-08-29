@@ -12,7 +12,6 @@ const Search = ({ room, user }) => {
     const [q, setQ] = useState(room.queue);
     const isPremiumAccount = user.product !== "free";
     
-    // Grabs the queue from the socket when screen first mounts
     useEffect(() => {
         function fetchQueue() {
           fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/queue/${room.id}`)

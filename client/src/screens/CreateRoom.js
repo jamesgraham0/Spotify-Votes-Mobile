@@ -28,8 +28,8 @@ const CreateRoom = ({ navigation, route }) => {
     const createNewRoom = async () => {
         return {
             name: roomName, 
-            code: '00000',
             hostId: user.id,
+            code: '00000',
             id: uuid.v4(),
             deviceId: await service.getDeviceId(),
             users: [user],
