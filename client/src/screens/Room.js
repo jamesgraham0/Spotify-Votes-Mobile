@@ -37,7 +37,7 @@ const Room = ({ navigation, route }) => {
             setRoom(room);
         });
         socket.on('kickUsersFromRoom', () => {
-            if (user.id !== hostId) {
+            if (user.id !== room.hostId) {
                 Alert.alert(
                     "Uh oh",
                     `The host has left the room. All members are being kicked.`,

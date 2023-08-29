@@ -96,7 +96,9 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        height: 30,
+        justifyContent: 'center',
+        height: '100%',
+        width: '100%'
     },
     img: {
         width: 10,

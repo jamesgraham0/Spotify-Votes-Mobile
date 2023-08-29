@@ -29,9 +29,9 @@
 - ✅ Only allow a single vote to every track (see below)
 - ✅ Add small photo on the queue card of who chose the track
 - ✅ List of user names in a room once in the room
-- 🟡 Change room joining to a randomly generated code when the room is created, 
+- ✅ Change room joining to a randomly generated code when the room is created, 
 - 🛑 Allow the host to kick users from the room
-- 🛑 Display number of users in each room both in the list of joinable rooms, and in room
+- 🛑 Display number of users in each room
 - 🛑 Change playing and pausing to server-side
 
 **ANIMATION**

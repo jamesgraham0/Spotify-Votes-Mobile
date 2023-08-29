@@ -71,8 +71,8 @@ io.on("connection", (socket) => {
 
 	socket.on('joinRoom', (room) => {
 		const roomToJoin = findRoomById(room.id);
-		io.in(room.id).emit('newUserJoinedRoom', roomToJoin); // To trigger animation of new user joined
-		socket.emit('joinRoom', roomToJoin); // To update new users' room
+		io.in(room.id).emit('newUserJoinedRoom', roomToJoin);
+		socket.emit('joinRoom', roomToJoin);
 		socket.join(room.id);
 	});
 
@@ -169,7 +169,5 @@ app.get('/queue/:id', (req, res) => {
 app.get('/code/:id', (req, res) => {
 	const { id } = req.params;
 	const room = findRoomById(id);
-	console.log(room);
-	console.log("room code", room.code);
 	res.json(room.code);
 });
