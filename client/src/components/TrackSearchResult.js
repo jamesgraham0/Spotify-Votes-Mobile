@@ -17,7 +17,7 @@ const TrackSearchResult = ({ track, inQueue }) => {
                     <Text style={styles.artist}>{track.artist}</Text>
                 </View>
                 <BlurView intensity={30} tint={'dark'} style={styles.containerBlur}>
-                    <Text style={{color: 'white', fontSize: 30}}>Already in queue</Text>
+                    <Text style={{color: 'white', fontSize: 30}}>Added to queue</Text>
                 </BlurView>
             </View> :
             <View style={styles.container}>

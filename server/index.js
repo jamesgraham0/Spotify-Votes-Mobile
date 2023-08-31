@@ -57,7 +57,7 @@ const generateRandomString = () => {
 
 ///////////////// SOCKET OPERATIONS /////////////////
 io.on("connection", (socket) => {
-	console.log(`User connected to socket with ID: ${socket.id}`);
+	console.log(`User connected with socket id: ${socket.id}`)
 
 	socket.on('createRoom', (room) => {
 		const { id } = room;

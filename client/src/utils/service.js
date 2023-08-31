@@ -1,33 +1,34 @@
-import axios from 'axios';
+import axios from "axios";
 import SpotifyWebApi from "spotify-web-api-node";
-import {CLIENT_ID, REDIRECT_URI} from 'react-native-dotenv';
+import {CLIENT_ID, REDIRECT_URI} from "react-native-dotenv";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
 });
 
-let token = '';
-let device_id = '';
+let token = "";
+let device_id = "";
 let queue = [];
+let userInfo = {};
 
 const BASE_URL = "https://api.spotify.com/v1"
 const concatUrl = (url) => `${BASE_URL}/${url}`;
 
 // returns device_id if the device is active
-// otherwise returns ''
+// otherwise returns ""
 const getDeviceId = async () => {
     try {
-        device_id = '';
+        device_id = "";
         const response = await spotifyApi.getMyDevices();
         const devices = response.body.devices;
         if (devices.length === 0) {
-            device_id = '';
-            return '';
+            device_id = "";
+            return "";
         }
         let activeDevices = devices.filter((device) => device.is_active);
         if (devices.length > 0) {
             device_id = activeDevices.map((device) => {
-                if (device.type !== 'Spotify Connect') {
+                if (device.type !== "Spotify Connect") {
                     return device.id;
                 }
             });                                               
@@ -43,26 +44,13 @@ const getDeviceId = async () => {
 
 const service = {
 
-    getAccessToken: () => {
-        try {
-            if (token !== '') {
-                return token;
-            }
-            else {
-                throw new Error('No token found');
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    },
-
     login: async () => {
-        const url = concatUrl('authorize');
+        const url = concatUrl("authorize");
         try {
             await axios.get(url, {
                 params: {
                     client_id: CLIENT_ID,
-                    response_type: 'code',
+                    response_type: "code",
                     redirect_uri: REDIRECT_URI,
                     scope: "user-read-currently-playing \
                             user-read-recently-played \
@@ -83,14 +71,34 @@ const service = {
         const { access_token } = authInfo.params;
         spotifyApi.setAccessToken(access_token);
         token = access_token;
-        const url = concatUrl('me');
+        const url = concatUrl("me");
         try {
             const response = await axios.get(url, {
                 headers: {
-                    'Authorization': `Bearer ${access_token}`
+                    "Authorization": `Bearer ${access_token}`
                 }
             });
-            return response.data;
+            userInfo = response?.data;
+            return response?.data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    getMyDevicesAndTransferPlayback: async () => {
+        try {
+            const response = await spotifyApi.getMyDevices();
+            const devices = response.body.devices;
+            
+            if (devices.length > 0) {
+                device_id = devices.map((device) => {
+                    if (device.type !== "Spotify Connect") {
+                        return device.id;
+                    }
+                });                                               
+                await spotifyApi.transferMyPlayback(device_id);
+                console.log("transfered playback to device", device_id[0]);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -134,15 +142,15 @@ const service = {
             }
     
             try {
-                if (device_id === '') {
-                    throw new Error('No device found trying to addTrackToQueue');
+                if (device_id === "") {
+                    throw new Error("No device found trying to addTrackToQueue");
                 }
                 const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${device_id}`;
                 await axios.post(url,
                     data, 
                     {
                   headers: {
-                    'Authorization': `Bearer ${token}`,
+                    "Authorization": `Bearer ${token}`,
                     "Accept": "application/json",
                     "Content-Type": "application/json"
                   },
@@ -161,15 +169,15 @@ const service = {
      * Queue as array of objects [{image, artistName, trackName, trackUri}]
      */
     getQueue: async () => {
-        const url = concatUrl('me/player/queue');
+        const url = concatUrl("me/player/queue");
         try {
             const response = await axios.get(url, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    "Authorization": `Bearer ${token}`
                 }
             });
             queue = response.data.queue.map((track) => {
-                if (track.type === 'track') {
+                if (track.type === "track") {
                     return {
                         image: track.album.images[0].url,
                         artistName: track.artists[0].name,
@@ -187,14 +195,9 @@ const service = {
 
     startPlaying: async (track, deviceId, playFromBeginning) => {
         const { uri } = track;
-        if (deviceId !== '' && deviceId !== null) {
+        if (deviceId !== "" && deviceId !== null) {
             try {
-                console.log("before transferring playback to device: ", deviceId);
-                await spotifyApi.transferMyPlayback([deviceId]);
-                console.log("transferred playback");
-    
                 const playbackState = await spotifyApi.getMyCurrentPlaybackState();
-            
                 let position = 0;
                 if (!playFromBeginning && playbackState.body !== null && playbackState?.body.progress_ms !== 0) {
                     position = playbackState.body.progress_ms;
@@ -209,7 +212,7 @@ const service = {
                     console.log("Error trying to play track");
                 }
             } catch (error) {
-                console.log("Error trying do something with playback:", error);
+                console.log(`Error trying do something with playback`, error);
             }
         }
     },
@@ -219,6 +222,7 @@ const service = {
             await spotifyApi.pause();
         } catch (error) {
             console.log("Error when trying to pause:", error);
+            
         }
     },
 
@@ -247,7 +251,7 @@ const service = {
         }
     },    
 
-    // pause playback and set the users' currently playing track to {}
+    // pause playback and set the users" currently playing track to {}
     resetPlaybackToEmptyState: async () => {
         console.log("resetting playing to default state");
         spotifyApi.getMyCurrentPlayingTrack().then((track) => {

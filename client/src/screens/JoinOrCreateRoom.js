@@ -29,7 +29,7 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
                     {isPremiumAccount ? 
                         <Text style={styles.createRoomText}>Create Room</Text> 
                         :
-                        <Text style={styles.createRoomTextDisabled}>Need premium account to create room</Text>
+                        <Text style={styles.createRoomTextDisabled}>Spotify premium required</Text>
                     }
             </TouchableOpacity>
             <TouchableOpacity 

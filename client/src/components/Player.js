@@ -14,14 +14,14 @@ const Player = ({ user, room }) => {
     // const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        socket.on("addedFirstTrack", (track) => {
+        socket.on("addedFirstTrack", async (track) => {
             setCurrentlyPlaying(track);
+            await service.startPlaying(track, deviceId, true);
         });
         socket.on('playingNextTrack', (obj) => {
             setCurrentlyPlaying(obj.track);
         });
         socket.on('joinRoom', (room) => {
-            console.log(room);
             setCurrentlyPlaying(room.currentlyPlaying);
         })
     }, [socket]);

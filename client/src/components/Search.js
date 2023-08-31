@@ -14,7 +14,7 @@ const Search = ({ room, user }) => {
     
     useEffect(() => {
         function fetchQueue() {
-          fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/queue/${room.id}`)
+          fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));

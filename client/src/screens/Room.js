@@ -20,7 +20,7 @@ const Room = ({ navigation, route }) => {
 
     useEffect(() => {
         function fetchRoomCode() {
-            fetch(`http://${Constants.EXPO_IP}:${Constants.PORT}/code/${room.id}`)
+            fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/code/${room.id}`)
                 .then((res) => res.json())
                 .then((data) => {
                     console.log(data);
@@ -108,110 +108,112 @@ const Room = ({ navigation, route }) => {
         }
     }
 
-    if (room) {
-        return (
-            <View style={styles.outerContainer}>
-                <View style={styles.headerContainer}>
-                    <TouchableOpacity 
+    const usersModal = () => {
+        return <Modal
+            animationType="fade"
+            transparent={true}
+            visible={userModalVisible}
+            onRequestClose={() => {
+                setUserModalVisible(!userModalVisible);
+            }}>
+            <BlurView intensity={30} tint={'dark'} style={styles.blur}>
+                <View style={styles.modalView}>
+                    <Text style={styles.numUsers}>
+                        {room.users.length === 1
+                            ? <Text>{room.users.length} Person</Text>
+                            : <Text>{room.users.length} People</Text>
+                        }                                    
+                    </Text>
+                    <Text style={styles.roomCode}>Room code: {code}</Text>
+                    <ScrollView
+                        bounces='true'
+                        contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
+                        style={styles.scrollView}
+                        >
+                        <View>
+                        {
+                            room.users.map((user) => {
+                                let count = 1;
+                                return (
+                                    <View key={user.id}>
+                                        <View style={styles.userContainer}>
+                                            <Text style={styles.count}>{count}</Text>
+                                            {user.id === room.hostId && <Text style={[{color: '#1DB954'}]}>Host</Text>}
+                                            <Text numberOfLines={1} style={styles.user}>
+                                                <Text>{user.display_name}</Text>
+                                            </Text>
+                                        </View>
+                                </View>
+                            )
+                        })
+                    }
+                    </View>
+                    </ScrollView>
+                    <TouchableOpacity
+                    style={[styles.button, styles.buttonClose]}
                     onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        handleReturnToJoinOrCreateRoom();
-                    }} 
-                    style={styles.returnButton}
-                    >
-                        <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
+                        setUserModalVisible(!userModalVisible)
+                    }}>
+                        <Text style={styles.buttonText}>Close</Text>
                     </TouchableOpacity>
-                        <Text numberOfLines={1} style={styles.roomName}>{room.name}</Text>
-
-                    {/* This is the icon to view people in room */}
-                    <View style={styles.iconContainer}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                                setUserModalVisible(!userModalVisible);
-                            }}
-                            >
-                            { newPersonInRoom ?
-                                handleUserJoinAnimation()
-                                :
-                                <Text></Text>
-                            }
-                            <FontAwesome5 style={styles.usersIcon} name="users" size={24} color={iconColor} />
-                            <Animated.View
-                                style={[{
-                                    width: 20,
-                                    height: 20,
-                                    marginTop: plusValue,
-                                }]}
-                            >
-                                <View style={[{
-                                        opacity: 1,
-                                        position: 'absolute',
-                                        alignSelf: 'center',
-                                        top: -24,
-                                        left: 9,
-                                }]}>
-                                <Ionicons color={iconColor} name="add-circle-outline" />
-                                </View>
-                            </Animated.View>
-                        </TouchableOpacity>
-                    </View>
-                        <Modal
-                            animationType="fade"
-                            transparent={true}
-                            visible={userModalVisible}
-                            onRequestClose={() => {
-                                setUserModalVisible(!userModalVisible);
-                            }}>
-                            <BlurView intensity={30} tint={'dark'} style={styles.blur}>
-                                <View style={styles.modalView}>
-                                    <Text style={styles.numUsers}>
-                                        {room.users.length === 1
-                                            ? <Text>{room.users.length} Person</Text>
-                                            : <Text>{room.users.length} People</Text>
-                                        }                                    
-                                    </Text>
-                                    <Text style={styles.roomCode}>Room code: {code}</Text>
-                                    <ScrollView
-                                        bounces='true'
-                                        contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
-                                        style={styles.scrollView}
-                                        >
-                                        <View>
-                                        {
-                                            room.users.map((user) => {
-                                                let count = 1;
-                                                return (
-                                                    <View key={user.id}>
-                                                        <View style={styles.userContainer}>
-                                                            <Text style={styles.count}>{count}</Text>
-                                                            {user.id === room.hostId && <Text style={[{color: '#1DB954'}]}>Host</Text>}
-                                                            <Text numberOfLines={1} style={styles.user}>
-                                                                <Text>{user.display_name}</Text>
-                                                            </Text>
-                                                        </View>
-                                                </View>
-                                            )
-                                        })
-                                    }
-                                    </View>
-                                    </ScrollView>
-                                    <TouchableOpacity
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {
-                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                        setUserModalVisible(!userModalVisible)
-                                    }}>
-                                        <Text style={styles.buttonText}>Hide Users</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </BlurView>
-                        </Modal>
                 </View>
-                <Navbar user={user} room={room}/>
+            </BlurView>
+        </Modal>
+    };
+
+    return (
+        <View style={styles.outerContainer}>
+            <View style={styles.headerContainer}>
+                <TouchableOpacity 
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    handleReturnToJoinOrCreateRoom();
+                }} 
+                style={styles.returnButton}
+                >
+                    <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
+                </TouchableOpacity>
+                    <Text numberOfLines={1} style={styles.roomName}>{room.name}</Text>
+
+                {/* This is the icon to view people in room */}
+                <View style={styles.iconContainer}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            setUserModalVisible(!userModalVisible);
+                        }}
+                        >
+                        { newPersonInRoom ?
+                            handleUserJoinAnimation()
+                            :
+                            <Text></Text>
+                        }
+                        <FontAwesome5 style={styles.usersIcon} name="users" size={24} color={iconColor} />
+                        <Animated.View
+                            style={[{
+                                width: 20,
+                                height: 20,
+                                marginTop: plusValue,
+                            }]}
+                        >
+                            <View style={[{
+                                    opacity: 1,
+                                    position: 'absolute',
+                                    alignSelf: 'center',
+                                    top: -24,
+                                    left: 9,
+                            }]}>
+                            <Ionicons color={iconColor} name="add-circle-outline" />
+                            </View>
+                        </Animated.View>
+                    </TouchableOpacity>
+                </View>
+                {usersModal()}
             </View>
-        )
-    }
+            <Navbar user={user} room={room}/>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -326,7 +328,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     roomCode: {
-        color: '#BBB',
+        color: '#1DB954',
         fontSize: 20,
     },
   })

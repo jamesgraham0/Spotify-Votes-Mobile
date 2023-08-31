@@ -24,7 +24,7 @@ const CreateRoom = ({ navigation, route }) => {
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
-
+    
     const createNewRoom = async () => {
         return {
             name: roomName, 
@@ -38,14 +38,52 @@ const CreateRoom = ({ navigation, route }) => {
         }
     }
     
+    const handleRedirectToSpotify = async () => {
+        try {
+            await Linking.openURL(Constants.SPOTIFY_URL);
+            
+            // stall to get devices when the user comes back
+            const delayMilliseconds = 2000;
+            await new Promise(resolve => setTimeout(resolve, delayMilliseconds));
+            await service.getMyDevicesAndTransferPlayback();
+        } catch (error) {
+            console.log("Error trying to handle redirect to Spotify", error);
+        }
+    };
+
+    // DeviceId must not be an empty string or undefined
+    // If the user redirects back to Spotify Votes after
+    // being redirected to Spotify, the API call to get
+    // the deviceId will be cut short, causing errors in
+    // the room.
+    const validateDeviceId = (deviceId) => {
+        return (
+            deviceId !== '' 
+            && 
+            deviceId !== undefined 
+            && 
+            deviceId.length === Constants.DEVICE_ID_LENGTH
+        )
+    };
+
+    const handleNavigateToNewRoom = async (room) => {
+        socket.emit('createRoom', room);
+        navigation.navigate('Room', {room: room, user: user});
+        await service.resetPlaybackToEmptyState();
+        await service.getMyDevicesAndTransferPlayback();
+    };
+
+    const validateRoomName = () => {
+        const trimmedRoomName = roomName.trim();
+        return trimmedRoomName.length <= 20;
+    };
+
     const handleCreateRoom = async () => {
         Keyboard.dismiss();
         if (validateRoomName()) {
             const room = await createNewRoom();
-            if (room.deviceId !== '' && room.deviceId !== undefined) {
-                socket.emit('createRoom', room);
-                navigation.navigate('Room', {room: room, user: user});
-                await service.resetPlaybackToEmptyState();
+            if (validateDeviceId(room.deviceId)) {
+                await handleNavigateToNewRoom(room);
             } else {
                 const supported = await Linking.canOpenURL(Constants.SPOTIFY_URL);
                 if (supported) {
@@ -55,7 +93,9 @@ const CreateRoom = ({ navigation, route }) => {
                         [
                             {
                                 text: "Open Spotify",
-                                onPress: async () => await Linking.openURL(Constants.SPOTIFY_URL),
+                                onPress: async () => {
+                                    await handleRedirectToSpotify();
+                                }
                             }
                         ]
                     );
@@ -68,45 +108,40 @@ const CreateRoom = ({ navigation, route }) => {
         }
     };
 
-    const validateRoomName = () => {
-        const trimmedRoomName = roomName.trim();
-        return trimmedRoomName.length <= 20;
+    const header = () => {
+        return <View style={styles.container}>
+                    <TouchableOpacity
+                        onPress={handleReturnToJoinOrCreateRoom}
+                        style={styles.returnButton}
+                    >
+                        <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
+                    </TouchableOpacity>
+                    <Text style={styles.createRoomText}>Create Room</Text>
+                </View>
     };
             
     return (
         <View style={styles.outerContainer}>
-            <View style={styles.container}>
-                <Text style={styles.createRoomText}>Create Room</Text>
-            </View>
-            <Text style={styles.instructionText}>Give your room a name!</Text>
-            <TouchableOpacity 
-            onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                handleReturnToJoinOrCreateRoom();
-            }} 
-            style={styles.returnButton}
-            >
-                <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
-            </TouchableOpacity>
-
+            {header()}
+            <Text style={styles.instructionText}>Give your new room a name!</Text>
             <KeyboardAvoidingView 
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.inputWrapper}
-                >
-                <TextInput 
+            >
+                <TextInput
                     style={styles.textInput}
                     placeholder={'Project X 2.0...'} 
                     value={roomName} 
                     onChangeText={word => setRoomName(word)}
-                    placeholderTextColor="#888" 
+                    placeholderTextColor="#888"
                 />
                 <TouchableOpacity onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                     handleCreateRoom()
                 }}>
-                    <View style={styles.addWrapper}>
-                        <Text style={styles.addText}>+</Text>
-                    </View>
+                <View style={styles.addWrapper}>
+                    <Text style={styles.addText}>+</Text>
+                </View>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
         </View>
@@ -117,42 +152,39 @@ const styles = StyleSheet.create({
     outerContainer: {
         flex: 1,
         backgroundColor: '#191414',
-        alignItems: 'center',
     },
     container: {
-      flex: 1,
-      backgroundColor: '#191414',
-      alignItems: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        backgroundColor: '#070707',
+        height: '13%',
+        padding: 20,
     },
     createRoomText: {
-        top: 100,
         color: '#fff',
         fontSize: 24,
+        maxWidth: '70%',
+        textAlign: 'center',
+        marginHorizontal: 56,
+        marginTop: 20,
     },
     returnButton: {
-        position: 'absolute',
-        top: 100,
         width: 50,
         height: 50,
-        left: 30,
+        marginTop: 36,
     },
     instructionText: {
-        position: 'absolute',
-        top: 150,
-        left: 30,
         color: '#BBB',
         fontSize: 20,
-        width: '70%',
-        height: 90,
-        margin: 10,
-        textAlign: 'left',
+        marginHorizontal: 60,
+        marginTop: 100,
+        marginBottom: 10,
     },
     inputWrapper: {
         backgroundColor: '#101010',
-        position: 'absolute',
-        top: 250,
         width: '90%',
-        height: '30%',
+        height: '25%',
         flexDirection: 'column',
         alignItems: 'center',
         borderRadius: 30,
@@ -162,7 +194,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: -2, height: -2 },
     },
     textInput: {
-        margin: 30,
+        marginTop: 50,
         padding: 10,
         width: 250,
         fontSize: 24,
@@ -175,7 +207,7 @@ const styles = StyleSheet.create({
         borderBottomEndRadius: 100,
     },
     addWrapper: {
-        margin: 70,
+        marginVertical: 20,
         width: 60,
         height: 60,
         borderRadius: 60,

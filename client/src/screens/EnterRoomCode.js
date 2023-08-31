@@ -29,7 +29,7 @@ const EnterRoomCode = ({ navigation, route }) => {
                 navigation.navigate('Room', { user: user, room: room });
             } else {
                 inputRefs[0].focus();
-                alert('Incorrect code');
+                alert(`There is no room with code ${enteredCode}`);
                 setCode(['', '', '', '', '']);
             }
         });
@@ -92,18 +92,21 @@ const EnterRoomCode = ({ navigation, route }) => {
         );
     };
 
+    const header = () => {
+        return <View style={styles.container}>
+                    <TouchableOpacity
+                        onPress={handleReturnToJoinOrCreateRoom}
+                        style={styles.returnButton}
+                    >
+                        <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
+                    </TouchableOpacity>
+                    <Text style={styles.enterRoomCode}>Enter Room Code</Text>
+                </View>
+    };
+
     return (
         <View style={styles.outerContainer}>
-            <View style={styles.container}>
-                <TouchableOpacity
-                    onPress={handleReturnToJoinOrCreateRoom}
-                    style={styles.returnButton}
-                >
-                    <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
-                </TouchableOpacity>
-                <Text style={styles.enterRoomCode}>Enter Room Code</Text>
-            </View>
-
+            {header()}
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.writeTaskWrapper}
@@ -141,21 +144,20 @@ const styles = StyleSheet.create({
         marginTop: 36,
     },
     writeTaskWrapper: {
-        position: 'absolute',
-        bottom: 100,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginVertical: 200,
     },
     codeInputContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 20,
+        marginVertical: 50,
     },
     codeBox: {
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         marginHorizontal: 5,
         backgroundColor: 'black',
         borderRadius: 10,
