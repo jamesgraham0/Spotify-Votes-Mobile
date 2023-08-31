@@ -89,19 +89,28 @@ const service = {
         try {
             const response = await spotifyApi.getMyDevices();
             const devices = response.body.devices;
-            
+          
             if (devices.length > 0) {
-                device_id = devices.map((device) => {
-                    if (device.type !== "Spotify Connect") {
-                        return device.id;
-                    }
-                });                                               
-                await spotifyApi.transferMyPlayback(device_id);
-                console.log("transfered playback to device", device_id[0]);
+              let deviceToTransfer = null;
+          
+              // First, check for a device of type "Smartphone"
+              deviceToTransfer = devices.find(device => device.type === "Smartphone");
+          
+              // If no smartphone found, check for a device of type "Computer"
+              if (!deviceToTransfer) {
+                deviceToTransfer = devices.find(device => device.type === "Computer");
+              }
+              
+              if (deviceToTransfer) {
+                await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
+                console.log("Transferred playback to device:", deviceToTransfer.name);
+              } else {
+                console.log("No suitable device found.");
+              }
             }
-        } catch (error) {
+          } catch (error) {
             console.log(error);
-        }
+          }
     },
 
     getDeviceId: async () => {

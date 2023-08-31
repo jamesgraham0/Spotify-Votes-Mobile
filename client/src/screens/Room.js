@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Alert, Modal, ScrollView, Animated } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, Modal, ScrollView, Animated, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Navbar from '../components/Navbar';
@@ -32,9 +32,12 @@ const Room = ({ navigation, route }) => {
     }, []);
     
     useEffect(() => {
-        socket.on('newUserJoinedRoom', (room) => {
+        socket.on('newUserJoinedRoom', (roomWithNewUser) => {
             setNewPersonInRoom(true);
-            setRoom(room);
+            setRoom(roomWithNewUser);
+        });
+        socket.on('joinRoom', (roomToSetForNewUser) => {
+            setRoom(roomToSetForNewUser);
         });
         socket.on('kickUsersFromRoom', () => {
             if (user.id !== room.hostId) {
@@ -129,19 +132,26 @@ const Room = ({ navigation, route }) => {
                         bounces='true'
                         contentInset={{top: 0, left: 0, bottom: 20, right: 0}}
                         style={styles.scrollView}
-                        >
-                        <View>
+                    >
+                    <View>
                         {
-                            room.users.map((user) => {
-                                let count = 1;
+                            room.users.map((user, index) => {
                                 return (
                                     <View key={user.id}>
                                         <View style={styles.userContainer}>
-                                            <Text style={styles.count}>{count}</Text>
+                                            <Text style={styles.count}>{++index}</Text>
                                             {user.id === room.hostId && <Text style={[{color: '#1DB954'}]}>Host</Text>}
                                             <Text numberOfLines={1} style={styles.user}>
-                                                <Text>{user.display_name}</Text>
+                                                <View style={styles.userNameContainer}>
+                                                    <Text numberOfLines={1} style={styles.userName} ellipsizeMode="tail">
+                                                        {user.display_name.length > 20 ? user.display_name.substring(0, 20) + '...' : user.display_name}
+                                                    </Text>
+                                                </View>
                                             </Text>
+                                            <Image
+                                                style={styles.img}
+                                                source={{ uri: user.images.length > 0 ? user.images[0].url : Constants.DEFAULT_PROFILE_IMAGE }}
+                                            />
                                         </View>
                                 </View>
                             )
@@ -247,7 +257,7 @@ const styles = StyleSheet.create({
         top: 150,
         height: 500,
         margin: 20,
-        backgroundColor: 'rgba(20, 20, 20, 0.9)',
+        backgroundColor: 'rgba(20, 20, 20, 0.5)',
         borderRadius: 20,
         padding: 15,
         alignItems: 'center',
@@ -266,6 +276,7 @@ const styles = StyleSheet.create({
         margin: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginHorizontal: 20,
         alignItems: 'center',
         borderColor: 'rgba(30, 30, 30, 0.5)',
         borderWidth: 1,
@@ -278,11 +289,9 @@ const styles = StyleSheet.create({
     user: {
         fontSize: 30,
         color: '#BBB',
-        marginRight: 50,
     },
     count: {
         color: '#BBB',
-        marginLeft: 30,
     },
     button: {
         borderRadius: 20,
@@ -330,6 +339,20 @@ const styles = StyleSheet.create({
     roomCode: {
         color: '#1DB954',
         fontSize: 20,
+    },
+    userNameContainer: {
+        maxWidth: 150,
+        overflow: 'hidden',
+    },
+    userName: {
+        color: '#BBB',
+        fontSize: 20,
+        textAlign: 'right',
+    },
+    img: {
+        borderRadius: 50,
+        width: 20,
+        height: 20,
     },
   })
   

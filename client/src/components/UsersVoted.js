@@ -2,28 +2,31 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, ScrollView } fr
 import React, { useState } from 'react';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import Constants from '../utils/constants';
 
 const UsersVoted = ({ track }) => {
     const { usersVoted } = track;
     const [userModalVisible, setUserModalVisible] = useState(false);
     const USERS_VOTED_TO_SHOW_ELLIPSES = 3;
-    let usersVotedValues = Object.values(usersVoted);
 
     const renderUsers = () => {
-        return usersVotedValues.map((userVoted, index) => {
-            const uniqueKey = `${userVoted.id}_${index}`;
+        return usersVoted.map((user, index) => {
+            const uniqueKey = `${user.id}_${index}`;
             return (
                 <View key={uniqueKey}>
                     <View style={styles.userContainer}>
-                        <Text style={styles.count}>{index + 1}</Text>
-                        {index === 0 ? <Text style={{ color: '#1DB954' }}>Host</Text> : null}
+                        <Text style={styles.count}>{++index}</Text>
                         <Text numberOfLines={1} style={styles.user}>
-                            {userVoted.name}
+                            <View style={styles.userNameContainer}>
+                                <Text numberOfLines={1} style={styles.userName} ellipsizeMode="tail">
+                                    {user.display_name.length > 20 ? user.display_name.substring(0, 20) + '...' : user.display_name}
+                                </Text>
+                            </View>
                         </Text>
-                    </View>
-                    <View style={styles.userContainer}>
-                        <Text style={styles.count}>{index}</Text>
-                        <Text style={styles.user}>{userVoted.name}</Text>
+                        <Image
+                            style={styles.modalImage}
+                            source={{ uri: user.images.length > 0 ? user.images[0].url : Constants.DEFAULT_PROFILE_IMAGE }}
+                        />
                     </View>
                 </View>
             );
@@ -41,7 +44,7 @@ const UsersVoted = ({ track }) => {
                     <BlurView intensity={30} tint={'dark'} style={styles.blur}>
                         <View style={styles.modalView}>
                             <Text style={styles.numUsers}>
-                                <Text>{usersVotedValues.length} People</Text>
+                                <Text>{usersVoted.length} People</Text>
                             </Text>
                             <ScrollView
                                 bounces='true'
@@ -73,17 +76,17 @@ const UsersVoted = ({ track }) => {
                 }}
                 style={styles.imageContainer}
             >
-                {usersVotedValues.slice(0, 3).map((userVoted, index) => (
+                {usersVoted.slice(0, 3).map((user, index) => (
                     <Image
-                        key={`${userVoted.id}_${index}`}
+                        key={`${user.id}_${index}`}
                         style={[
                             styles.img,
                             { zIndex: index === 0 ? USERS_VOTED_TO_SHOW_ELLIPSES + 1 : USERS_VOTED_TO_SHOW_ELLIPSES - index },
                         ]}
-                        source={{ uri: userVoted.image }}
+                        source={{ uri: user.images.length > 0 ? user.images[0].url : Constants.DEFAULT_PROFILE_IMAGE }}
                     />
                 ))}
-                {usersVotedValues.length >= USERS_VOTED_TO_SHOW_ELLIPSES && (
+                {usersVoted.length >= USERS_VOTED_TO_SHOW_ELLIPSES && (
                     <Text style={styles.ellipses}>...</Text>
                 )}
             </TouchableOpacity>
@@ -101,10 +104,10 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     img: {
-        width: 10,
-        height: 10,
+        width: 15,
+        height: 15,
         borderRadius: 50,
-        marginHorizontal: -2,
+        marginHorizontal: -3,
     },
     modalView: {
         top: 150,
@@ -130,6 +133,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginHorizontal: 20,
         borderColor: 'rgba(30, 30, 30, 0.5)',
         borderWidth: 1,
         borderRadius: 20,
@@ -138,14 +142,12 @@ const styles = StyleSheet.create({
         borderRightWidth: 0,
         boxShadow: 'rgba(255, 255, 255, 0.5)',
     },
-    user: {
-        fontSize: 30,
+    userName: {
+        fontSize: 21,
         color: '#BBB',
-        marginRight: 50,
     },
     count: {
         color: '#BBB',
-        marginLeft: 30,
     },
     button: {
         borderRadius: 20,
@@ -176,6 +178,10 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
     },
+    userNameContainer: {
+        maxWidth: 150,
+        overflow: 'hidden',
+    },
     numUsers: {
         color: '#BBB',
         fontSize: 30,
@@ -183,12 +189,18 @@ const styles = StyleSheet.create({
     },
     ellipses: {
         color: 'white',
-        fontSize: 10,
+        fontSize: 8,
         marginLeft: 3,
+        marginTop: 5,
     },
     imageContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    modalImage: {
+        borderRadius: 50,
+        width: 20,
+        height: 20,
     },
 });
 

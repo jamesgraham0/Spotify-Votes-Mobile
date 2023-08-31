@@ -29,6 +29,7 @@
 - ✅ Kick users from room when host leaves
 - 🛑 Allow the host to kick users from the room
 - 🛑 Display number of users in room
+- 🛑 Handle case where non-host leaves the room (socket.emit("leaveRoom", user))
 - 🛑 Change playing and pausing to server-side
 - 🛑 Socket disconnects when app is in background for a few seconds. Make it either reconnect when they join, or maintain the connection.
 

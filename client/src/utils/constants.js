@@ -5,6 +5,7 @@ const Constants = {
     SPOTIFY_URL: 'https://open.spotify.com',
     APP_SCHEME: 'exp',
     DEVICE_ID_LENGTH: 40,
+    DEFAULT_PROFILE_IMAGE: "http://www.gravatar.com/avatar/?d=mp",
 };
 
 export default Constants;

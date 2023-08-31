@@ -39,12 +39,10 @@ let rooms = [
 
 let roomCodeToIdMap = {};
 
-const DEFAULT_PROFILE_IMAGE = "http://www.gravatar.com/avatar/?d=mp";
-
 const findRoomById = (roomId) => {
 	return rooms.find(room => room.id === roomId)
 };
-
+ 
 const generateRandomString = () => {
     const characters = '0123456789';
     let result = '';
@@ -69,8 +67,10 @@ io.on("connection", (socket) => {
 		socket.join(room.id);
 	});
 
-	socket.on('joinRoom', (room) => {
+	socket.on('joinRoom', (obj) => {
+		const { user, room } = obj;
 		const roomToJoin = findRoomById(room.id);
+		roomToJoin.users.push(user);
 		io.in(room.id).emit('newUserJoinedRoom', roomToJoin);
 		socket.emit('joinRoom', roomToJoin);
 		socket.join(room.id);
@@ -120,17 +120,7 @@ io.on("connection", (socket) => {
 		if (!(user.id in trackToVote.usersVoted)) {
 			trackToVote.votes += 1;
 			roomToVote.queue.sort((a, b) => b.votes - a.votes);
-			if (user.images > 0) {
-				trackToVote.usersVoted[user.id] = {
-					name: user.name,
-					image: user.images[0],
-				};
-			} else {
-				trackToVote.usersVoted[user.id] = {
-					name: user.name,
-					image: DEFAULT_PROFILE_IMAGE,
-				}
-			}
+			trackToVote.usersVoted.push(user);
 		}
 		io.in(room.id).emit('vote', roomToVote.queue);
 	});

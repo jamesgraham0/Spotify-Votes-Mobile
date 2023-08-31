@@ -25,7 +25,7 @@ const EnterRoomCode = ({ navigation, route }) => {
         const enteredCode = code.join('');
         socket.emit('checkRoomCode', enteredCode, ({ room, isCorrectCode }) => {
             if (isCorrectCode) {
-                socket.emit('joinRoom', room);
+                socket.emit('joinRoom', { user: user, room: room });
                 navigation.navigate('Room', { user: user, room: room });
             } else {
                 inputRefs[0].focus();
@@ -33,7 +33,7 @@ const EnterRoomCode = ({ navigation, route }) => {
                 setCode(['', '', '', '', '']);
             }
         });
-    }
+    };
 
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     codeInputContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginVertical: 50,
+        marginBottom: 200,
     },
     codeBox: {
         width: 60,
