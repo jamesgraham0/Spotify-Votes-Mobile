@@ -91,23 +91,26 @@ const service = {
             const devices = response.body.devices;
           
             if (devices.length > 0) {
-              let deviceToTransfer = null;
-          
-              // First, check for a device of type "Smartphone"
-              deviceToTransfer = devices.find(device => device.type === "Smartphone");
-          
-              // If no smartphone found, check for a device of type "Computer"
-              if (!deviceToTransfer) {
-                deviceToTransfer = devices.find(device => device.type === "Computer");
-              }
-              
-              if (deviceToTransfer) {
-                await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
-                console.log("Transferred playback to device:", deviceToTransfer.name);
-              } else {
-                console.log("No suitable device found.");
-              }
+                let deviceToTransfer = null;
+            
+                // First, check for a device of type "Smartphone"
+                deviceToTransfer = devices.find(device => device.type === "Smartphone");
+            
+                // If no smartphone found, check for a device of type "Computer"
+                if (!deviceToTransfer) {
+                    deviceToTransfer = devices.find(device => device.type === "Computer");
+                }
+                
+                if (deviceToTransfer) {
+                    await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
+                    console.log("Device is active? ", deviceToTransfer.is_active);
+                    return deviceToTransfer.is_active;
+                } else {
+                    console.log("No smartphone or computer found");
+                }
             }
+            console.log("No devices found");
+            return false;
           } catch (error) {
             console.log(error);
           }
@@ -149,7 +152,6 @@ const service = {
                 uri: uri,
                 device_id: device_id
             }
-    
             try {
                 if (device_id === "") {
                     throw new Error("No device found trying to addTrackToQueue");
@@ -211,14 +213,14 @@ const service = {
                 if (!playFromBeginning && playbackState.body !== null && playbackState?.body.progress_ms !== 0) {
                     position = playbackState.body.progress_ms;
                 }
-                
                 try {
+                    await spotifyApi.transferMyPlayback([deviceId]);
                     await spotifyApi.play({
                         uris: [uri],
                         position_ms: position  
                     });
                 } catch (error) {
-                    console.log("Error trying to play track");
+                    console.log("Error trying to play track", error);
                 }
             } catch (error) {
                 console.log(`Error trying do something with playback`, error);

@@ -60,7 +60,8 @@ const Search = ({ room, user }) => {
                 largeImage: largeAlbumImage.url,
                 duration: track.duration_ms,
                 votes: 0,
-                usersVoted: []
+                usersVoted: [],
+                addedBy: user,
               }
             })
           )

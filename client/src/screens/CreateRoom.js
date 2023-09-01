@@ -70,7 +70,6 @@ const CreateRoom = ({ navigation, route }) => {
         socket.emit('createRoom', room);
         navigation.navigate('Room', {room: room, user: user});
         await service.resetPlaybackToEmptyState();
-        await service.getMyDevicesAndTransferPlayback();
     };
 
     const validateRoomName = () => {
@@ -82,14 +81,15 @@ const CreateRoom = ({ navigation, route }) => {
         Keyboard.dismiss();
         if (validateRoomName()) {
             const room = await createNewRoom();
-            if (validateDeviceId(room.deviceId)) {
+            let isActiveDeviceAndTransferred = await service.getMyDevicesAndTransferPlayback();
+            if (validateDeviceId(room.deviceId) && isActiveDeviceAndTransferred) {
                 await handleNavigateToNewRoom(room);
             } else {
                 const supported = await Linking.canOpenURL(Constants.SPOTIFY_URL);
                 if (supported) {
                     Alert.alert(
                         'Wait',
-                        "Redirecting you to Spotify, toggle the play/pause button and then try creating a room again",
+                        "Redirecting you to Spotify. Try creating a room after it opens.",
                         [
                             {
                                 text: "Open Spotify",

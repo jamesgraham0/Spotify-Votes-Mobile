@@ -114,16 +114,21 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on('vote', (room) => {
-		const { id, track, user } = room;
-		const roomToVote = findRoomById(id);
+		const { track, roomId, user } = room;
+		const roomToVote = findRoomById(roomId);
 		const trackToVote = roomToVote.queue.find(t => t.uri === track.uri);
-		if (!(user.id in trackToVote.usersVoted)) {
+		
+		if (!trackToVote.usersVoted.some(u => u.id === user.id)) {
+			console.log("first vote for", user.display_name);
 			trackToVote.votes += 1;
-			roomToVote.queue.sort((a, b) => b.votes - a.votes);
 			trackToVote.usersVoted.push(user);
+			roomToVote.queue.sort((a, b) => b.votes - a.votes);
+		} else {
+			console.log("you have already voted for this track");
 		}
-		io.in(room.id).emit('vote', roomToVote.queue);
+		io.in(roomId).emit('vote', roomToVote.queue);
 	});
+	
 
 	socket.on('startCountdownForNextTrack', (room) => {
 		io.in(room.id).emit('startCountdownForNextTrack');
