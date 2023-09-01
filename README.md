@@ -30,15 +30,10 @@
 - ✅ Display number of users in room
 - ✅ Add who added the track
 - ✅ Handle case where non-host leaves the room
-- 🛑 Allow the host to kick users from the room
 - 🛑 Change playing and pausing to server-side
-- 🛑 Socket disconnects when app is in background for a few seconds. Make it either reconnect when they join, or maintain the connection.
-
-**ANIMATION**
 - 🛑 When the next track is popped from the queue, slide it to the left and fade it away
 - 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
 - 🛑 Prompts on how to search for a song, add a track, and general navigation about the room
 
 **OTHER**
 - 🛑 Documentation and refactoring for readability and maintainability
-- 🛑 Fix problem where socket disconnects after app is in background for x seconds
