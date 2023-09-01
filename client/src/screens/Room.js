@@ -22,10 +22,7 @@ const Room = ({ navigation, route }) => {
         function fetchRoomCode() {
             fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/code/${room.id}`)
                 .then((res) => res.json())
-                .then((data) => {
-                    console.log(data);
-                    setRoomCode(data);
-                })
+                .then((data) => setRoomCode(data))
                 .catch((err) => console.error(err));
         }
         fetchRoomCode();
@@ -55,6 +52,9 @@ const Room = ({ navigation, route }) => {
                 )
             }
         });
+        socket.on('leaveRoom', (room) => {
+            setRoom(room);
+        });
     }, [socket]);
 
         useEffect(() => {
@@ -80,7 +80,10 @@ const Room = ({ navigation, route }) => {
         setIconColor('#1DB954');
         setNewPersonInRoom(false);
     }
-    
+
+    const handleUserLeavingRoom = () => {
+        (socket.emit("leaveRoom", {roomId: room.id, user: user}));
+    }; 
 
     const handleReturnToJoinOrCreateRoom = () => {
         if (room.hostId === user.id) {
@@ -108,6 +111,7 @@ const Room = ({ navigation, route }) => {
             );
         } else {
             navigation.navigate('JoinOrCreateRoom', { user: user });
+            handleUserLeavingRoom();
         }
     }
 

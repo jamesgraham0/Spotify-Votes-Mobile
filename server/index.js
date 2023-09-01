@@ -117,14 +117,10 @@ io.on("connection", (socket) => {
 		const { track, roomId, user } = room;
 		const roomToVote = findRoomById(roomId);
 		const trackToVote = roomToVote.queue.find(t => t.uri === track.uri);
-		
 		if (!trackToVote.usersVoted.some(u => u.id === user.id)) {
-			console.log("first vote for", user.display_name);
 			trackToVote.votes += 1;
 			trackToVote.usersVoted.push(user);
 			roomToVote.queue.sort((a, b) => b.votes - a.votes);
-		} else {
-			console.log("you have already voted for this track");
 		}
 		io.in(roomId).emit('vote', roomToVote.queue);
 	});
@@ -143,6 +139,16 @@ io.on("connection", (socket) => {
 			callback({ room: {}, isCorrectCode: false });
 		}
 	});
+
+	socket.on('leaveRoom', (obj) => {
+    const { roomId, user } = obj;
+    const roomToLeave = findRoomById(roomId);
+    const userIndex = roomToLeave.users.findIndex(u => u.id === user.id);    
+    if (userIndex >= 0) {
+        roomToLeave.users.splice(userIndex, 1);
+    }
+    io.in(roomId).emit('leaveRoom', roomToLeave);
+});
 
 	socket.on('disconnect', () => {
 		socket.disconnect();
