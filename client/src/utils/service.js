@@ -55,7 +55,6 @@ const handleReconnectionToSpotify = async () => {
     // stall to get devices when the user comes back
     const delayMilliseconds = 2000;
     await new Promise(resolve => setTimeout(resolve, delayMilliseconds));
-    console.log("after redirect");
     await service.getMyDevicesAndTransferPlayback();
 };
 
@@ -106,7 +105,6 @@ const service = {
         try {
             const response = await spotifyApi.getMyDevices();
             const devices = response.body.devices;
-            console.log(devices);
           
             const deviceTypes = ["Smartphone", "Computer", "Tablet", "Speaker"];
             let deviceToTransfer = null;
@@ -120,44 +118,12 @@ const service = {
           
             if (deviceToTransfer) {
               await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
-              console.log("Device is active? ", deviceToTransfer.is_active);
               return deviceToTransfer.is_active;
-            } else {
-              console.log("No device found");
             }
-            
-            console.log("No devices found");
             return false;
           } catch (error) {
             console.log(error);
           }
-    },
-
-    getActiveDevice: async () => {
-        try {
-            const response = await spotifyApi.getMyDevices();
-            const devices = response.body.devices;
-          
-            if (devices.length > 0) {
-                let deviceToTransfer = null;
-            
-                // First, check for a device of type "Smartphone"
-                deviceToTransfer = devices.find(device => device.type === "Smartphone");
-            
-                // If no smartphone found, check for a device of type "Computer"
-                if (!deviceToTransfer) {
-                    deviceToTransfer = devices.find(device => device.type === "Computer");
-                }
-                
-                if (deviceToTransfer) {
-                    return deviceToTransfer;
-                } else {
-                    console.log("No smartphone or computer found");
-                }
-            }
-        } catch (error) {
-            console.log("Error getting active device", error);
-        }
     },
 
     getDeviceId: async () => {
@@ -170,7 +136,6 @@ const service = {
 
     searchTrack: async (search) => {
         try {
-            console.log("token", token);
             let result = await spotifyApi.searchTracks(search, { limit : 40 });
             return result;
         } catch (error) {
@@ -186,14 +151,12 @@ const service = {
         let trackInQueue = false;
         queue.forEach((t) => {
             if (t.trackUri === uri) {
-                console.log("Track already in queue");
                 trackInQueue = true;
             }
         });
         
         // track not in queue, add it
         if (!trackInQueue) {
-            console.log(`Adding ${track.title} to queue`);
             const data = {
                 uri: uri,
                 device_id: device_id
@@ -212,7 +175,6 @@ const service = {
                     "Content-Type": "application/json"
                   },
                 });
-                console.log(`${track.title} added to queue`);
               } catch (error) {
                 console.log(error);
             }
@@ -264,7 +226,6 @@ const service = {
                         uris: [uri],
                         position_ms: position  
                     });
-                    console.log("Successfully started playing track");
                     return true;
                 } catch (error) {
                     console.log("Trying to play the track again", error);
@@ -314,7 +275,6 @@ const service = {
 
     // pause playback and set the users" currently playing track to {}
     resetPlaybackToEmptyState: async () => {
-        console.log("resetting playing to default state");
         spotifyApi.getMyCurrentPlayingTrack().then((track) => {
             let isPlaying = track?.body.is_playing;
             if (isPlaying) { // reset player

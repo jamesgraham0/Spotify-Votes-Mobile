@@ -6,6 +6,9 @@ const Constants = {
     APP_SCHEME: 'exp',
     DEVICE_ID_LENGTH: 40,
     DEFAULT_PROFILE_IMAGE: "http://www.gravatar.com/avatar/?d=mp",
+    SPOTIFY_GREEN: '#1DB954',
+    SPOTIFY_PURPLE: '#B026FF',
+    SPOTIFY_BLACK: '#191414',
 };
 
 export default Constants;

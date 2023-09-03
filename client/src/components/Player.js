@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
 import { Ionicons } from '@expo/vector-icons'; 
 import { socket } from "../utils/socket";
+import Constants from "../utils/constants";
 
 const Player = ({ user, room }) => {
     const [isPlaying, setIsPlaying] = useState(false);
@@ -11,14 +12,11 @@ const Player = ({ user, room }) => {
     const TIME_CHECKING_IF_TRACK_FINISHED = 1000;
     let timerId = null;
     let autoPlayTimer = 0;
-    // const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         socket.on("addedFirstTrack", async (track) => {
             setCurrentlyPlaying(track);
             if (user.id === hostId) {
-                console.log("playing", track.title);
-                console.log("from host's device");
                 await service.startPlaying(track, deviceId, true);
             }
         });
@@ -48,7 +46,6 @@ const Player = ({ user, room }) => {
     const startTimer = () => {
         timerId = setInterval(() => {
             autoPlayTimer -= TIME_CHECKING_IF_TRACK_FINISHED;
-            // setProgress(100 - Math.floor(100 * autoPlayTimer/currentlyPlaying.duration));
             if (queue.length > 0 && autoPlayTimer <= 5000) {
                 socket.emit('startCountdownForNextTrack', room);
             }
@@ -59,13 +56,6 @@ const Player = ({ user, room }) => {
         }, 1000);
     }
 
-    // const pauseTimer = () => {
-    //     clearInterval(timerId);
-    // }
-
-    // const resumeTimer = () => {
-    //     startTimer();
-    // }
     ////////////////////////////////////////
 
     const handlePlayPause = async () => {
@@ -79,14 +69,12 @@ const Player = ({ user, room }) => {
     const handlePause = async () => {
         await service.pausePlaying();
             setIsPlaying(false);
-            // pauseTimer();
     }
     
     const handlePlay = async () => {
         if (currentlyPlaying?.uri && deviceId && deviceId !== '') {
             setIsPlaying(true);
             await service.startPlaying(currentlyPlaying, deviceId, false);
-            // resumeTimer();
         } else {
             alert("There was an issue finding an active spotify device, reload the app and try again.")
         }
@@ -95,7 +83,7 @@ const Player = ({ user, room }) => {
     if (currentlyPlaying?.uri) {
         return (
             <View style={styles.container}>
-            <View style={styles.player}>
+            <View style={[styles.player, {backgroundColor: Constants.SPOTIFY_BLACK}]}>
                 <Image style={styles.image} source={{uri: currentlyPlaying.largeImage}}/>
             </View>
                 {currentlyPlaying.title && currentlyPlaying.artist &&
@@ -104,9 +92,6 @@ const Player = ({ user, room }) => {
                             <Text style={styles.title}>{currentlyPlaying.title}</Text>
                             <Text style={styles.artist}>{currentlyPlaying.artist}</Text> 
                         </View>
-                        {/* <View style={styles.progress}>
-                            <View style={[styles.progressFill, { width: `${progress}%` }]} />
-                        </View> */}
                         <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                             {user.id === hostId ? isPlaying ?
                                 <Ionicons name="pause-outline" size={48} color="white"/>
@@ -133,7 +118,6 @@ const styles = StyleSheet.create({
     player: {
         position: 'absolute',
         top: 50,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         width: 265,
         height: 265,
         borderRadius: 10,
@@ -143,7 +127,6 @@ const styles = StyleSheet.create({
         shadowRadius: 40,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#191414',
     },
     image: {
         width: 250,
@@ -180,23 +163,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         color: '#1DB954',
         fontSize: 18,
-    },
-    progress: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        alignSelf: 'center',
-        borderRadius: 10,
-        width: '80%',
-        height: 5,
-        shadowColor: 'rgba(176, 38, 255, 0.5)',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 1,
-        shadowRadius: 5,
-        backgroundColor: '#191414',
-    },
-    progressFill: {
-        height: '100%',
-        borderRadius: 10,
-        backgroundColor: 'rgba(176, 38, 255, 0.5)',
     },
 })
 

@@ -38,9 +38,6 @@ const Search = ({ room, user }) => {
         if (!search) return setSearchResults([])
         let cancel = false
         service.searchTrack(search).then(res => {
-          if (res === null) {
-            console.log("res was null");
-          }
           if (cancel || res === null) return
           setSearchResults(
             res.body.tracks.items.map(track => {
