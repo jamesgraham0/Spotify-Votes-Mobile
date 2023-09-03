@@ -37,7 +37,9 @@ const Search = ({ room, user }) => {
     useEffect(() => {
         if (!search) return setSearchResults([])
         let cancel = false
+        console.log("before search", search);
         service.searchTrack(search).then(res => {
+          console.log("AFTER AFTER");
           if (res === null) {
             console.log("res was null");
           }
@@ -65,7 +67,9 @@ const Search = ({ room, user }) => {
               }
             })
           )
-        })
+        }).catch((error) => {
+          console.log("promise issue?", error);
+        });
         return () => (cancel = true)
       }, [search]);
 

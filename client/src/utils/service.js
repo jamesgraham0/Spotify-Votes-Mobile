@@ -106,26 +106,26 @@ const service = {
         try {
             const response = await spotifyApi.getMyDevices();
             const devices = response.body.devices;
+            console.log(devices);
           
-            if (devices.length > 0) {
-                let deviceToTransfer = null;
-            
-                // First, check for a device of type "Smartphone"
-                deviceToTransfer = devices.find(device => device.type === "Smartphone");
-            
-                // If no smartphone found, check for a device of type "Computer"
-                if (!deviceToTransfer) {
-                    deviceToTransfer = devices.find(device => device.type === "Computer");
-                }
-                
-                if (deviceToTransfer) {
-                    await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
-                    console.log("Device is active? ", deviceToTransfer.is_active);
-                    return deviceToTransfer.is_active;
-                } else {
-                    console.log("No smartphone or computer found");
-                }
+            const deviceTypes = ["Smartphone", "Computer", "Tablet", "Speaker"];
+            let deviceToTransfer = null;
+          
+            for (const deviceType of deviceTypes) {
+              deviceToTransfer = devices.find((device) => device.type === deviceType);
+              if (deviceToTransfer) {
+                break; // Exit the loop if a matching device is found
+              }
             }
+          
+            if (deviceToTransfer) {
+              await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
+              console.log("Device is active? ", deviceToTransfer.is_active);
+              return deviceToTransfer.is_active;
+            } else {
+              console.log("No device found");
+            }
+            
             console.log("No devices found");
             return false;
           } catch (error) {
@@ -170,12 +170,14 @@ const service = {
 
     searchTrack: async (search) => {
         try {
-            return await spotifyApi.searchTracks(search);
+            console.log("token", token);
+            let result = await spotifyApi.searchTracks(search, { limit : 40 });
+            return result;
         } catch (error) {
             console.log("Error while searching for track", error);
+            return null;
         }
-        return null;
-    },
+      },
 
     addTrackToQueue: async (track) => {
         const uri = track.uri;

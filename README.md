@@ -16,7 +16,7 @@
 - ✅ Only allow a single vote to every track (see below)
 - ✅ Add small photo on the queue card of who chose the track
 - ✅ List of user names in a room once in the room
-- ✅ Change room joining to a randomly generated code when the room is created, 
+- ✅ Change room joining to a randomly generated code when the room is created
 - ✅ Create room (updates state of list of joinable rooms) -> emit to everyone 
 - ✅ Delete room (updates state of list of joinable rooms) -> emit to everyone
 - ✅ Adding the first track to queue sets it to currentlyPlaying -> emit to everyone in room 
@@ -29,11 +29,12 @@
 - ✅ Kick users from room when host leaves
 - ✅ Display number of users in room
 - ✅ Add who added the track
-- ✅ Handle case where non-host leaves the room
-- 🛑 Change playing and pausing to server-side
+- ✅ Handle when non-host leaves the room
+- ✅ Handle when host closes Spotify while Spotify Votes is still being used 
 - 🛑 When the next track is popped from the queue, slide it to the left and fade it away
 - 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
 - 🛑 Prompts on how to search for a song, add a track, and general navigation about the room
+- 🛑 Make the Landing page button look more like a button
 
 **OTHER**
 - 🛑 Documentation and refactoring for readability and maintainability

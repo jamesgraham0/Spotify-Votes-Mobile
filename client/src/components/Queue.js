@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView, Animated } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
 import { socket } from '../utils/socket';
@@ -29,13 +29,13 @@ const Queue = ({ queue, roomId, user }) => {
         });
         socket.on('vote', (q) => {
             setQ(q);
-        })
+        });
         socket.on('joinRoom', (room) => {
             setQ(room.queue);
         });
         socket.on('startCountdownForNextTrack', () => {
             setCountdownStarted(true);
-        })
+        });
     }, [socket])
 
     useEffect(() => {
