@@ -16,10 +16,16 @@ const Player = ({ user, room }) => {
     useEffect(() => {
         socket.on("addedFirstTrack", async (track) => {
             setCurrentlyPlaying(track);
-            await service.startPlaying(track, deviceId, true);
+            if (user.id === hostId) {
+                console.log("playing", track.title);
+                console.log("from host's device");
+                await service.startPlaying(track, deviceId, true);
+            }
         });
         socket.on('playingNextTrack', (obj) => {
-            setCurrentlyPlaying(obj.nextTrack);
+            if (user.id === hostId) {
+                setCurrentlyPlaying(obj.nextTrack);
+            }
         });
         socket.on('joinRoom', (room) => {
             setCurrentlyPlaying(room.currentlyPlaying);
