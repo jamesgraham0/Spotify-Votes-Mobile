@@ -40,7 +40,9 @@ const CreateRoom = ({ navigation, route }) => {
     
     const handleRedirectToSpotify = async () => {
         try {
-            await Linking.openURL(Constants.SPOTIFY_URL);
+            if (await Linking.canOpenURL(Constants.SPOTIFY_URL)) {
+                await Linking.openURL(Constants.SPOTIFY_URL);
+            }
             
             // stall to get devices when the user comes back
             const delayMilliseconds = 2000;

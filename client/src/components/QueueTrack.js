@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Animated } from 'react-native'; // Import Animated from react-native
+import React, { useEffect, useRef } from 'react';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
 import UsersVoted from './UsersVoted';
@@ -7,12 +7,33 @@ import UsersVoted from './UsersVoted';
 const QueueTrack = ({ track, roomId, user }) => {
     const { artist, smallImage, title, votes, addedBy } = track;
 
+    const slideAnim = useRef(new Animated.Value(0)).current; // Initialize slide animation value
+
+    useEffect(() => {
+        socket.on('playingNextTrack', (obj) => {
+            const { nextTrack } = obj;
+
+            // Animate the next track sliding to the left and fading out
+            Animated.timing(slideAnim, {
+                toValue: -100, // Slide to the left by 100 units (adjust as needed)
+                duration: 1000, // Animation duration in milliseconds (adjust as needed)
+                useNativeDriver: false, // Don't forget to set useNativeDriver to false
+            }).start(() => {
+                // Reset the animation value after the animation completes
+                slideAnim.setValue(0);
+            });
+        });
+    }, [socket]);
+
     const vote = () => {
-        socket.emit('vote', {track: track, roomId: roomId, user: user });
-    }
+        socket.emit('vote', { track: track, roomId: roomId, user: user });
+    };
 
     return (
-        <View style={styles.cardContainer}>
+        <Animated.View style={[styles.cardContainer, { transform: [{ translateX: slideAnim }], opacity: slideAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0],
+        }) }]}>
             <TouchableOpacity 
                 key={track.uri}
                 onPress={() => {
@@ -44,7 +65,7 @@ const QueueTrack = ({ track, roomId, user }) => {
                     </View>
                 </View>
             </TouchableOpacity>
-        </View>
+        </Animated.View>
     );
 };
 

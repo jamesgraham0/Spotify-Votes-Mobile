@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Animated } from 'react-native';
 import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
 import { socket } from '../utils/socket';

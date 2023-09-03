@@ -1,6 +1,8 @@
 import axios from "axios";
 import SpotifyWebApi from "spotify-web-api-node";
 import {CLIENT_ID, REDIRECT_URI} from "react-native-dotenv";
+import { Linking } from "react-native";
+import Constants from "./constants";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: CLIENT_ID,
@@ -41,6 +43,21 @@ const getDeviceId = async () => {
         console.log(error);
     }
 }
+
+const handleRedirectToSpotify = async () => {
+    if (await Linking.canOpenURL(Constants.SPOTIFY_URL)) {
+        await Linking.openURL(Constants.SPOTIFY_URL);
+    }
+};
+
+const handleReconnectionToSpotify = async () => {
+    await handleRedirectToSpotify();
+    // stall to get devices when the user comes back
+    const delayMilliseconds = 2000;
+    await new Promise(resolve => setTimeout(resolve, delayMilliseconds));
+    console.log("after redirect");
+    await service.getMyDevicesAndTransferPlayback();
+};
 
 const service = {
 
@@ -114,6 +131,33 @@ const service = {
           } catch (error) {
             console.log(error);
           }
+    },
+
+    getActiveDevice: async () => {
+        try {
+            const response = await spotifyApi.getMyDevices();
+            const devices = response.body.devices;
+          
+            if (devices.length > 0) {
+                let deviceToTransfer = null;
+            
+                // First, check for a device of type "Smartphone"
+                deviceToTransfer = devices.find(device => device.type === "Smartphone");
+            
+                // If no smartphone found, check for a device of type "Computer"
+                if (!deviceToTransfer) {
+                    deviceToTransfer = devices.find(device => device.type === "Computer");
+                }
+                
+                if (deviceToTransfer) {
+                    return deviceToTransfer;
+                } else {
+                    console.log("No smartphone or computer found");
+                }
+            }
+        } catch (error) {
+            console.log("Error getting active device", error);
+        }
     },
 
     getDeviceId: async () => {
@@ -214,18 +258,23 @@ const service = {
                     position = playbackState.body.progress_ms;
                 }
                 try {
-                    await spotifyApi.transferMyPlayback([deviceId]);
                     await spotifyApi.play({
                         uris: [uri],
                         position_ms: position  
                     });
+                    console.log("Successfully started playing track");
+                    return true;
                 } catch (error) {
-                    console.log("Error trying to play track", error);
+                    console.log("Trying to play the track again", error);
+                    await handleReconnectionToSpotify();
+                    return false;
                 }
             } catch (error) {
-                console.log(`Error trying do something with playback`, error);
+                console.log(`Error trying to get playback state`, error);
+                return false;
             }
         }
+        return false;
     },
     
     pausePlaying: async () => {
@@ -233,7 +282,6 @@ const service = {
             await spotifyApi.pause();
         } catch (error) {
             console.log("Error when trying to pause:", error);
-            
         }
     },
 
@@ -270,14 +318,14 @@ const service = {
             if (isPlaying) { // reset player
                 spotifyApi.pause().then(() => {
                     //current track has been set to {}
-                  }, (err) => {
+                }, (err) => {
                     console.log(err);
                 });
                 spotifyApi.seek(0).then(() => {
                     //current track has been set to {}
-                  }, (err) => {
+                }, (err) => {
                     console.log(err);
-                  });
+                });
             }
         });
     }

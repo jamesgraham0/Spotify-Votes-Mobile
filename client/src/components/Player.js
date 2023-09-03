@@ -19,7 +19,7 @@ const Player = ({ user, room }) => {
             await service.startPlaying(track, deviceId, true);
         });
         socket.on('playingNextTrack', (obj) => {
-            setCurrentlyPlaying(obj.track);
+            setCurrentlyPlaying(obj.nextTrack);
         });
         socket.on('joinRoom', (room) => {
             setCurrentlyPlaying(room.currentlyPlaying);
@@ -29,8 +29,8 @@ const Player = ({ user, room }) => {
     useEffect(() => {
         const play = async () => {
             autoPlayTimer = currentlyPlaying.duration;
-            await service.startPlaying(currentlyPlaying, deviceId, true);
-            setIsPlaying(true);
+            let canPlay = await service.startPlaying(currentlyPlaying, deviceId, true);
+            setIsPlaying(canPlay);
             startTimer();
         }
         if (user.id === hostId && currentlyPlaying && Object.keys(currentlyPlaying).length !== 0) {

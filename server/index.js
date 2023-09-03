@@ -40,7 +40,7 @@ let rooms = [
 let roomCodeToIdMap = {};
 
 const findRoomById = (roomId) => {
-	return rooms.find(room => room.id === roomId)
+	return rooms.find(room => room.id === roomId);
 };
  
 const generateRandomString = () => {
@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
 			nextTrack = roomToPlayNextTrack.queue.shift();
 		}
 		roomToPlayNextTrack.currentlyPlaying = nextTrack;
-		io.in(room.id).emit("playingNextTrack", {track: nextTrack, queue: roomToPlayNextTrack.queue})
+		io.in(room.id).emit("playingNextTrack", {nextTrack: nextTrack, queue: roomToPlayNextTrack.queue});
 	});
 
 	socket.on('vote', (room) => {
