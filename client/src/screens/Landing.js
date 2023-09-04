@@ -4,7 +4,7 @@ import { ResponseType, useAuthRequest } from 'expo-auth-session';
 import service from '../utils/service';
 import { CLIENT_ID, CLIENT_SECRET } from 'react-native-dotenv';
 import * as Haptics from 'expo-haptics';
-import Constants from '../utils/constants';
+import BackgroundCircles from '../components/BackgroundCircles';
 
 
 const Landing = ({ navigation }) => {
@@ -73,17 +73,7 @@ const Landing = ({ navigation }) => {
   return (
     <View style={styles.container}>
 
-      <View style={[styles.circleGreen1, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-      <View style={[styles.circleGreen2, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-      <View style={[styles.circleGreen3, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-      <View style={[styles.circleGreen4, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-      <View style={[styles.circleGreen5, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-
-      <View style={[styles.circlePurple1, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-      <View style={[styles.circlePurple2, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-      <View style={[styles.circlePurple3, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-      <View style={[styles.circlePurple4, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-      <View style={[styles.circlePurple5, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
+      <BackgroundCircles/>
 
       <View style={[styles.circleBlack1, {backgroundColor: 'rgb(10, 10, 10)'}]} />
       <View style={[styles.circleBlack2, {backgroundColor: 'rgb(10, 10, 10)'}]} />
@@ -125,7 +115,7 @@ const styles = StyleSheet.create({
   title: {
     top: '40%',
     fontSize: 40,
-    color: '#1DB954',
+    color: 'white',
   },
   roundButton: {
     width: 70,

@@ -16,6 +16,7 @@ import Constants from '../utils/constants';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
+import DarkBackgroundCircles from '../components/DarkBackgroundCircles';
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
@@ -111,7 +112,7 @@ const CreateRoom = ({ navigation, route }) => {
     };
 
     const header = () => {
-        return <View style={styles.container}>
+        return <View style={Constants.HEADER_STYLES}>
                     <TouchableOpacity
                         onPress={handleReturnToJoinOrCreateRoom}
                         style={styles.returnButton}
@@ -124,6 +125,7 @@ const CreateRoom = ({ navigation, route }) => {
             
     return (
         <View style={styles.outerContainer}>
+            <DarkBackgroundCircles/>
             {header()}
             <Text style={styles.instructionText}>Give your new room a name!</Text>
             <KeyboardAvoidingView 
@@ -155,15 +157,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#191414',
     },
-    container: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        backgroundColor: '#070707',
-        height: '13%',
-        padding: 20,
-    },
     createRoomText: {
+        fontSize: 40,
         color: '#fff',
         fontSize: 24,
         maxWidth: '70%',

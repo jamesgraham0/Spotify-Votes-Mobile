@@ -9,6 +9,14 @@ const Constants = {
     SPOTIFY_GREEN: '#1DB954',
     SPOTIFY_PURPLE: '#B026FF',
     SPOTIFY_BLACK: '#191414',
+    HEADER_STYLES: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        height: '13%',
+        padding: 20,
+        backgroundColor: 'rgba(10, 10, 10, 0.5)',
+    },
 };
 
 export default Constants;

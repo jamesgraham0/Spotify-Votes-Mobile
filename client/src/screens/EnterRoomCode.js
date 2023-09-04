@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingVi
 import React, { useState, useEffect } from 'react';
 import { socket } from '../utils/socket';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Constants from '../utils/constants';
+import DarkBackgroundCircles from '../components/DarkBackgroundCircles';
 
 const EnterRoomCode = ({ navigation, route }) => {
     const [code, setCode] = useState(['', '', '', '', '']);
@@ -93,7 +95,7 @@ const EnterRoomCode = ({ navigation, route }) => {
     };
 
     const header = () => {
-        return <View style={styles.container}>
+        return <View style={Constants.HEADER_STYLES}>
                     <TouchableOpacity
                         onPress={handleReturnToJoinOrCreateRoom}
                         style={styles.returnButton}
@@ -106,7 +108,9 @@ const EnterRoomCode = ({ navigation, route }) => {
 
     return (
         <View style={styles.outerContainer}>
+            <DarkBackgroundCircles/>
             {header()}
+            <Text style={styles.instructionText}>Enter the code for the room you want to join</Text>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.writeTaskWrapper}
@@ -122,14 +126,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#191414',
     },
-    container: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        backgroundColor: '#070707',
-        height: '13%',
-        padding: 20,
-    },
     enterRoomCode: {
         color: '#fff',
         fontSize: 24,
@@ -143,12 +139,19 @@ const styles = StyleSheet.create({
         height: 50,
         marginTop: 36,
     },
+    instructionText: {
+        color: '#BBB',
+        fontSize: 20,
+        marginHorizontal: 60,
+        marginTop: 100,
+        marginBottom: 10,
+    },
     writeTaskWrapper: {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginVertical: 200,
+        marginVertical: 100,
     },
     codeInputContainer: {
         flexDirection: 'row',
