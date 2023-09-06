@@ -1,22 +1,44 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import service from '../utils/service';
 import TrackSearchResult from './TrackSearchResult';
-import { pushQueue } from '../reducers/reducer';
-import { useDispatch } from 'react-redux';
 import { socket } from '../utils/socket';
+import * as Haptics from 'expo-haptics';
+import Constants from '../utils/constants';
 
-
-const Search = ({ room }) => {
+const Search = ({ room, user }) => {
     const [search, setSearch] = useState("")
     const [searchResults, setSearchResults] = useState([])
-    const dispatch = useDispatch();
+    const [q, setQ] = useState(room.queue);
+    const isPremiumAccount = user.product !== "free";
+    
+    useEffect(() => {
+        function fetchQueue() {
+          fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`)
+            .then((res) => res.json())
+            .then((data) => setQ(data))
+            .catch((err) => console.error(err));
+        }
+        fetchQueue();
+      }, []);
+
+    useEffect(() => {
+        socket.on("addedTrackToQueue", (q) => {
+            setQ(q)
+        });
+        socket.on('playingNextTrack', (obj) => {
+            setQ(obj.queue);
+        });
+        socket.on('joinRoom', (room) => {
+            setQ(room.queue);
+        });
+    }, [socket])
 
     useEffect(() => {
         if (!search) return setSearchResults([])
         let cancel = false
         service.searchTrack(search).then(res => {
-          if (cancel || !res.body) return
+          if (cancel || res === null) return
           setSearchResults(
             res.body.tracks.items.map(track => {
               let largeAlbumImage = track.album.images[1];
@@ -35,40 +57,57 @@ const Search = ({ room }) => {
                 largeImage: largeAlbumImage.url,
                 duration: track.duration_ms,
                 votes: 0,
+                usersVoted: [],
+                addedBy: user,
               }
             })
           )
-        })
+        });
         return () => (cancel = true)
       }, [search]);
 
       const addTrack = (track) => {
-        // dispatch(pushQueue({track: track, roomId: room.id}));
-        socket.emit("addTrack", {id:room.id, track:track});
+        if (!q.some(t => t.uri === track.uri)) {
+          socket.emit("addTrack", {roomId:room.id, track:track});
+        }
     }
 
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.search}
-                value={search}
-                placeholder="Search..."
-                placeholderTextColor="#555"
-                returnKeyType="search"
-                onChangeText={input => setSearch(input)}
-            />
+            {isPremiumAccount ? <TextInput
+                  style={styles.search}
+                  value={search}
+                  placeholder="Search..."
+                  placeholderTextColor="#555"
+                  returnKeyType="search"
+                  onChangeText={input => {
+                    setSearch(input.replace(/^\s+/, ''));
+                }}
+              /> 
+              :
+              <TextInput
+                  style={styles.searchDisabled}
+                  placeholder="Need premium account to search"
+                  placeholderTextColor="#555"
+              /> 
+            }
             <ScrollView
                 style={styles.scrollView}
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
+                keyboardShouldPersistTaps='handled'
             >
                 {searchResults.map(track => (
                     <TouchableOpacity 
                         key={track.uri}
-                        onPress={() => addTrack(track)}>
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                          addTrack(track)
+                        }}>
                         <TrackSearchResult
                             track={track}
+                            inQueue={q.some(t => t.uri === track.uri)}
                         />
                     </TouchableOpacity>
                 ))}
@@ -93,6 +132,16 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         color: '#BBB',
         fontSize: 30,
+        height: 33,
+        width: '90%',
+    },
+    searchDisabled: {
+        position: 'absolute',
+        top: 3,
+        left: 20,
+        marginVertical: 20,
+        color: '#BBB',
+        fontSize: 22,
         height: 33,
         width: '90%',
     },

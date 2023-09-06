@@ -1,10 +1,23 @@
-const http = require('http');
-const express = require('express');
-const socketIO = require('socket.io');
-const PORT = 3000;
+// import Constants from "./serverConstants";
+// let rooms = Constants.rooms;
+const express = require("express");
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+const http = require("http").Server(app);
+const cors = require("cors");
+const io = require("socket.io")(http, {
+	cors: {
+		origin: "http://localhost:3000",
+	},
+});
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors());
+const PORT = "4000";
+http.listen(PORT, () => {
+	console.log(`Server listening on ${PORT}`);
+});
+
 let rooms = [
 	{
 		"currentlyPlaying": {
@@ -12,117 +25,150 @@ let rooms = [
 			"uri": "", 
 			"smallImage": "", 
 			"largeImage": "", 
-			"duration": 0
+			"duration": 0,
 		}, 
 		"deviceId": "b166d1276412b883e0b37b6ef1112e656a5dc127", 
 		"hostId": "t1wyfo4650rthc8s0y3bmfhm8", 
 		"id": "oaijwefojewfewfaiejfojawef", 
 		"name": "1", 
-		"password": "1", 
+		"code": "00000",
 		"queue": [], 
 		"users": []
 	},
-];
+]
 
-io.on('connection', socket => {
-	console.log('client socketid: ' + socket.id);
+let roomCodeToIdMap = {};
+
+const findRoomById = (roomId) => {
+	return rooms.find(room => room.id === roomId);
+};
+ 
+const generateRandomString = () => {
+    const characters = '0123456789';
+    let result = '';
+    for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+    }
+    return result;
+};
+
+///////////////// SOCKET OPERATIONS /////////////////
+io.on("connection", (socket) => {
+	console.log(`User connected with socket id: ${socket.id}`)
 
 	socket.on('createRoom', (room) => {
-		console.log("creating room", room.name);
+		const { id } = room;
+		const code = generateRandomString();
+		roomCodeToIdMap[code] = id;
+		room["code"] = code;
 		rooms.unshift(room);
-		// Update every client about the new room
 		socket.broadcast.emit('createRoom', rooms);
-		// Join the host socket to the by roomId
 		socket.join(room.id);
 	});
 
-	socket.on('joinRoom', (room) => {
-		const r = rooms.find(rm => rm.id === room.id);
-
-		// Update the whole room for the user that just joined
-		socket.emit('joinRoom', r)
-		
-		// Let everyone in the room know that another person has joined the room
-		socket.to(room.id).emit('joinRoom', r);
-		
-		// Join the users' socket to the roomId
+	socket.on('joinRoom', (obj) => {
+		const { user, room } = obj;
+		const roomToJoin = findRoomById(room.id);
+		roomToJoin.users.push(user);
+		io.in(room.id).emit('newUserJoinedRoom', roomToJoin);
+		socket.emit('joinRoom', roomToJoin);
 		socket.join(room.id);
 	});
 
 	socket.on('deleteRoom', (room) => {
-		let i = rooms.findIndex((r) => r.id === room.id)
-		if (i > -1) {
-			rooms.splice(i, 1);
+		let roomIndex = rooms.findIndex(rm => rm.id === room.id)
+		if (roomIndex >= 0) {
+			rooms.splice(roomIndex, 1);
 		}
+		delete roomCodeToIdMap[room.code];
+		io.in(room.id).emit('kickUsersFromRoom');
 		socket.broadcast.emit('deleteRoom', rooms);
 	});
 
 	socket.on("addTrack", (obj) => {
-		const {id, track} = obj;
-		const room = rooms.find(room => room.id === id);
+		const { roomId, track } = obj;
+		const room = findRoomById(roomId);
 		if (room) {
-			// if there's no track playing: play it now
-			// If currentlyPlaying == {}: currentlyPlaying = track
 			if (Object.keys(room.currentlyPlaying).length === 0) {
 				room.currentlyPlaying = track;
 				io.in(room.id).emit('addedFirstTrack', track);
 			}
 			else {
-				// Else: add track to queue
 				room.queue.push(track);
-				// sort queue by votes
 				room.queue.sort((a, b) => b.votes - a.votes);
 				io.in(room.id).emit("addedTrackToQueue", room.queue);
 			}
 		}
 	});
 
-	// play the next track in the queue
-	// if there's no tracks in the queue, set the track to {}
 	socket.on('playNextTrack', (room) => {
-		// find what room this is
-		const {id} = room;
-		const r = rooms.find(rm => rm.id === id);
-
-		// pop the first track in the room.queue
+		const { id } = room;
+		const roomToPlayNextTrack = findRoomById(id);
 		let nextTrack = {};
-		if (r.queue.length > 0) {
-			nextTrack = r.queue.shift();
+		if (roomToPlayNextTrack.queue.length > 0) {
+			nextTrack = roomToPlayNextTrack.queue.shift();
 		}
-
-		r.currentlyPlaying = nextTrack;
-
-		// return {track:<first_track_in_queue>, queue:<room.queue>}
-		io.in(room.id).emit("playingNextTrack", {track:nextTrack, queue:r.queue})
+		roomToPlayNextTrack.currentlyPlaying = nextTrack;
+		io.in(room.id).emit("playingNextTrack", {nextTrack: nextTrack, queue: roomToPlayNextTrack.queue});
 	});
 
 	socket.on('vote', (room) => {
-		const { id, track } = room;
-		const r = rooms.find(rm => rm.id === id);
-		const t = r.queue.find(t => t.uri === track.uri);
-
-		// Increment the vote count
-		t.votes += 1;
-		r.queue.sort((a, b) => b.votes - a.votes);
-		io.in(room.id).emit('vote', r.queue);
+		const { track, roomId, user } = room;
+		const roomToVote = findRoomById(roomId);
+		const trackToVote = roomToVote.queue.find(t => t.uri === track.uri);
+		if (!trackToVote.usersVoted.some(u => u.id === user.id)) {
+			trackToVote.votes += 1;
+			trackToVote.usersVoted.push(user);
+			roomToVote.queue.sort((a, b) => b.votes - a.votes);
+		}
+		io.in(roomId).emit('vote', roomToVote.queue);
 	});
+	
+
+	socket.on('startCountdownForNextTrack', (room) => {
+		io.in(room.id).emit('startCountdownForNextTrack');
+	});
+
+	socket.on('checkRoomCode', (guessedCode, callback) => {
+		if (roomCodeToIdMap.hasOwnProperty(guessedCode)) {
+			const roomId = roomCodeToIdMap[guessedCode];
+			const room = findRoomById(roomId);
+			callback({ room: room, isCorrectCode: true });
+		} else {
+			callback({ room: {}, isCorrectCode: false });
+		}
+	});
+
+	socket.on('leaveRoom', (obj) => {
+    const { roomId, user } = obj;
+    const roomToLeave = findRoomById(roomId);
+    const userIndex = roomToLeave.users.findIndex(u => u.id === user.id);    
+    if (userIndex >= 0) {
+        roomToLeave.users.splice(userIndex, 1);
+    }
+    io.in(roomId).emit('leaveRoom', roomToLeave);
+});
 
 	socket.on('disconnect', () => {
 		socket.disconnect();
-		console.log('user ' + socket.id + ' disconnected');
+		console.log(`User disconnected with ID: ${socket.id}`);
 	});
 });
 
+///////////////// GET OPERATIONS /////////////////
 app.get("/rooms", (req, res) => {
 	res.json(rooms);
 });
 
 app.get('/queue/:id', (req, res) => {
 	const { id } = req.params;
-	const r = rooms.find((rm) => rm.id === id);
-	res.json(r.queue);
+	const room = findRoomById(id);
+	res.json(room.queue);
 });
 
-server.listen(PORT, () => {
-  console.log('server started and listening on port ' + PORT);
+app.get('/code/:id', (req, res) => {
+	const { id } = req.params;
+	const room = findRoomById(id);
+	res.json(room.code);
 });

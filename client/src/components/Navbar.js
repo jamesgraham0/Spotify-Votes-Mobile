@@ -1,4 +1,4 @@
-import { Animated, View } from 'react-native';
+import { Animated } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -34,21 +34,43 @@ const Navbar = ({ user, room }) => {
 
   function queueIconNotification() {
     setQueueIconColor('#1DB954');
-    Animated.spring(moveUp, {
+    const springUp = Animated.spring(moveUp, {
       toValue: -5,
-      duration: 100,
+      duration: 10,
       tension: 50,
       useNativeDriver: false,
-    }).start(() => {
+    });
+    const springDown = Animated.spring(moveUp, {
+      toValue: 0,
+      duration: 10,
+      tension: 50,
+      useNativeDriver: false,
+    });
+  
+    Animated.sequence([springUp, springDown]).start(() => {
       setTrackAddedToQueue(false);
-      Animated.spring(moveUp, {
-        toValue: 0,
-        duration: 100,
-        tension: 50,
-        useNativeDriver: false,
-      }).start(() => {
-        setQueueIconColor('#BBB');
-      });
+      setQueueIconColor('#BBB');
+    });
+  }
+  
+  function playIconNotification() {
+    setPlayIconColor('#1DB954');
+    const springUp = Animated.spring(moveUpPlaying, {
+      toValue: -5,
+      duration: 10,
+      tension: 50,
+      useNativeDriver: false,
+    });
+    const springDown = Animated.spring(moveUpPlaying, {
+      toValue: 0,
+      duration: 10,
+      tension: 50,
+      useNativeDriver: false,
+    });
+  
+    Animated.sequence([springUp, springDown]).start(() => {
+      setTrackAddedToPlaying(false);
+      setPlayIconColor('#BBB');
     });
   }
 
@@ -57,25 +79,6 @@ const Navbar = ({ user, room }) => {
   }, [trackAddedToQueue]);
 
 
-  function playIconNotification() {
-    setPlayIconColor('#1DB954');
-    Animated.spring(moveUpPlaying, {
-      toValue: -5,
-      duration: 100,
-      tension: 50,
-      useNativeDriver: false,
-    }).start(() => {
-      setTrackAddedToPlaying(false);
-      Animated.spring(moveUpPlaying, {
-        toValue: 0,
-        duration: 100,
-        tension: 50,
-        useNativeDriver: false,
-      }).start(() => {
-        setPlayIconColor('#BBB');
-      });
-    });
-  }
 
   useEffect(() => {
       setPlayIconColor(trackAddedToPlaying ? '#1DB954' : '#BBB');
@@ -101,7 +104,7 @@ const Navbar = ({ user, room }) => {
       >
       <Tab.Screen
         name="Search"
-        children={() => <Search room={room}/>}
+        children={() => <Search room={room} user={user}/>}
         options={{
           headerShown: false,
           tabBarLabel: 'Search',
@@ -128,7 +131,7 @@ const Navbar = ({ user, room }) => {
       />
       <Tab.Screen
         name="Queue"
-        children={() => <Queue queue={room.queue} roomId={room.id} />}
+        children={() => <Queue queue={room.queue} roomId={room.id} user={user} />}
         options={{
           headerShown: false,
           tabBarLabel: 'Queue',

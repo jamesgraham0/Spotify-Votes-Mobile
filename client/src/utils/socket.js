@@ -1,6 +1,11 @@
 import io from 'socket.io-client';
-// Initialize Socket IO: change to 'https://<myserver.onheroku.com>' in prod.
-export const socket = io('http://192.168.1.67:3000', {
+import Constants from './constants';
+
+export const socket = io(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}`, {
   transports: ['websocket'],
   jsonp: false
+});
+
+socket.on("connect", () => {
+  console.log(`User connected with socket id: ${socket.id}`)
 });

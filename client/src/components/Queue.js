@@ -2,15 +2,16 @@ import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import React, { useState, useEffect } from "react";
 import QueueTrack from './QueueTrack';
 import { socket } from '../utils/socket';
+import Constants from '../utils/constants';
 
-const Queue = ({ queue, roomId }) => {
+const Queue = ({ queue, roomId, user }) => {
     const [q, setQ] = useState(queue);
-    
-    // Grabs the queue from the socket when screen first mounts
+    const [countdownForNextTrack, setCountdownForNextTrack] = useState(5);
+    const [countdownStarted, setCountdownStarted] = useState(false);
+
     useEffect(() => {
         function fetchQueue() {
-          console.log("fetching queue");
-          fetch(`http://192.168.1.67:3000/queue/${roomId}`)
+          fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${roomId}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));
@@ -27,26 +28,51 @@ const Queue = ({ queue, roomId }) => {
         });
         socket.on('vote', (q) => {
             setQ(q);
-        })
+        });
         socket.on('joinRoom', (room) => {
             setQ(room.queue);
         });
+        socket.on('startCountdownForNextTrack', () => {
+            setCountdownStarted(true);
+        });
     }, [socket])
+
+    useEffect(() => {
+        if (countdownStarted) {
+          startCountdownForNextTrack();
+        }
+    }, [countdownStarted]);
+    
+    function startCountdownForNextTrack() {
+        let countdown = countdownForNextTrack;
+        const intervalId = setInterval(() => {
+            if (countdown > 0) {
+                countdown--;
+                setCountdownForNextTrack(countdown);
+            } else {
+                setCountdownStarted(false);
+                clearInterval(intervalId);
+                setCountdownForNextTrack(5);
+            }
+        }, 1000);
+    }
 
     return (
         <View style={styles.container}>
             <Text style={styles.queueText}>Queue</Text>
+            {countdownStarted &&
+                <Text style={styles.countdownForNextTrack}>{countdownForNextTrack}</Text>
+            }
             <ScrollView
                 style={styles.scrollView}
                 bounces='true'
                 contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
-                
             >
-                {q && q.length > 0 && q
+                {q?.length > 0 && q
                 .map((track, index) => {
                     return (
                         <View key={index}>
-                            <QueueTrack track={track} roomId={roomId}/>
+                            <QueueTrack track={track} roomId={roomId} user={user}/>
                         </View>
                     )
                 })}
@@ -69,6 +95,13 @@ const Queue = ({ queue, roomId }) => {
             left: 20,
             marginVertical: 20,
             color: '#BBB',
+            fontSize: 30,
+        },
+        countdownForNextTrack: {
+            position: 'absolute',
+            left: '48%',
+            marginVertical: 20,
+            color: '#B33',
             fontSize: 30,
         },
         scrollView: {
