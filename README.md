@@ -31,10 +31,10 @@
 - ✅ Add who added the track
 - ✅ Handle when non-host leaves the room
 - ✅ Handle when host closes Spotify while Spotify Votes is still being used 
+- ✅ Make the Landing page button look more like a button
 - 🛑 When the next track is popped from the queue, slide it to the left and fade it away
 - 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
 - 🛑 Prompts on how to search for a song, add a track, and general navigation about the room
-- 🛑 Make the Landing page button look more like a button
 
 **OTHER**
 - 🛑 Documentation and refactoring for readability and maintainability
