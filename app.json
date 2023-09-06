@@ -4,6 +4,7 @@
     "slug": "SpotifyVotesExpo",
     "version": "1.0.0",
     "orientation": "portrait",
+    "privacy": "public",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -11,7 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "scheme": "SpotifyVotesExpo",
+    "scheme": ["spotifyvotesexpo"],
     "updates": {
       "fallbackToCacheTimeout": 0
     },

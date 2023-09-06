@@ -1,5 +1,3 @@
-// import Constants from "./serverConstants";
-// let rooms = Constants.rooms;
 const express = require("express");
 const app = express();
 const http = require("http").Server(app);
