@@ -32,9 +32,18 @@
 - ✅ Handle when non-host leaves the room
 - ✅ Handle when host closes Spotify while Spotify Votes is still being used 
 - ✅ Make the Landing page button look more like a button
-- 🛑 When the next track is popped from the queue, slide it to the left and fade it away
-- 🛑 Animate adding a track to the queue, where the searched track shrinks and moves towards the queue
-- 🛑 Prompts on how to search for a song, add a track, and general navigation about the room
 
-**OTHER**
-- 🛑 Documentation and refactoring for readability and maintainability
+**Running the code**
+* Make sure you have Node.js installed
+* Make sure you have the expo app installed on your phone
+* Make sure you have the Spotify app installed on your phone
+* Clone the repository
+
+
+* In the root directory (*Spotify-Votes-Mobile*), run `npm install`
+* Run `npx expo start` to start the client side simulator with expo
+* In the *utils/constants.js* file, assign EXPO_IP to the IP address that is shown in the terminal, this is where expo is running and the client socket needs to connect to.
+* In another terminal, go to the *server* directory and run `npm install`
+* Run `npm start`, this will start the server
+
+If you did it correctly you should see an acknowledgement in the terminal that the client has connected to the server, with matching socket id's.
