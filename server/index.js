@@ -1,5 +1,3 @@
-// import Constants from "./serverConstants";
-// let rooms = Constants.rooms;
 const express = require("express");
 const app = express();
 const http = require("http").Server(app);
@@ -109,6 +107,7 @@ io.on("connection", (socket) => {
 		if (roomToPlayNextTrack.queue.length > 0) {
 			nextTrack = roomToPlayNextTrack.queue.shift();
 		}
+		console.log("play next track:", nextTrack);
 		roomToPlayNextTrack.currentlyPlaying = nextTrack;
 		io.in(room.id).emit("playingNextTrack", {nextTrack: nextTrack, queue: roomToPlayNextTrack.queue});
 	});
