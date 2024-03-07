@@ -60,8 +60,8 @@ const Landing = ({ navigation }) => {
   useEffect(() => {
     if (response?.type === 'success') {
       service
-        .getUserCredentials(response)
-        .then((user) => {
+      .getUserCredentials(response)
+      .then((user) => {
           navigation.navigate('JoinOrCreateRoom', { user: user });
         })
         .catch((error) => {

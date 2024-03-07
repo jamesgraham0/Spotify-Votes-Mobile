@@ -15,12 +15,12 @@ const AppNavigation = () => {
           <Stack.Screen 
             name="Landing" 
             component={Landing}
-            options={{ headerShown: false, title: 'Landing'}}  
+            options={{ headerShown: false, title: 'Landing' }}  
             />
           <Stack.Screen 
             name="JoinOrCreateRoom" 
             component={JoinOrCreateRoom} 
-            options={{ headerShown: false, title: 'JoinOrCreateRoom'}}  
+            options={{ headerShown: false, title: 'JoinOrCreateRoom', gestureEnabled: false}}  
             />
           <Stack.Screen 
             name="CreateRoom" 
