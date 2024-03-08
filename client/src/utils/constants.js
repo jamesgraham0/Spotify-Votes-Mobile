@@ -10,11 +10,14 @@ const Constants = {
     SPOTIFY_PURPLE: '#B026FF',
     SPOTIFY_BLACK: '#191414',
     HEADER_STYLES: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '13%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        height: '13%',
-        padding: 20,
+        justifyContent: 'center',
         backgroundColor: 'rgba(10, 10, 10, 0.5)',
     },
 };

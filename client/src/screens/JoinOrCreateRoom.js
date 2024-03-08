@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import * as Haptics from 'expo-haptics';
-import Constants from '../utils/constants';
 import BackgroundCircles from '../components/BackgroundCircles';
+import RoomButton from '../components/RoomButton';
 
 const JoinOrCreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
@@ -22,28 +22,26 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
             <BackgroundCircles/>
             <Text style={styles.title}> Spotify Votes </Text>
             <Text style={styles.HiMessage}> Hi, {name}! </Text>
-            <TouchableOpacity 
+            <RoomButton
                 disabled={!isPremiumAccount}
                 onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
                     handleCreateRoom();
                 }} 
-                style={!isPremiumAccount ? styles.createRoomButtonDisabled : styles.createRoomButton}>
-                    {isPremiumAccount ? 
-                        <Text style={styles.createRoomText}>Create Room</Text> 
-                        :
-                        <Text style={styles.createRoomTextDisabled}>Spotify premium required</Text>
-                    }
-            </TouchableOpacity>
-            <TouchableOpacity 
-            onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
-                handleJoinRoom();
-            }} 
-            style={styles.joinRoomButton}>
-                <Text style={styles.joinRoomText}>Join Room</Text>
-            </TouchableOpacity>
-    </View>
+                buttonText={isPremiumAccount ? "Create Room" : "Spotify premium required"}
+                buttonStyle={isPremiumAccount ? styles.createRoomButton : styles.createRoomButtonDisabled}
+                textStyle={styles.createRoomText}
+            />
+            <RoomButton
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); 
+                    handleJoinRoom();
+                }} 
+                buttonText="Join Room"
+                buttonStyle={styles.joinRoomButton}
+                textStyle={styles.joinRoomText}
+            />
+        </View>
     )
 }
 
@@ -223,6 +221,5 @@ const styles = StyleSheet.create({
         right: -40,
     },
 });
-  
 
 export default JoinOrCreateRoom;

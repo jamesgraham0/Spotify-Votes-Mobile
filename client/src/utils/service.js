@@ -20,24 +20,10 @@ const concatUrl = (url) => `${BASE_URL}/${url}`;
 // otherwise returns ""
 const getDeviceId = async () => {
     try {
-        device_id = "";
         const response = await spotifyApi.getMyDevices();
         const devices = response.body.devices;
-        if (devices.length === 0) {
-            device_id = "";
-            return "";
-        }
-        let activeDevices = devices.filter((device) => device.is_active);
-        if (devices.length > 0) {
-            device_id = activeDevices.map((device) => {
-                if (device.type !== "Spotify Connect") {
-                    return device.id;
-                }
-            });
-        }
-        if (Array.isArray(device_id)) {
-            device_id = device_id[0];
-        }
+        const activeDevices = devices.filter(device => device.is_active && device.type !== "Spotify Connect");
+        device_id = activeDevices.length > 0 ? activeDevices[0].id : "";
         return device_id;
     } catch (error) {
         console.log(error);
