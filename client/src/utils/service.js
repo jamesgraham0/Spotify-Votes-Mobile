@@ -1,11 +1,11 @@
 import axios from "axios";
 import SpotifyWebApi from "spotify-web-api-node";
-import {CLIENT_ID, REDIRECT_URI} from "react-native-dotenv";
+import { CLIENT_ID, REDIRECT_URI } from "react-native-dotenv";
 import { Linking } from "react-native";
 import Constants from "./constants";
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: CLIENT_ID,
+    clientId: CLIENT_ID,
 });
 
 let token = "";
@@ -33,7 +33,7 @@ const getDeviceId = async () => {
                 if (device.type !== "Spotify Connect") {
                     return device.id;
                 }
-            });                                               
+            });
         }
         if (Array.isArray(device_id)) {
             device_id = device_id[0];
@@ -105,25 +105,25 @@ const service = {
         try {
             const response = await spotifyApi.getMyDevices();
             const devices = response.body.devices;
-          
+
             const deviceTypes = ["Smartphone", "Computer", "Tablet", "Speaker"];
             let deviceToTransfer = null;
-          
+
             for (const deviceType of deviceTypes) {
-              deviceToTransfer = devices.find((device) => device.type === deviceType);
-              if (deviceToTransfer) {
-                break; // Exit the loop if a matching device is found
-              }
+                deviceToTransfer = devices.find((device) => device.type === deviceType);
+                if (deviceToTransfer) {
+                    break; // Exit the loop if a matching device is found
+                }
             }
-          
+
             if (deviceToTransfer) {
-              await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
-              return deviceToTransfer.is_active;
+                await spotifyApi.transferMyPlayback([deviceToTransfer.id]);
+                return deviceToTransfer.is_active;
             }
             return false;
-          } catch (error) {
+        } catch (error) {
             console.log(error);
-          }
+        }
     },
 
     getDeviceId: async () => {
@@ -136,13 +136,13 @@ const service = {
 
     searchTrack: async (search) => {
         try {
-            let result = await spotifyApi.searchTracks(search, { limit : 40 });
+            let result = await spotifyApi.searchTracks(search, { limit: 40 });
             return result;
         } catch (error) {
             console.log("Error while searching for track", error);
             return null;
         }
-      },
+    },
 
     addTrackToQueue: async (track) => {
         const uri = track.uri;
@@ -154,7 +154,7 @@ const service = {
                 trackInQueue = true;
             }
         });
-        
+
         // track not in queue, add it
         if (!trackInQueue) {
             const data = {
@@ -167,15 +167,15 @@ const service = {
                 }
                 const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${device_id}`;
                 await axios.post(url,
-                    data, 
+                    data,
                     {
-                  headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                  },
-                });
-              } catch (error) {
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Accept": "application/json",
+                            "Content-Type": "application/json"
+                        },
+                    });
+            } catch (error) {
                 console.log(error);
             }
         }
@@ -212,34 +212,45 @@ const service = {
         }
     },
 
-    startPlaying: async (track, deviceId, playFromBeginning) => {
-        const { uri } = track;
+    startPlaying: async (track, deviceId) => {
         if (deviceId !== "" && deviceId !== null) {
             try {
                 const playbackState = await spotifyApi.getMyCurrentPlaybackState();
-                let position = 0;
-                if (!playFromBeginning && playbackState.body !== null && playbackState?.body.progress_ms !== 0) {
-                    position = playbackState.body.progress_ms;
+                let currentPosition = 0;
+                if (playbackState.body !== null && playbackState?.body.progress_ms !== 0) {
+                    currentPosition = playbackState.body.progress_ms;
                 }
+                console.log("Trying to play the track", track.uri, "\nat position", currentPosition, "\non device", deviceId, "token", token);
                 try {
-                    await spotifyApi.play({
-                        uris: [uri],
-                        position_ms: position  
-                    });
-                    return true;
+                    const response = await axios.put(
+                        'https://api.spotify.com/v1/me/player/play',
+                        {
+                          'uris': [
+                            track.uri
+                          ],
+                          'position_ms': currentPosition
+                        },
+                        {
+                          headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                          }
+                        }
+                      );
+                    return response.status === 204;
                 } catch (error) {
                     console.log("Trying to play the track again", error);
-                    await handleReconnectionToSpotify();
+                    // await handleReconnectionToSpotify();
                     return false;
                 }
             } catch (error) {
-                console.log(`Error trying to get playback state`, error);
+                console.log("Error trying to get playback state", error);
                 return false;
             }
         }
         return false;
     },
-    
+
     pausePlaying: async () => {
         try {
             await spotifyApi.pause();
@@ -271,7 +282,7 @@ const service = {
         } catch (error) {
             console.log(error);
         }
-    },    
+    },
 
     // pause playback and set the users" currently playing track to {}
     resetPlaybackToEmptyState: async () => {

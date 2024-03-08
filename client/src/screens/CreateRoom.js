@@ -129,7 +129,7 @@ const CreateRoom = ({ navigation, route }) => {
             {header()}
             <Text style={styles.instructionText}>Give your new room a name!</Text>
             <KeyboardAvoidingView 
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                // behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.inputWrapper}
             >
                 <TextInput

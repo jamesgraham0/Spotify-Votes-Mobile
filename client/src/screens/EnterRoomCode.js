@@ -112,7 +112,7 @@ const EnterRoomCode = ({ navigation, route }) => {
             {header()}
             <Text style={styles.instructionText}>Enter the code for the room you want to join</Text>
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                // behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.writeTaskWrapper}
             >
                 {renderCodeInputs()}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons';
 import { socket } from "../utils/socket";
 import Constants from "../utils/constants";
 
@@ -58,49 +58,49 @@ const Player = ({ user, room }) => {
 
     ////////////////////////////////////////
 
-    const handlePlayPause = async () => {
+    const handlePlayPause = () => {
         if (isPlaying) {
-            await handlePause();
+            handlePause();
         } else {
-            await handlePlay();
+            handlePlay();
         }
     }
 
     const handlePause = async () => {
         await service.pausePlaying();
-            setIsPlaying(false);
+        setIsPlaying(false);
     }
-    
+
     const handlePlay = async () => {
         if (currentlyPlaying?.uri && deviceId && deviceId !== '') {
             setIsPlaying(true);
-            await service.startPlaying(currentlyPlaying, deviceId, false);
+            await service.startPlaying(currentlyPlaying, deviceId);
         } else {
-            alert("There was an issue finding an active spotify device, reload the app and try again.")
+            alert("There was an issue finding an active spotify device, reload the app and try again.");
         }
     }
 
     if (currentlyPlaying?.uri) {
         return (
             <View style={styles.container}>
-            <View style={[styles.player, {backgroundColor: Constants.SPOTIFY_BLACK}]}>
-                <Image style={styles.image} source={{uri: currentlyPlaying.largeImage}}/>
-            </View>
+                <View style={[styles.player, { backgroundColor: Constants.SPOTIFY_BLACK }]}>
+                    <Image style={styles.image} source={{ uri: currentlyPlaying.largeImage }} />
+                </View>
                 {currentlyPlaying.title && currentlyPlaying.artist &&
                     <View style={styles.bottomContainer}>
                         <View style={styles.trackInfoContainer}>
                             <Text style={styles.title}>{currentlyPlaying.title}</Text>
-                            <Text style={styles.artist}>{currentlyPlaying.artist}</Text> 
+                            <Text style={styles.artist}>{currentlyPlaying.artist}</Text>
                         </View>
                         <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
                             {user.id === hostId ? isPlaying ?
-                                <Ionicons name="pause-outline" size={48} color="white"/>
-                                :   <Ionicons name="play-outline" size={48} color="white"/> 
+                                <Ionicons name="pause-outline" size={48} color="white" />
+                                : <Ionicons name="play-outline" size={48} color="white" />
                                 : <Text>Hello</Text>
                             }
                         </TouchableOpacity>
-                    </View>    
-                }   
+                    </View>
+                }
             </View>
         );
     }
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         height: 265,
         borderRadius: 10,
         shadowColor: 'rgba(29, 185, 84, 0.5)',
-        shadowOffset: {width: 0, height: 0},
+        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 40,
         alignItems: 'center',
