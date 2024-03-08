@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { socket } from '../utils/socket';
-import DarkBackgroundCircles from '../components/DarkBackgroundCircles';
+import DarkBackgroundCircles from '../components/BackgroundCircles2';
 import Header from '../components/Header';
+import Constants from '../utils/constants';
 
 const EnterRoomCode = ({ navigation, route }) => {
     const [code, setCode] = useState(['', '', '', '', '']);
@@ -114,11 +115,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#191414',
     },
     instructionText: {
-        color: '#BBB',
-        fontSize: 20,
-        marginHorizontal: 60,
-        marginTop: 200,
-        marginBottom: 10,
+        ...Constants.INSTRUCTION_TEXT_STYLES,
     },
     writeTaskWrapper: {
         width: '100%',

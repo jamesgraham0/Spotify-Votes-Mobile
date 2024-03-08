@@ -2,21 +2,21 @@ import { StyleSheet, View } from 'react-native';
 import Constants from '../utils/constants';
 
 const BackgroundCircles = () => {
-    return (
-        <View style={styles.container}>
-            <View style={[styles.circleGreen1, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-            <View style={[styles.circleGreen2, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-            <View style={[styles.circleGreen3, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-            <View style={[styles.circleGreen4, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
-            <View style={[styles.circleGreen5, {backgroundColor: Constants.SPOTIFY_GREEN}]} />
+  return (
+    <View style={styles.container}>
+      <View style={[styles.circleGreen1, {backgroundColor: Constants.SPOTIFY_GREEN, shadowColor: Constants.SPOTIFY_GREEN}]} />
+      <View style={[styles.circleGreen2, {backgroundColor: Constants.SPOTIFY_GREEN, shadowColor: Constants.SPOTIFY_GREEN}]} />
+      <View style={[styles.circleGreen3, {backgroundColor: Constants.SPOTIFY_GREEN, shadowColor: Constants.SPOTIFY_GREEN}]} />
+      <View style={[styles.circleGreen4, {backgroundColor: Constants.SPOTIFY_GREEN, shadowColor: Constants.SPOTIFY_GREEN}]} />
+      <View style={[styles.circleGreen5, {backgroundColor: Constants.SPOTIFY_GREEN, shadowColor: Constants.SPOTIFY_GREEN}]} />
 
-            <View style={[styles.circlePurple1, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-            <View style={[styles.circlePurple2, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-            <View style={[styles.circlePurple3, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-            <View style={[styles.circlePurple4, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-            <View style={[styles.circlePurple5, {backgroundColor: Constants.SPOTIFY_PURPLE}]} />
-        </View>
-    );
+      <View style={[styles.circlePurple1, {backgroundColor: Constants.SPOTIFY_PURPLE, shadowColor: Constants.SPOTIFY_PURPLE}]} />
+      <View style={[styles.circlePurple2, {backgroundColor: Constants.SPOTIFY_PURPLE, shadowColor: Constants.SPOTIFY_PURPLE}]} />
+      <View style={[styles.circlePurple3, {backgroundColor: Constants.SPOTIFY_PURPLE, shadowColor: Constants.SPOTIFY_PURPLE}]} />
+      <View style={[styles.circlePurple4, {backgroundColor: Constants.SPOTIFY_PURPLE, shadowColor: Constants.SPOTIFY_PURPLE}]} />
+      <View style={[styles.circlePurple5, {backgroundColor: Constants.SPOTIFY_PURPLE, shadowColor: Constants.SPOTIFY_PURPLE}]} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -84,7 +84,11 @@ function circleStyle(size) {
     height: size,
     borderRadius: size / 2,
     opacity: 0.4,
-  };
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 6,
+    elevation: 5,
+};
 }
 
 export default BackgroundCircles;

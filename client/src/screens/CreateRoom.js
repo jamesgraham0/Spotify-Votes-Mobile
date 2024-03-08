@@ -2,7 +2,6 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity,
     TextInput,
     KeyboardAvoidingView,
     Keyboard,
@@ -10,13 +9,12 @@ import {
     Alert
 } from 'react-native';
 import React, { useState } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
 import Constants from '../utils/constants';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
-import DarkBackgroundCircles from '../components/DarkBackgroundCircles';
+import DarkBackgroundCircles from '../components/BackgroundCircles2';
 import Header from '../components/Header';
 
 const CreateRoom = ({ navigation, route }) => {
@@ -162,26 +160,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#191414',
     },
-    createRoomText: {
-        fontSize: 40,
-        color: '#fff',
-        fontSize: 24,
-        maxWidth: '70%',
-        textAlign: 'center',
-        marginHorizontal: 56,
-        marginTop: 20,
-    },
     returnButton: {
         width: 50,
         height: 50,
         marginTop: 36,
     },
     instructionText: {
-        color: '#BBB',
-        fontSize: 20,
-        marginHorizontal: 60,
-        marginTop: 250,
-        marginBottom: 10,
+        ...Constants.INSTRUCTION_TEXT_STYLES
     },
     inputWrapper: {
         backgroundColor: '#101010',

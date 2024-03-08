@@ -20,6 +20,13 @@ const Constants = {
         justifyContent: 'center',
         backgroundColor: 'rgba(10, 10, 10, 0.5)',
     },
+    INSTRUCTION_TEXT_STYLES: {
+        color: '#BBB',
+        fontSize: 22,
+        marginHorizontal: 60,
+        marginTop: 220,
+        marginBottom: 10,
+    }
 };
 
 export default Constants;
