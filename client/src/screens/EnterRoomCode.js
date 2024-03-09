@@ -83,7 +83,7 @@ const EnterRoomCode = ({ navigation, route }) => {
                             onKeyPress={({ nativeEvent }) => {
                                 if (nativeEvent.key === 'Backspace') {
                                     handleBackspaceOnEmptyBox(index);
-                                };
+                                }
                             }}
                             value={digit}
                             maxLength={1}

@@ -20,13 +20,12 @@ const Navbar = ({ user, room }) => {
   const [playIconColor, setPlayIconColor] = useState('#BBB');
   const moveUpPlaying = useState(new Animated.Value(0))[0];
 
-
   useEffect(() => {
-    socket.on("addedTrackToQueue", (q) => {
+    socket.on("addedTrackToQueue", () => {
       setTrackAddedToQueue(true);
       queueIconNotification();
     }); 
-    socket.on("addedFirstTrack", (t) => {
+    socket.on("addedFirstTrack", () => {
       setTrackAddedToPlaying(true);
       playIconNotification();
     })
@@ -108,7 +107,7 @@ const Navbar = ({ user, room }) => {
         options={{
           headerShown: false,
           tabBarLabel: 'Search',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Ionicons name="search" color={'#BBB'} size={size} />
           ),
         }}
@@ -118,7 +117,7 @@ const Navbar = ({ user, room }) => {
         children={() => <Playing user={user} room={room} />}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Animated.View
               style={[{
                   marginTop: moveUpPlaying,
@@ -135,7 +134,7 @@ const Navbar = ({ user, room }) => {
         options={{
           headerShown: false,
           tabBarLabel: 'Queue',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Animated.View
               style={[{
                   marginTop: moveUp,

@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import service from "../utils/service";

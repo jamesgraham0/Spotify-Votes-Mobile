@@ -16,6 +16,7 @@ import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
 import DarkBackgroundCircles from '../components/BackgroundCircles2';
 import Header from '../components/Header';
+import RoomButton from '../components/RoomButton';
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;

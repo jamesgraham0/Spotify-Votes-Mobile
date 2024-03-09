@@ -11,7 +11,6 @@ const spotifyApi = new SpotifyWebApi({
 let token = "";
 let device_id = "";
 let queue = [];
-let userInfo = {};
 
 const BASE_URL = "https://api.spotify.com/v1"
 const concatUrl = (url) => `${BASE_URL}/${url}`;
@@ -80,7 +79,6 @@ const service = {
                     "Authorization": `Bearer ${access_token}`
                 }
             });
-            userInfo = response?.data;
             return response?.data;
         } catch (error) {
             console.log(error);
@@ -226,7 +224,7 @@ const service = {
                     return response.status === 204;
                 } catch (error) {
                     console.log("Trying to play the track again", error);
-                    // await handleReconnectionToSpotify();
+                    await handleReconnectionToSpotify();
                     return false;
                 }
             } catch (error) {

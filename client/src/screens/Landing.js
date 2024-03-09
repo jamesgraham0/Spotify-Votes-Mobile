@@ -49,7 +49,7 @@ const Landing = ({ navigation }) => {
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
   };
 
-  const [request, response, promptAsync] = useAuthRequest(
+  const [, response, promptAsync] = useAuthRequest(
     {
       responseType: ResponseType.Token,
       clientId: CLIENT_ID,

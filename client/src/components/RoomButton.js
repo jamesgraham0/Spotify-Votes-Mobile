@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import * as Haptics from 'expo-haptics';
 
-export default RoomButton = ({ onPress, disabled, buttonText, buttonStyle, textStyle }) => {
+const RoomButton = ({ onPress, disabled, buttonText, buttonStyle, textStyle }) => {
     return (
         <TouchableOpacity
             onPress={() => {
@@ -37,3 +37,5 @@ const stylesButton = StyleSheet.create({
         fontSize: 24,
     },
 });
+
+export default RoomButton;

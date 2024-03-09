@@ -129,7 +129,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on('checkRoomCode', (guessedCode, callback) => {
-		if (roomCodeToIdMap.hasOwnProperty(guessedCode)) {
+		if (guessedCode in roomCodeToIdMap) {
 			const roomId = roomCodeToIdMap[guessedCode];
 			const room = findRoomById(roomId);
 			// if the host of the room is the one trying to join, don't let them

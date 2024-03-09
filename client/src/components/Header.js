@@ -1,9 +1,9 @@
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, { useState, useEffect } from 'react';
 import Constants from '../utils/constants';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-export default Header = ({ headerText, onBackPress }) => {
+const Header = ({ headerText, onBackPress }) => {
     return (
         <View style={Constants.HEADER_STYLES}>
             <TouchableOpacity onPress={onBackPress} style={styles.returnButton}>
@@ -30,3 +30,5 @@ const styles = StyleSheet.create({
         height: 50,
     },
 });
+
+export default Header;
