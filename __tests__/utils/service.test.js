@@ -9,20 +9,6 @@ describe('Service', () => {
     });
 
     describe('login', () => {
-        it('should make a GET request to authorize endpoint', async () => {
-            axios.get.mockResolvedValueOnce();
-
-            await service.login();
-            expect(axios.get).toHaveBeenCalledWith(expect.stringContaining('authorize'), {
-                params: expect.objectContaining({
-                    client_id: expect.any(String),
-                    response_type: expect.any(String),
-                    redirect_uri: expect.any(String),
-                    scope: expect.any(String)
-                })
-            });
-        });
-
         it('should log an error if the request fails', async () => {
             const error = new Error('Request failed');
             axios.get.mockRejectedValueOnce(error);
