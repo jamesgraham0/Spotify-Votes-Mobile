@@ -120,8 +120,14 @@ const service = {
 
     searchTrack: async (search) => {
         try {
-            let result = await spotifyApi.searchTracks(search, { limit: 40 });
-            return result;
+            const url = concatUrl(`search?q=${encodeURIComponent(search)}&type=track`);
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response?.data.tracks.items;
         } catch (error) {
             console.log("Error while searching for track", error);
             return null;
@@ -131,15 +137,8 @@ const service = {
     addTrackToQueue: async (track) => {
         const uri = track.uri;
 
-        // track already in queue
-        let trackInQueue = false;
-        queue.forEach((t) => {
-            if (t.trackUri === uri) {
-                trackInQueue = true;
-            }
-        });
+        const trackInQueue = queue.some((t) => t.trackUri === uri);
 
-        // track not in queue, add it
         if (!trackInQueue) {
             const data = {
                 uri: uri,
@@ -149,16 +148,14 @@ const service = {
                 if (device_id === "") {
                     throw new Error("No device found trying to addTrackToQueue");
                 }
-                const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${device_id}`;
-                await axios.post(url,
-                    data,
-                    {
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Accept": "application/json",
-                            "Content-Type": "application/json"
-                        },
-                    });
+                const url = concatUrl(`me/player/queue?uri=${uri}&device_id=${device_id}`);
+                await axios.post(url, data, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                });
             } catch (error) {
                 console.log(error);
             }
@@ -199,28 +196,33 @@ const service = {
     startPlaying: async (track, deviceId) => {
         if (deviceId !== "" && deviceId !== null) {
             try {
-                const playbackState = await spotifyApi.getMyCurrentPlaybackState();
+                const url_ = concatUrl(`me/player`);
+                const playbackState = await axios.get(url_, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
                 let currentPosition = 0;
-                if (playbackState.body !== null && playbackState?.body.progress_ms !== 0) {
-                    currentPosition = playbackState.body.progress_ms;
+                if (playbackState.data?.progress_ms !== 0) {
+                    currentPosition = playbackState.data.progress_ms;
                 }
-                console.log("Trying to play the track", track.uri, "\nat position", currentPosition, "\non device", deviceId, "token", token);
+                const url = concatUrl(`me/player/play`);
                 try {
                     const response = await axios.put(
-                        'https://api.spotify.com/v1/me/player/play',
+                        url,
                         {
-                          'uris': [
-                            track.uri
-                          ],
-                          'position_ms': currentPosition
+                            'uris': [
+                                track.uri
+                            ],
+                            'position_ms': currentPosition
                         },
                         {
-                          headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                          }
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
                         }
-                      );
+                    );
                     return response.status === 204;
                 } catch (error) {
                     console.log("Trying to play the track again", error);
@@ -237,54 +239,43 @@ const service = {
 
     pausePlaying: async () => {
         try {
-            await spotifyApi.pause();
+            const url = concatUrl('me/player/pause');
+            await axios.put(url, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
         } catch (error) {
             console.log("Error when trying to pause:", error);
         }
     },
 
-    getPlaybackState: async () => {
+    resetTrack: async () => {
         try {
-            const result = await spotifyApi.getMyCurrentPlaybackState();
-            if (result.body !== null) {
-                return result.body;
-            }
-            return false;
+            const url = concatUrl('me/player/seek?position_ms=0');
+            await axios.put(url, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
         } catch (error) {
-            console.log("Error getting playback state from serparate functinon", error);
+            console.log("Error when trying to reset track:", error);
         }
     },
 
-    // returns the current playing track as an object or an empty object
-    getCurrentlyPlaying: async () => {
-        try {
-            const result = await spotifyApi.getMyCurrentPlayingTrack();
-            if (result.body !== null) {
-                return result.body;
-            }
-            return {};
-        } catch (error) {
-            console.log(error);
-        }
-    },
-
-    // pause playback and set the users" currently playing track to {}
+    // pause playback and set the users' currently playing track to {}
     resetPlaybackToEmptyState: async () => {
-        spotifyApi.getMyCurrentPlayingTrack().then((track) => {
-            let isPlaying = track?.body.is_playing;
-            if (isPlaying) { // reset player
-                spotifyApi.pause().then(() => {
-                    //current track has been set to {}
-                }, (err) => {
-                    console.log(err);
-                });
-                spotifyApi.seek(0).then(() => {
-                    //current track has been set to {}
-                }, (err) => {
-                    console.log(err);
-                });
+        const url = concatUrl('me/player/currently-playing');
+        const track = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
             }
-        });
+        })
+        let isPlaying = track?.data.is_playing;
+        if (isPlaying) { // reset player
+            await service.pausePlaying();
+            await service.resetTrack();
+        }
     }
 }
 

@@ -40,7 +40,7 @@ const Search = ({ room, user }) => {
         service.searchTrack(search).then(res => {
           if (cancel || res === null) return
           setSearchResults(
-            res.body.tracks.items.map(track => {
+            res.map(track => {
               let largeAlbumImage = track.album.images[1];
               const smallestAlbumImage = track.album.images.reduce(
                 (smallest, image) => {

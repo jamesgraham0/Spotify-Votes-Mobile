@@ -1,47 +1,11 @@
-import { StyleSheet, Text, View, TouchableOpacity, Animated, Easing} from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
 import { ResponseType, useAuthRequest } from 'expo-auth-session';
 import service from '../utils/service';
 import { CLIENT_ID, CLIENT_SECRET } from 'react-native-dotenv';
 import * as Haptics from 'expo-haptics';
 import BackgroundCircles from '../components/BackgroundCircles';
-
-const PulsingButton = ({ onPress }) => {
-  const [pulseValue] = useState(new Animated.Value(1));
-
-  useEffect(() => {
-    const pulseIn = Animated.timing(pulseValue, {
-      toValue: 1.2, 
-      duration: 1200, 
-      useNativeDriver: true,
-      easing: Easing.linear,
-    });
-
-    const pulseOut = Animated.timing(pulseValue, {
-      toValue: 1, 
-      duration: 1200, 
-      useNativeDriver: true,
-      easing: Easing.linear,
-    });
-
-    const pulseSequence = Animated.sequence([pulseIn, pulseOut]);
-
-    Animated.loop(pulseSequence).start();
-  }, []);
-
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.roundButton}>
-      <Animated.View
-        style={[
-          styles.pulseView,
-          {
-            transform: [{ scale: pulseValue }],
-          },
-        ]}
-      />
-    </TouchableOpacity>
-  );
-};
+import PulsingButton from '../components/PulsingButton';
 
 const Landing = ({ navigation }) => {
   const discovery = {
@@ -115,24 +79,6 @@ const styles = StyleSheet.create({
     top: '40%',
     fontSize: 40,
     color: 'white',
-  },
-  roundButton: {
-    width: 70,
-    height: 70,
-    top: '65%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pulseView: {
-    width: 70,
-    height: 70,
-    borderWidth: 2,
-    borderRadius: 50,
-    shadowOpacity: 2,
-    shadowColor: '#1DB954',
-    shadowOffset: { width: 0, height: 0 },
-    borderColor: '#1DB954',
-    backgroundColor: 'transparent',
   },
   circleBlack1: {
     position: 'absolute',
