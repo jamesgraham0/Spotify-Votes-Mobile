@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { socket } from '../utils/socket';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import DarkBackgroundCircles from '../components/BackgroundCircles2';
+import Header from '../components/Header';
 import Constants from '../utils/constants';
-import DarkBackgroundCircles from '../components/DarkBackgroundCircles';
 
 const EnterRoomCode = ({ navigation, route }) => {
     const [code, setCode] = useState(['', '', '', '', '']);
@@ -82,9 +82,9 @@ const EnterRoomCode = ({ navigation, route }) => {
                             onChangeText={text => onChanged(text, index)}
                             onKeyPress={({ nativeEvent }) => {
                                 if (nativeEvent.key === 'Backspace') {
-                                  handleBackspaceOnEmptyBox(index);
-                                };
-                              }}
+                                    handleBackspaceOnEmptyBox(index);
+                                }
+                            }}
                             value={digit}
                             maxLength={1}
                         />
@@ -94,25 +94,13 @@ const EnterRoomCode = ({ navigation, route }) => {
         );
     };
 
-    const header = () => {
-        return <View style={Constants.HEADER_STYLES}>
-                    <TouchableOpacity
-                        onPress={handleReturnToJoinOrCreateRoom}
-                        style={styles.returnButton}
-                    >
-                        <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
-                    </TouchableOpacity>
-                    <Text style={styles.enterRoomCode}>Enter Room Code</Text>
-                </View>
-    };
-
     return (
         <View style={styles.outerContainer}>
-            <DarkBackgroundCircles/>
-            {header()}
+            <DarkBackgroundCircles />
+            <Header headerText="Enter Room Code" onBackPress={handleReturnToJoinOrCreateRoom}/>
             <Text style={styles.instructionText}>Enter the code for the room you want to join</Text>
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                // behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.writeTaskWrapper}
             >
                 {renderCodeInputs()}
@@ -126,25 +114,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#191414',
     },
-    enterRoomCode: {
-        color: '#fff',
-        fontSize: 24,
-        maxWidth: '70%',
-        textAlign: 'center',
-        marginHorizontal: 34,
-        marginTop: 20,
-    },
-    returnButton: {
-        width: 50,
-        height: 50,
-        marginTop: 36,
-    },
     instructionText: {
-        color: '#BBB',
-        fontSize: 20,
-        marginHorizontal: 60,
-        marginTop: 100,
-        marginBottom: 10,
+        ...Constants.INSTRUCTION_TEXT_STYLES,
     },
     writeTaskWrapper: {
         width: '100%',

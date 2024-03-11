@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     },
     artist: {
         fontSize: 12,
-        color: '#fff',
         color: '#1DB954',
     },
     img: {

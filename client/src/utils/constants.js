@@ -1,5 +1,5 @@
 const Constants = {
-    EXPO_IP: '192.168.1.71', // For development purposes this needs to be updated to match the IP of expo go after each update
+    EXPO_IP: '192.168.1.64', // TODO: For development purposes this needs to be updated to match the IP of expo go after each update
     BACKEND_PORT: '4000',
     EXPO_PORT: '19000',
     SPOTIFY_URL: 'https://open.spotify.com',
@@ -10,13 +10,23 @@ const Constants = {
     SPOTIFY_PURPLE: '#B026FF',
     SPOTIFY_BLACK: '#191414',
     HEADER_STYLES: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '13%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        height: '13%',
-        padding: 20,
+        justifyContent: 'center',
         backgroundColor: 'rgba(10, 10, 10, 0.5)',
     },
+    INSTRUCTION_TEXT_STYLES: {
+        color: '#BBB',
+        fontSize: 22,
+        marginHorizontal: 60,
+        marginTop: 220,
+        marginBottom: 10,
+    }
 };
 
 export default Constants;

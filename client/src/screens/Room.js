@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
         top: 150,
         height: 500,
         margin: 20,
-        backgroundColor: 'rgba(20, 20, 20, 0.5)',
+        backgroundColor: 'rgba(20, 20, 20, 0.9)',
         borderRadius: 20,
         padding: 15,
         alignItems: 'center',
@@ -272,7 +272,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-        backgroundColor: '#191414',
     },
     userContainer: {
         height: 50,

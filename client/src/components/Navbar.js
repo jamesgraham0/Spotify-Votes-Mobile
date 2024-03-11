@@ -1,9 +1,7 @@
 import { Animated } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { socket } from '../utils/socket';
 import Playing from './Playing';
 import Search from './Search';
@@ -20,13 +18,12 @@ const Navbar = ({ user, room }) => {
   const [playIconColor, setPlayIconColor] = useState('#BBB');
   const moveUpPlaying = useState(new Animated.Value(0))[0];
 
-
   useEffect(() => {
-    socket.on("addedTrackToQueue", (q) => {
+    socket.on("addedTrackToQueue", () => {
       setTrackAddedToQueue(true);
       queueIconNotification();
     }); 
-    socket.on("addedFirstTrack", (t) => {
+    socket.on("addedFirstTrack", () => {
       setTrackAddedToPlaying(true);
       playIconNotification();
     })
@@ -108,7 +105,7 @@ const Navbar = ({ user, room }) => {
         options={{
           headerShown: false,
           tabBarLabel: 'Search',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Ionicons name="search" color={'#BBB'} size={size} />
           ),
         }}
@@ -118,7 +115,7 @@ const Navbar = ({ user, room }) => {
         children={() => <Playing user={user} room={room} />}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Animated.View
               style={[{
                   marginTop: moveUpPlaying,
@@ -135,7 +132,7 @@ const Navbar = ({ user, room }) => {
         options={{
           headerShown: false,
           tabBarLabel: 'Queue',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ size }) => (
             <Animated.View
               style={[{
                   marginTop: moveUp,

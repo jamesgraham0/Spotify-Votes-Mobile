@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BackgroundCircles2 should render the BackgroundCircles2 component 1`] = `
+<View
+  style={
+    {
+      "height": "100%",
+      "position": "absolute",
+      "width": "100%",
+    }
+  }
+>
+  <View
+    style={
+      [
+        {
+          "borderRadius": 100,
+          "elevation": 5,
+          "height": 200,
+          "opacity": 0.2,
+          "position": "absolute",
+          "right": 150,
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "top": 510,
+          "width": 200,
+        },
+        {
+          "backgroundColor": "#1DB954",
+          "shadowColor": "#1DB954",
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      [
+        {
+          "borderRadius": 200,
+          "bottom": -200,
+          "elevation": 5,
+          "height": 400,
+          "opacity": 0.3,
+          "position": "absolute",
+          "right": -100,
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "width": 400,
+        },
+        {
+          "backgroundColor": "#1DB954",
+          "shadowColor": "#1DB954",
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      [
+        {
+          "borderRadius": 50,
+          "bottom": 280,
+          "elevation": 5,
+          "height": 100,
+          "opacity": 0.1,
+          "position": "absolute",
+          "right": 90,
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "width": 100,
+        },
+        {
+          "backgroundColor": "#1DB954",
+          "shadowColor": "#1DB954",
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      [
+        {
+          "borderRadius": 100,
+          "elevation": 5,
+          "height": 200,
+          "left": 30,
+          "opacity": 0.4,
+          "position": "absolute",
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "top": 140,
+          "width": 200,
+        },
+        {
+          "backgroundColor": "rgba(10, 10, 10, 1)",
+          "shadowColor": "rgba(10, 10, 10, 1)",
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      [
+        {
+          "borderRadius": 75,
+          "elevation": 5,
+          "height": 150,
+          "opacity": 0.4,
+          "position": "absolute",
+          "right": 40,
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "top": 150,
+          "width": 150,
+        },
+        {
+          "backgroundColor": "rgba(10, 10, 10, 1)",
+          "shadowColor": "rgba(10, 10, 10, 1)",
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      [
+        {
+          "borderRadius": 25,
+          "elevation": 5,
+          "height": 50,
+          "opacity": 0.2,
+          "position": "absolute",
+          "right": 150,
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "top": 120,
+          "width": 50,
+        },
+        {
+          "backgroundColor": "#B026FF",
+          "shadowColor": "#B026FF",
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      [
+        {
+          "borderRadius": 125,
+          "elevation": 5,
+          "height": 250,
+          "opacity": 0.4,
+          "position": "absolute",
+          "right": -60,
+          "shadowOffset": {
+            "height": 0,
+            "width": 0,
+          },
+          "shadowOpacity": 0.8,
+          "shadowRadius": 6,
+          "top": -60,
+          "width": 250,
+        },
+        {
+          "backgroundColor": "#B026FF",
+          "shadowColor": "#B026FF",
+        },
+      ]
+    }
+  />
+</View>
+`;

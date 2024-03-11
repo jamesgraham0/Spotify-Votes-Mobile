@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TrackSearchResult should render the TrackSearchResult component 1`] = `
+<View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#080808",
+        "borderRadius": 5,
+        "flex": 1,
+        "flexDirection": "row",
+        "height": 80,
+        "marginHorizontal": 20,
+        "marginVertical": 10,
+        "padding": 5,
+      }
+    }
+  >
+    <Image
+      source={
+        {
+          "uri": "test.jpg",
+        }
+      }
+      style={
+        {
+          "backgroundColor": "black",
+          "borderRadius": 5,
+          "height": 70,
+          "width": 70,
+        }
+      }
+    />
+    <View
+      style={
+        {
+          "alignSelf": "center",
+          "marginHorizontal": 30,
+          "marginVertical": 10,
+          "width": 180,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#fff",
+            "fontSize": 20,
+            "fontWeight": "bold",
+          }
+        }
+      >
+        Test Track
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#fff",
+            "fontSize": 16,
+          }
+        }
+      >
+        Test Artist
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`TrackSearchResult should render the TrackSearchResult component with blur 1`] = `
+<View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#080808",
+        "borderRadius": 5,
+        "flex": 1,
+        "flexDirection": "row",
+        "height": 80,
+        "marginHorizontal": 20,
+        "marginVertical": 10,
+        "padding": 5,
+      }
+    }
+  >
+    <Image
+      source={
+        {
+          "uri": "test.jpg",
+        }
+      }
+      style={
+        {
+          "backgroundColor": "black",
+          "borderRadius": 5,
+          "height": 70,
+          "width": 70,
+        }
+      }
+    />
+    <View
+      style={
+        {
+          "alignSelf": "center",
+          "marginHorizontal": 30,
+          "marginVertical": 10,
+          "width": 180,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#fff",
+            "fontSize": 20,
+            "fontWeight": "bold",
+          }
+        }
+      >
+        Test Track
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#fff",
+            "fontSize": 16,
+          }
+        }
+      >
+        Test Artist
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+          },
+          {
+            "alignItems": "center",
+            "backgroundColor": "rgba(0, 50, 100, 0.2)",
+            "borderRadius": 5,
+            "bottom": 0,
+            "justifyContent": "center",
+            "left": 0,
+            "overflow": "hidden",
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          },
+        ]
+      }
+    >
+      <ViewManagerAdapter_ExpoBlurView
+        blurReductionFactor={4}
+        experimentalBlurMethod="none"
+        intensity={30}
+        style={
+          {
+            "bottom": 0,
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
+        tint="dark"
+      />
+      <Text
+        style={
+          {
+            "color": "white",
+            "fontSize": 30,
+          }
+        }
+      >
+        Added to queue
+      </Text>
+    </View>
+  </View>
+</View>
+`;

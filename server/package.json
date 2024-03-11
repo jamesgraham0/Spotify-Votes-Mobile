@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prestart": "eslint ./*.js || true",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
@@ -15,5 +16,8 @@
     "express": "^4.18.2",
     "nodemon": "^2.0.20",
     "socket.io": "^4.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
   }
 }

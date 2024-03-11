@@ -1,34 +1,34 @@
-import { 
-    StyleSheet, 
-    Text, 
-    View, 
-    TouchableOpacity, 
-    TextInput, 
-    KeyboardAvoidingView, 
-    Keyboard, 
+import {
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    KeyboardAvoidingView,
+    Keyboard,
     Linking,
     Alert
 } from 'react-native';
 import React, { useState } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
 import Constants from '../utils/constants';
 import service from '../utils/service';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
-import DarkBackgroundCircles from '../components/DarkBackgroundCircles';
+import DarkBackgroundCircles from '../components/BackgroundCircles2';
+import Header from '../components/Header';
+import RoomButton from '../components/RoomButton';
 
 const CreateRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
-    
+
     const handleReturnToJoinOrCreateRoom = () => {
         navigation.navigate('JoinOrCreateRoom', { user: user });
     }
-    
+
     const createNewRoom = async () => {
         return {
-            name: roomName, 
+            name: roomName,
             hostId: user.id,
             code: '00000',
             id: uuid.v4(),
@@ -38,13 +38,13 @@ const CreateRoom = ({ navigation, route }) => {
             queue: [],
         }
     }
-    
+
     const handleRedirectToSpotify = async () => {
         try {
             if (await Linking.canOpenURL(Constants.SPOTIFY_URL)) {
                 await Linking.openURL(Constants.SPOTIFY_URL);
             }
-            
+
             // stall to get devices when the user comes back
             const delayMilliseconds = 2000;
             await new Promise(resolve => setTimeout(resolve, delayMilliseconds));
@@ -61,17 +61,17 @@ const CreateRoom = ({ navigation, route }) => {
     // the room.
     const validateDeviceId = (deviceId) => {
         return (
-            deviceId !== '' 
-            && 
-            deviceId !== undefined 
-            && 
+            deviceId !== ''
+            &&
+            deviceId !== undefined
+            &&
             deviceId.length === Constants.DEVICE_ID_LENGTH
         )
     };
 
     const handleNavigateToNewRoom = async (room) => {
         socket.emit('createRoom', room);
-        navigation.navigate('Room', {room: room, user: user});
+        navigation.navigate('Room', { room: room, user: user });
         await service.resetPlaybackToEmptyState();
     };
 
@@ -111,42 +111,30 @@ const CreateRoom = ({ navigation, route }) => {
         }
     };
 
-    const header = () => {
-        return <View style={Constants.HEADER_STYLES}>
-                    <TouchableOpacity
-                        onPress={handleReturnToJoinOrCreateRoom}
-                        style={styles.returnButton}
-                    >
-                        <Ionicons name="chevron-back-circle-outline" size={32} color="grey" />
-                    </TouchableOpacity>
-                    <Text style={styles.createRoomText}>Create Room</Text>
-                </View>
-    };
-            
     return (
         <View style={styles.outerContainer}>
-            <DarkBackgroundCircles/>
-            {header()}
+            <DarkBackgroundCircles />
+            <Header headerText="Create Room" onBackPress={handleReturnToJoinOrCreateRoom}/>
             <Text style={styles.instructionText}>Give your new room a name!</Text>
-            <KeyboardAvoidingView 
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            <KeyboardAvoidingView
+                // behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.inputWrapper}
             >
                 <TextInput
                     style={styles.textInput}
-                    placeholder={'Project X 2.0...'} 
-                    value={roomName} 
+                    placeholder={'Chill party...'}
+                    value={roomName}
                     onChangeText={word => setRoomName(word)}
                     placeholderTextColor="#888"
+                /> 
+                <RoomButton
+                    onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                        handleCreateRoom();
+                    }}
+                    buttonText="Create Room"
+                    buttonStyle={styles.createRoomButton}
                 />
-                <TouchableOpacity onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                    handleCreateRoom()
-                }}>
-                <View style={styles.addWrapper}>
-                    <Text style={styles.addText}>+</Text>
-                </View>
-                </TouchableOpacity>
             </KeyboardAvoidingView>
         </View>
     )
@@ -155,16 +143,23 @@ const CreateRoom = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     outerContainer: {
         flex: 1,
+        height: 300,
         backgroundColor: '#191414',
     },
-    createRoomText: {
-        fontSize: 40,
-        color: '#fff',
-        fontSize: 24,
-        maxWidth: '70%',
-        textAlign: 'center',
-        marginHorizontal: 56,
-        marginTop: 20,
+    createRoomButton: {
+        borderWidth: 2,
+        borderColor: '#B026FF',
+        width: 300,
+        height: 80,
+        borderRadius: 50,
+        shadowOpacity: 1,
+        shadowColor: '#B026FF',
+        shadowOffset: { width: 0, height: 0 },
+        shadowRadius: 5,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#191414',
     },
     returnButton: {
         width: 50,
@@ -172,17 +167,14 @@ const styles = StyleSheet.create({
         marginTop: 36,
     },
     instructionText: {
-        color: '#BBB',
-        fontSize: 20,
-        marginHorizontal: 60,
-        marginTop: 100,
-        marginBottom: 10,
+        ...Constants.INSTRUCTION_TEXT_STYLES
     },
     inputWrapper: {
         backgroundColor: '#101010',
         width: '90%',
-        height: '25%',
+        height: '30%',
         flexDirection: 'column',
+        justifyContent: 'space-around',
         alignItems: 'center',
         borderRadius: 30,
         margin: 20,
@@ -203,27 +195,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         borderBottomEndRadius: 100,
     },
-    addWrapper: {
-        marginVertical: 20,
-        width: 60,
-        height: 60,
-        borderRadius: 60,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#1DB954',
-        shadowOpacity: 0.5,
-        shadowColor: '#1DB954',
-        shadowOffset: { width: 0, height: 0 },
-        shadowRadius: 5,
-        backgroundColor: '#191414',
-    },
-    addText: {
-        color: '#fff',
-        fontSize: 24,
-    }
-  })
-  
+})
+
 
 export default CreateRoom;
