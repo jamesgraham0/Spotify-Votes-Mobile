@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Queue should render the Queue component 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "black",
+      "flex": 1,
+      "height": "100%",
+      "opacity": 0.9,
+      "width": "100%",
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "#BBB",
+        "fontSize": 30,
+        "left": 20,
+        "marginVertical": 20,
+        "position": "absolute",
+      }
+    }
+  >
+    Queue
+  </Text>
+  <RCTScrollView
+    bounces="true"
+    contentInset={
+      {
+        "bottom": 10,
+        "left": 0,
+        "right": 0,
+        "top": 10,
+      }
+    }
+    style={
+      {
+        "borderEndColor": "#BBB",
+        "borderEndWidth": 1,
+        "borderRadius": 30,
+        "borderStartColor": "#BBB",
+        "borderStartWidth": 1,
+        "height": "80%",
+        "position": "absolute",
+        "top": 80,
+        "width": "90%",
+      }
+    }
+  >
+    <View />
+  </RCTScrollView>
+</View>
+`;

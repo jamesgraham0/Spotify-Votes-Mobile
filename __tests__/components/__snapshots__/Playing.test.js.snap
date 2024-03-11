@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Playing should render the Playing component 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flex": 1,
+      },
+      {
+        "backgroundColor": "#191414",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": "#080808",
+        "height": "100%",
+        "width": "100%",
+      }
+    }
+  />
+</View>
+`;
