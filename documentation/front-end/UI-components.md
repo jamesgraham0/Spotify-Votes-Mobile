@@ -57,7 +57,7 @@
     
     ### RoomButton
     
-    - Called from **CreateRoom** and **JoinOrCreateRoom**
+    - Called from **CreateRoom** and **LocalRoom**
     - Represents a customizable button used for various actions within a room.
     - Triggers haptic feedback and a provided `onPress` function when the button is pressed.
     - Displays a provided text (`buttonText`) and can be styled with custom button and text styles (`buttonStyle` and `textStyle`).
@@ -85,7 +85,7 @@
     
     ### BackgroundCircles
     
-    - Called from **Landing** and **JoinOrCreateRoom**
+    - Called from **Landing** and **LocalRoom**
     - A dynamic, abstract background pattern composed of overlapping, semi-transparent circles of two different colours. The dark circles are used to guide the users eyes to the instruction text.
     
     ### BackgroundCircles2
@@ -107,7 +107,7 @@
     - Maintains a state for the room code and updates it as the user types in the `TextInput`.
     - Contains a function `validateCodeAndJoinRoom` that checks if the entered code corresponds to an existing room and, if so, emits a 'joinRoom' event to the server and navigates the user to the room.
     
-    ### JoinOrCreateRoom
+    ### LocalRoom
     
     - Represents a screen where users can choose to either create a new room or join an existing room.
     - Receives the user's information as a prop and uses it to display a personalized greeting and to determine whether the user has a premium Spotify account.

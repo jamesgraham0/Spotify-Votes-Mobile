@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JoinOrCreateRoom should render the JoinOrCreateRoom component 1`] = `
+exports[`LocalRoom should render the LocalRoom component 1`] = `
 <View
   style={
     {
@@ -280,6 +280,76 @@ exports[`JoinOrCreateRoom should render the JoinOrCreateRoom component 1`] = `
       }
     />
   </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(10, 10, 10, 0.5)",
+        "flexDirection": "row",
+        "height": "13%",
+        "justifyContent": "center",
+        "left": 0,
+        "position": "absolute",
+        "top": 0,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "height": 50,
+          "left": 20,
+          "opacity": 1,
+          "position": "absolute",
+          "top": "50%",
+          "width": 50,
+        }
+      }
+    >
+      <Text />
+    </View>
+    <Text
+      style={
+        {
+          "color": "#fff",
+          "fontSize": 24,
+          "maxWidth": "70%",
+          "position": "absolute",
+          "top": "50%",
+        }
+      }
+    >
+      Spotify Votes
+    </Text>
+  </View>
   <Text
     style={
       {
@@ -289,7 +359,7 @@ exports[`JoinOrCreateRoom should render the JoinOrCreateRoom component 1`] = `
       }
     }
   >
-     Spotify Votes 
+    Local Room
   </Text>
   <Text
     style={
@@ -300,8 +370,7 @@ exports[`JoinOrCreateRoom should render the JoinOrCreateRoom component 1`] = `
       }
     }
   >
-     Hi, 
-    ! 
+    Create or join a room
   </Text>
   <View
     accessibilityState={

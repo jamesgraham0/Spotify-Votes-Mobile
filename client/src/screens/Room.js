@@ -45,7 +45,7 @@ const Room = ({ navigation, route }) => {
                         {
                             text: "OK",
                             onPress: () => {
-                                navigation.navigate('JoinOrCreateRoom', { user: user });
+                                navigation.navigate('LocalRoom', { user: user });
                             }
                         }
                     ]
@@ -85,7 +85,7 @@ const Room = ({ navigation, route }) => {
         (socket.emit("leaveRoom", {roomId: room.id, user: user}));
     }; 
 
-    const handleReturnToJoinOrCreateRoom = () => {
+    const handleReturnToLocalRoom = () => {
         if (room.hostId === user.id) {
             Alert.alert(
                 "Wait!",
@@ -98,7 +98,7 @@ const Room = ({ navigation, route }) => {
                     { 
                         text: "Delete Room", 
                         onPress: () => {
-                            navigation.navigate('JoinOrCreateRoom', { user: user });
+                            navigation.navigate('LocalRoom', { user: user });
                             const pause = async () => {
                                 await service.resetPlaybackToEmptyState();
                             }
@@ -109,7 +109,7 @@ const Room = ({ navigation, route }) => {
                 ]
             );
         } else {
-            navigation.navigate('JoinOrCreateRoom', { user: user });
+            navigation.navigate('LocalRoom', { user: user });
             handleUserLeavingRoom();
         }
     }
@@ -181,7 +181,7 @@ const Room = ({ navigation, route }) => {
                 <TouchableOpacity 
                 onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    handleReturnToJoinOrCreateRoom();
+                    handleReturnToLocalRoom();
                 }} 
                 style={styles.returnButton}
                 >
