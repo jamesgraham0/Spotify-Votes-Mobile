@@ -1,12 +1,12 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import JoinOrCreateRoom from '../../client/src/screens/JoinOrCreateRoom';
+import LocalRoom from '../../client/src/screens/LocalRoom';
 
-describe('JoinOrCreateRoom', () => {
-    it('should render the JoinOrCreateRoom component', () => {
+describe('LocalRoom', () => {
+    it('should render the LocalRoom component', () => {
         const navigation = {};
         const route = { params: { user: {} } };
-        const tree = renderer.create(<JoinOrCreateRoom navigation={navigation} route={route} />).toJSON();
+        const tree = renderer.create(<LocalRoom navigation={navigation} route={route} />).toJSON();
         expect(tree).toMatchSnapshot();
     });
 });

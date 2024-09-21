@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { socket } from '../utils/socket';
-import DarkBackgroundCircles from '../components/BackgroundCircles2';
-import Header from '../components/Header';
-import Constants from '../utils/constants';
+import { socket } from '../../utils/socket';
+import DarkBackgroundCircles from '../../components/BackgroundCircles2';
+import Header from '../../components/Header';
+import Constants from '../../utils/constants';
 
-const EnterRoomCode = ({ navigation, route }) => {
+const JoinLocalRoomScreen = ({ navigation, route }) => {
     const [code, setCode] = useState(['', '', '', '', '']);
     const { user } = route.params;
     const inputRefs = [];
@@ -37,8 +37,8 @@ const EnterRoomCode = ({ navigation, route }) => {
         });
     };
 
-    const handleReturnToJoinOrCreateRoom = () => {
-        navigation.navigate('JoinOrCreateRoom', { user: user });
+    const handleReturnToLocalRoom = () => {
+        navigation.navigate('CreateOrJoinLocalRoomScreen', { user: user });
     }
 
 
@@ -97,7 +97,7 @@ const EnterRoomCode = ({ navigation, route }) => {
     return (
         <View style={styles.outerContainer}>
             <DarkBackgroundCircles />
-            <Header headerText="Enter Room Code" onBackPress={handleReturnToJoinOrCreateRoom}/>
+            <Header headerText="Enter Room Code" onBackPress={handleReturnToLocalRoom}/>
             <Text style={styles.instructionText}>Enter the code for the room you want to join</Text>
             <KeyboardAvoidingView
                 // behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default EnterRoomCode;
+export default JoinLocalRoomScreen;

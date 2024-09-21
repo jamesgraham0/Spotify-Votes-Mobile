@@ -10,20 +10,20 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import uuid from 'react-native-uuid';
-import Constants from '../utils/constants';
-import service from '../utils/service';
-import { socket } from '../utils/socket';
+import Constants from '../../utils/constants';
+import service from '../../utils/service';
+import { socket } from '../../utils/socket';
 import * as Haptics from 'expo-haptics';
-import DarkBackgroundCircles from '../components/BackgroundCircles2';
-import Header from '../components/Header';
-import RoomButton from '../components/RoomButton';
+import DarkBackgroundCircles from '../../components/BackgroundCircles2';
+import Header from '../../components/Header';
+import RoomButton from '../../components/RoomButton';
 
-const CreateRoom = ({ navigation, route }) => {
+const CreateLocalRoomScreen = ({ navigation, route }) => {
     const { user } = route.params;
     const [roomName, setRoomName] = useState('');
 
-    const handleReturnToJoinOrCreateRoom = () => {
-        navigation.navigate('JoinOrCreateRoom', { user: user });
+    const handleReturnToLocalRoom = () => {
+        navigation.navigate('CreateOrJoinLocalRoomScreen', { user: user });
     }
 
     const createNewRoom = async () => {
@@ -70,7 +70,7 @@ const CreateRoom = ({ navigation, route }) => {
     };
 
     const handleNavigateToNewRoom = async (room) => {
-        socket.emit('createRoom', room);
+        socket.emit('createLocalRoomScreen', room);
         navigation.navigate('Room', { room: room, user: user });
         await service.resetPlaybackToEmptyState();
     };
@@ -80,7 +80,7 @@ const CreateRoom = ({ navigation, route }) => {
         return trimmedRoomName.length <= 20;
     };
 
-    const handleCreateRoom = async () => {
+    const handleCreateLocalRoomScreen = async () => {
         Keyboard.dismiss();
         if (validateRoomName()) {
             const room = await createNewRoom();
@@ -114,7 +114,7 @@ const CreateRoom = ({ navigation, route }) => {
     return (
         <View style={styles.outerContainer}>
             <DarkBackgroundCircles />
-            <Header headerText="Create Room" onBackPress={handleReturnToJoinOrCreateRoom}/>
+            <Header headerText="Create Room" onBackPress={handleReturnToLocalRoom}/>
             <Text style={styles.instructionText}>Give your new room a name!</Text>
             <KeyboardAvoidingView
                 // behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -130,10 +130,10 @@ const CreateRoom = ({ navigation, route }) => {
                 <RoomButton
                     onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                        handleCreateRoom();
+                        handleCreateLocalRoomScreen();
                     }}
                     buttonText="Create Room"
-                    buttonStyle={styles.createRoomButton}
+                    buttonStyle={styles.createLocalRoomScreenButton}
                 />
             </KeyboardAvoidingView>
         </View>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
         height: 300,
         backgroundColor: '#191414',
     },
-    createRoomButton: {
+    createLocalRoomScreenButton: {
         borderWidth: 2,
         borderColor: '#B026FF',
         width: 300,
@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default CreateRoom;
+export default CreateLocalRoomScreen;

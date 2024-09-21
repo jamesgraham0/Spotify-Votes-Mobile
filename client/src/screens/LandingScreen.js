@@ -38,7 +38,7 @@ const Landing = ({ navigation }) => {
     if (response?.type === 'success') {
       service.getUserCredentials(response)
       .then((user) => {
-          navigation.navigate('JoinOrCreateRoom', { user: user });
+          navigation.navigate('LocalOrGlobal', { user: user });
         })
         .catch((error) => {
           console.log(error);

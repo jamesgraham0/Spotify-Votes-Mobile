@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import * as Haptics from 'expo-haptics';
-import BackgroundCircles from '../components/BackgroundCircles';
-import RoomButton from '../components/RoomButton';
+import BackgroundCircles from '../../components/BackgroundCircles';
+import RoomButton from '../../components/RoomButton';
+import Header from '../../components/Header';
 
-const JoinOrCreateRoom = ({ navigation, route }) => {
+const CreateOrJoinLocalRoomScreen = ({ navigation, route }) => {
     const { user } = route.params;
     const name = user.display_name;
     const isPremiumAccount = user.product !== "free";
@@ -20,8 +21,9 @@ const JoinOrCreateRoom = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             <BackgroundCircles/>
-            <Text style={styles.title}> Spotify Votes </Text>
-            <Text style={styles.HiMessage}> Hi, {name}! </Text>
+            <Header headerText="Spotify Votes" onBackPress={() => navigation.navigate('LocalOrGlobal', { user: user })}/>
+            <Text style={styles.title}>Local Room</Text>
+            <Text style={styles.instructions}>Create or join a room</Text>
             <RoomButton
                 disabled={!isPremiumAccount}
                 onPress={() => {
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
       fontSize: 40,
       color: '#1DB954',
     },
-    HiMessage: {
+    instructions: {
         top: 280,
         color: '#fff',
         fontSize: 30,
@@ -222,4 +224,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default JoinOrCreateRoom;
+export default CreateOrJoinLocalRoomScreen;
