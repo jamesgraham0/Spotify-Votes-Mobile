@@ -5,85 +5,73 @@ import DarkBackgroundCircles from '../../components/BackgroundCircles2';
 import Header from '../../components/Header';
 import Constants from '../../utils/constants';
 import { ScrollView } from 'react-native';
+import RoomToJoin from '../../components/GlobalRoomToJoin';
 
 const JoinGlobalRoomScreen = ({ navigation, route }) => {
     const { user } = route.params;
 
+    // TODO: Fetch rooms data from server --> Redis
     const rooms = [
         {
-            name: 'Room 1',
-            subtitle: 'Subtitle 1',
-            users: '3/40',
-            track: 'Track 1',
+            id: Math.random().toString(36).substring(7),
+            name: '12345678901234567890',
+            subtitle: 'Subtitle 1 - This is a long subtitle that describes the room in detail',
+            users: ["james", "shaun", "josh", "jason", "jimmy"],
+            track: 'Where I Belong',
             art: 'Art 1',
         },
         {
+            id: Math.random().toString(36).substring(7),
             name: 'Room 2',
             subtitle: 'Subtitle 2',
-            users: '5/40',
+            users: ["james", "shaun"],
             track: 'Track 2',
             art: 'Art 2',
         },
     ];
 
     return (
-        <View style={styles.outerContainer}>
-            <DarkBackgroundCircles />
-            <Header headerText="Select Room to Join" onBackPress={() => navigation.navigate('CreateOrJoinGlobalRoomScreen', { user: user })}/>
-            
-            <ScrollView>
-                {rooms.length > 0 ? (
+        <View style={styles.container}>
+        <DarkBackgroundCircles />
+        <Header headerText="Select Room to Join" onBackPress={() => navigation.navigate('CreateOrJoinGlobalRoomScreen', { user: user })}/>
+        <ScrollView
+            style={styles.scrollView}
+            bounces='true'
+            contentInset={{top: 10, left: 0, bottom: 10, right: 0}}
+        >
+            {rooms.length > 0 ? (
                     rooms.map((room, index) => (
                         <View key={index}>
-                            <Text>{room.name}</Text>
-                            <Text>{room.subtitle}</Text>
-                            <Text>{room.users}</Text>
-                            <Text>{room.track}</Text>
-                            <Text>{room.art}</Text>
+                            <RoomToJoin room={room} user={user} />
                         </View>
                     ))
                 ) : (
-                    <Text>No rooms at the moment. Try creating one!</Text>
+                    <Text style={Constants.INSTRUCTION_TEXT_STYLES}>No global rooms at the moment. Try creating a new one!</Text>
                 )}
-            </ScrollView>
-        </View>
+        </ScrollView>
+    </View>
     )
 }
 
 const styles = StyleSheet.create({
-    outerContainer: {
+    container: {
         flex: 1,
-        backgroundColor: '#191414',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    writeTaskWrapper: {
         width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        marginVertical: 100,
+        height: '100%',
+        alignItems: "center",
+        backgroundColor: "#191414",
     },
-    codeInputContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginBottom: 200,
-    },
-    codeBox: {
-        width: 60,
-        height: 60,
-        marginHorizontal: 5,
-        backgroundColor: 'black',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'grey',
-    },
-    codeInput: {
-        flex: 1,
-        color: 'white',
-        fontSize: 24,
-        textAlign: 'center',
-    },
+    scrollView: {
+        position: 'absolute',
+        top: 140,
+        width: '90%',
+        height: '75%',
+        borderRadius: 30,
+        borderStartColor: '#BBB',
+        borderStartWidth: 1,
+        borderEndColor: '#BBB',
+        borderEndWidth: 1,
+    }
 })
 
 
