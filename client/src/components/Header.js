@@ -17,7 +17,7 @@ const Header = ({ headerText, onBackPress }) => {
 const styles = StyleSheet.create({
     headerText: {
         position: 'absolute',
-        top: '50%',
+        top: '55%',
         color: '#fff',
         fontSize: 24,
         maxWidth: '70%',

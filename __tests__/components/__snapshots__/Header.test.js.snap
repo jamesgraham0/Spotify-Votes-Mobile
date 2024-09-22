@@ -64,7 +64,7 @@ exports[`Header should render the Header component 1`] = `
         "fontSize": 24,
         "maxWidth": "70%",
         "position": "absolute",
-        "top": "50%",
+        "top": "55%",
       }
     }
   />
