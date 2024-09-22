@@ -26,7 +26,20 @@ const Constants = {
         marginHorizontal: 60,
         marginTop: 220,
         marginBottom: 10,
-    }
+    },
+    TEXT_INPUT_STYLES: {
+        marginTop: 10,
+        padding: 10,
+        width: 300,
+        fontSize: 24,
+        color: '#fff',
+        backgroundColor: '#101010',
+        borderStartColor: '#B026FF',
+        borderStartWidth: 1,
+        borderBottomColor: '#B026FF',
+        borderBottomWidth: 2,
+        borderBottomEndRadius: 100,
+    },
 };
 
 export default Constants;

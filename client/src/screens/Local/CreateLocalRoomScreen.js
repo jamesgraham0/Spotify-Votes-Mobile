@@ -121,10 +121,11 @@ const CreateLocalRoomScreen = ({ navigation, route }) => {
                 style={styles.inputWrapper}
             >
                 <TextInput
-                    style={styles.textInput}
+                    style={Constants.TEXT_INPUT_STYLES}
                     placeholder={'Chill party...'}
                     value={roomName}
                     onChangeText={word => setRoomName(word)}
+                    maxLength={20}
                     placeholderTextColor="#888"
                 /> 
                 <RoomButton
@@ -181,20 +182,7 @@ const styles = StyleSheet.create({
         shadowColor: '#1DB954',
         shadowOpacity: 0.3,
         shadowOffset: { width: -2, height: -2 },
-    },
-    textInput: {
-        marginTop: 50,
-        padding: 10,
-        width: 250,
-        fontSize: 24,
-        color: '#fff',
-        backgroundColor: '#101010',
-        borderStartColor: '#B026FF',
-        borderStartWidth: 1,
-        borderBottomColor: '#B026FF',
-        borderBottomWidth: 2,
-        borderBottomEndRadius: 100,
-    },
+    }
 })
 
 
