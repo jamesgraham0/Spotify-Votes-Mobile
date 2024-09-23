@@ -17,7 +17,7 @@ const Search = ({ room, user }) => {
           fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
-            .catch((err) => console.error(err));
+            .catch((err) => console.error(err, "An error occurred while fetching the queue"));
         }
         fetchQueue();
       }, []);

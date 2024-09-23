@@ -6,7 +6,7 @@ import Constants from "../utils/constants";
 const GlobalRoomToJoin = ({ room, user }) => {
   const { name, subtitle, users, track } = room;
 
-  const handleGoToGlobalRoom = (room, user) => {
+  const JoinGlobalRoom = (room, user) => {
     console.log("Joining room:", room);
     // socket.emit('joinRoom', { roomId, user });
   };
@@ -17,7 +17,7 @@ const GlobalRoomToJoin = ({ room, user }) => {
         key={track.uri}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          handleGoToGlobalRoom(room, user);
+          JoinGlobalRoom(room, user);
         }}
       >
         <View style={styles.container}>

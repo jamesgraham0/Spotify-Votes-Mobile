@@ -3,13 +3,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Landing from "./client/src/screens/LandingScreen.js";
 import CreateOrJoinLocalRoomScreen from "./client/src/screens/Local/CreateOrJoinLocalRoomScreen.js";
-import CreateRoom from "./client/src/screens/Local/CreateLocalRoomScreen.js";
-import EnterRoomCode from "./client/src/screens/Local/JoinLocalRoomScreen.js";
-import Room from "./client/src/screens/Room";
+import CreateLocalRoomScreen from "./client/src/screens/Local/CreateLocalRoomScreen.js";
+import JoinLocalRoomScreen from "./client/src/screens/Local/JoinLocalRoomScreen.js";
+import LocalRoom from "./client/src/screens/Local/LocalRoom";
 import LocalOrGlobal from "./client/src/screens/LocalOrGlobalScreen.js";
 import JoinGlobalRoomScreen from "./client/src/screens/Global/JoinGlobalRoomScreen";
 import CreateOrJoinGlobalRoomScreen from "./client/src/screens/Global/CreateOrJoinGlobalRoomScreen";
 import CreateGlobalRoomScreen from "./client/src/screens/Global/CreateGlobalRoomScreen.js";
+import GlobalRoom from "./client/src/screens/Global/GlobalRoom.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,11 @@ const AppNavigation = () => {
         />
 
         {/* Global Room */}
+        <Stack.Screen
+          name="GlobalRoom"
+          component={GlobalRoom}
+          options={{ headerShown: false, title: "GlobalRoom" }}
+        />
         <Stack.Screen
           name="CreateOrJoinGlobalRoomScreen"
           component={CreateOrJoinGlobalRoomScreen}
@@ -65,19 +71,19 @@ const AppNavigation = () => {
           }}
         />
         <Stack.Screen
-          name="CreateRoom"
-          component={CreateRoom}
-          options={{ headerShown: false, title: "CreateRoom" }}
+          name="CreateLocalRoomScreen"
+          component={CreateLocalRoomScreen}
+          options={{ headerShown: false, title: "CreateLocalRoomScreen" }}
         />
         <Stack.Screen
-          name="EnterRoomCode"
-          component={EnterRoomCode}
-          options={{ headerShown: false, title: "EnterRoomCode" }}
+          name="JoinLocalRoomScreen"
+          component={JoinLocalRoomScreen}
+          options={{ headerShown: false, title: "JoinLocalRoomScreen" }}
         />
         <Stack.Screen
-          name="Room"
-          component={Room}
-          options={{ headerShown: false, title: "Room" }}
+          name="LocalRoom"
+          component={LocalRoom}
+          options={{ headerShown: false, title: "LocalRoom" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

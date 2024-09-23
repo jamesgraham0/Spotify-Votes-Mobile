@@ -1,7 +1,7 @@
 const Constants = {
     EXPO_IP: '192.168.2.67', // TODO: For development purposes this needs to be updated to match the IP of expo go after each update
     BACKEND_PORT: '4000',
-    EXPO_PORT: '19000',
+    EXPO_PORT: '8081',
     SPOTIFY_URL: 'https://open.spotify.com',
     APP_SCHEME: 'exp',
     DEVICE_ID_LENGTH: 40,

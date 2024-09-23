@@ -11,11 +11,11 @@ const CreateOrJoinLocalRoomScreen = ({ navigation, route }) => {
     const isPremiumAccount = user.product !== "free";
 
     const handleCreateRoom = () => {
-        navigation.navigate('CreateRoom', { user: user });
+        navigation.navigate('CreateLocalRoomScreen', { user: user });
     }
 
     const handleJoinRoom = () => {
-        navigation.navigate('EnterRoomCode', { user: user });
+        navigation.navigate('JoinLocalRoomScreen', { user: user });
     }
     
     return (

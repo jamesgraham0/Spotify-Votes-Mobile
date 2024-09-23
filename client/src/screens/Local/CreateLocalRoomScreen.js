@@ -59,7 +59,7 @@ const CreateLocalRoomScreen = ({ navigation, route }) => {
     // being redirected to Spotify, the API call to get
     // the deviceId will be cut short, causing errors in
     // the room.
-    const validateDeviceId = (deviceId) => {
+    const validDeviceId = (deviceId) => {
         return (
             deviceId !== ''
             &&
@@ -70,22 +70,22 @@ const CreateLocalRoomScreen = ({ navigation, route }) => {
     };
 
     const handleNavigateToNewRoom = async (room) => {
-        socket.emit('createLocalRoomScreen', room);
-        navigation.navigate('Room', { room: room, user: user });
+        socket.emit('createRoom', room);
+        navigation.navigate('LocalRoom', { room: room, user: user });
         await service.resetPlaybackToEmptyState();
     };
 
-    const validateRoomName = () => {
+    const validRoomName = () => {
         const trimmedRoomName = roomName.trim();
         return trimmedRoomName.length <= 20;
     };
 
-    const handleCreateLocalRoomScreen = async () => {
+    const handleCreateLocalRoom = async () => {
         Keyboard.dismiss();
-        if (validateRoomName()) {
+        if (validRoomName()) {
             const room = await createNewRoom();
             let isActiveDeviceAndTransferred = await service.getMyDevicesAndTransferPlayback();
-            if (validateDeviceId(room.deviceId) && isActiveDeviceAndTransferred) {
+            if (validDeviceId(room.deviceId) && isActiveDeviceAndTransferred) {
                 await handleNavigateToNewRoom(room);
             } else {
                 const supported = await Linking.canOpenURL(Constants.SPOTIFY_URL);
@@ -131,7 +131,7 @@ const CreateLocalRoomScreen = ({ navigation, route }) => {
                 <RoomButton
                     onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                        handleCreateLocalRoomScreen();
+                        handleCreateLocalRoom();
                     }}
                     buttonText="Create Room"
                     buttonStyle={styles.createLocalRoomScreenButton}

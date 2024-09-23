@@ -6,14 +6,16 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Keyboard,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
+import uuid from 'react-native-uuid';
 import { socket } from "../../utils/socket";
 import DarkBackgroundCircles from "../../components/BackgroundCircles2";
 import Header from "../../components/Header";
 import Constants from "../../utils/constants";
 import RoomButton from "../../components/RoomButton";
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 
 const CreateGlobalRoomScreen = ({ navigation, route }) => {
   const { user } = route.params;
@@ -21,8 +23,8 @@ const CreateGlobalRoomScreen = ({ navigation, route }) => {
   const [subTitle, setSubTitle] = useState("");
 
   const handleReturnToGlobalRoom = () => {
-    navigation.navigate('CreateOrJoinGlobalRoomScreen', { user: user });
-}
+    navigation.navigate("CreateOrJoinGlobalRoomScreen", { user: user });
+  };
 
   const handleRoomNameChange = (text) => {
     setRoomName(text);
@@ -32,9 +34,39 @@ const CreateGlobalRoomScreen = ({ navigation, route }) => {
     setSubTitle(text);
   };
 
+  const createNewGlobalRoom = () => {
+    return {
+      name: roomName,
+      code: "00000",
+      id: uuid.v4(),
+      users: [user],
+      currentlyPlaying: {},
+      queue: [],
+    };
+  };
+
+  const navigateToNewGlobalRoom = (room) => {
+    socket.emit("createGlobalRoom", room);
+    navigation.navigate("GlobalRoom", { room: room, user: user });
+  };
+
+  const validRoomName = () => {
+    const trimmedRoomName = roomName.trim();
+    return trimmedRoomName.length <= 20 && trimmedRoomName.length > 0;
+  };
+
+  // Removed forcing the user to redirect to Spotify. That is still
+  // implemented in the LocalRoom.js file
   const handleCreateGlobalRoom = () => {
-    console.log("Room Name:", roomName);
-    console.log("Sub Title:", subTitle);
+    Keyboard.dismiss();
+    if (validRoomName()) {
+      const room = createNewGlobalRoom();
+      navigateToNewGlobalRoom(room);
+    } else {
+      alert(
+        `Room name must be at most 20 characters but is currently ${roomName.length}`
+      );
+    }
   };
 
   return (

@@ -1,15 +1,15 @@
 import { StyleSheet, Text, View, TouchableOpacity, Alert, Modal, ScrollView, Animated, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Navbar from '../components/Navbar';
-import service from '../utils/service';
-import { socket } from '../utils/socket';
+import Navbar from '../../components/Navbar';
+import service from '../../utils/service';
+import { socket } from '../../utils/socket';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
-import Constants from '../utils/constants';
+import Constants from '../../utils/constants';
 
-const Room = ({ navigation, route }) => {
+const LocalRoom = ({ navigation, route }) => {
     const { user } = route.params;
     const [room, setRoom] = useState(route.params.room)
     const [newPersonInRoom, setNewPersonInRoom] = useState(false);
@@ -45,7 +45,7 @@ const Room = ({ navigation, route }) => {
                         {
                             text: "OK",
                             onPress: () => {
-                                navigation.navigate('LocalRoom', { user: user });
+                                navigation.navigate('CreateOrJoinLocalRoom', { user: user });
                             }
                         }
                     ]
@@ -359,4 +359,4 @@ const styles = StyleSheet.create({
   })
   
 
-export default Room;
+export default LocalRoom;
