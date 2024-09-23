@@ -1,8 +1,15 @@
-const express = require("express");
+import express from "express";
+import * as http from 'http';
+import cors from "cors";
+import { Server } from "socket.io";
+import redisClient from './db/connection.js';
+
+redisClient.connect();
+
 const app = express();
-const http = require("http").Server(app);
-const cors = require("cors");
-const io = require("socket.io")(http, {
+const server = http.Server(app);
+
+const io = new Server(server, {
 	cors: {
 		origin: "http://localhost:3000",
 	},
@@ -12,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 const PORT = "4000";
-http.listen(PORT, () => {
+server.listen(PORT, () => {
 	console.log(`Server listening on ${PORT}`);
 });
 

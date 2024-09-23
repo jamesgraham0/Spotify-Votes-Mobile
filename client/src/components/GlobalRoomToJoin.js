@@ -2,13 +2,14 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import * as Haptics from "expo-haptics";
 import Constants from "../utils/constants";
+import { socket } from "../utils/socket";
 
 const GlobalRoomToJoin = ({ room, user }) => {
-  const { name, subtitle, users, track } = room;
+  const { name, subtitle, users, track, id } = room;
 
   const JoinGlobalRoom = (room, user) => {
     console.log("Joining room:", room);
-    // socket.emit('joinRoom', { roomId, user });
+    socket.emit('joinRoom', { id, user });
   };
 
   return (
