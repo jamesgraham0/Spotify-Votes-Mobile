@@ -46,7 +46,7 @@ const CreateGlobalRoomScreen = ({ navigation, route }) => {
   };
 
   const navigateToNewGlobalRoom = (room) => {
-    socket.emit("createGlobalRoom", room);
+    socket.emit("createRoom", room);
     navigation.navigate("GlobalRoom", { room: room, user: user });
   };
 

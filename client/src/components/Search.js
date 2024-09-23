@@ -11,16 +11,6 @@ const Search = ({ room, user }) => {
     const [searchResults, setSearchResults] = useState([])
     const [q, setQ] = useState(room.queue);
     const isPremiumAccount = user.product !== "free";
-    
-    useEffect(() => {
-        function fetchQueue() {
-          fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`)
-            .then((res) => res.json())
-            .then((data) => setQ(data))
-            .catch((err) => console.error(err, "An error occurred while fetching the queue"));
-        }
-        fetchQueue();
-      }, []);
 
     useEffect(() => {
         socket.on("addedTrackToQueue", (q) => {
