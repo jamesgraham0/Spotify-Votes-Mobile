@@ -28,6 +28,20 @@ const GlobalRoom = ({ navigation, route }) => {
   const [iconColor, setIconColor] = useState("#BBB");
 
   useEffect(() => {
+    (async () => {
+      try {
+        console.log(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`);
+        const res = await fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`);
+        const data = await res.json();
+        // TODO
+        // setQ(data);
+      } catch (err) {
+        console.error(err, "An error occurred while fetching the queue");
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     socket.on("newUserJoinedRoom", (roomWithNewUser) => {
       setNewPersonInRoom(true);
       setRoom(roomWithNewUser);
