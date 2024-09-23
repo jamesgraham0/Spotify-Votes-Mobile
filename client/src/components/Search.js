@@ -4,7 +4,6 @@ import service from '../utils/service';
 import TrackSearchResult from './TrackSearchResult';
 import { socket } from '../utils/socket';
 import * as Haptics from 'expo-haptics';
-import Constants from '../utils/constants';
 
 const Search = ({ room, user }) => {
     const [search, setSearch] = useState("")
