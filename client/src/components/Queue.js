@@ -11,7 +11,7 @@ const Queue = ({ queue, roomId, user }) => {
 
     useEffect(() => {
         function fetchQueue() {
-          fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${roomId}`)
+          fetch(`http://${Constants.EXPO_IP}:${Constants.SERVER_PORT}/queue/${roomId}`)
             .then((res) => res.json())
             .then((data) => setQ(data))
             .catch((err) => console.error(err));

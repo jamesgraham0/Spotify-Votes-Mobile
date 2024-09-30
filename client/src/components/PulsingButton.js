@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     roundButton: {
         width: 70,
         height: 70,
-        top: '65%',
+        // top: '65%',
         alignItems: 'center',
         justifyContent: 'center',
       },

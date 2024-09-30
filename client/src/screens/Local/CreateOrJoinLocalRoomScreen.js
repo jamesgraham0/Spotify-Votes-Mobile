@@ -21,7 +21,7 @@ const CreateOrJoinLocalRoomScreen = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             <BackgroundCircles/>
-            <Header headerText="Spotify Votes" onBackPress={() => navigation.navigate('LocalOrGlobal', { user: user })}/>
+            <Header headerText="Spotify Votes" onBackPress={() => navigation.navigate('LocalOrGlobalScreen', { user: user })}/>
             <Text style={styles.title}>Local Room</Text>
             <Text style={styles.instructions}>Create or join a room</Text>
             <RoomButton

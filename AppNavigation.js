@@ -6,7 +6,7 @@ import CreateOrJoinLocalRoomScreen from "./client/src/screens/Local/CreateOrJoin
 import CreateLocalRoomScreen from "./client/src/screens/Local/CreateLocalRoomScreen.js";
 import JoinLocalRoomScreen from "./client/src/screens/Local/JoinLocalRoomScreen.js";
 import LocalRoom from "./client/src/screens/Local/LocalRoom";
-import LocalOrGlobal from "./client/src/screens/LocalOrGlobalScreen.js";
+import LocalOrGlobalScreen from "./client/src/screens/LocalOrGlobalScreen.js";
 import JoinGlobalRoomScreen from "./client/src/screens/Global/JoinGlobalRoomScreen";
 import CreateOrJoinGlobalRoomScreen from "./client/src/screens/Global/CreateOrJoinGlobalRoomScreen";
 import CreateGlobalRoomScreen from "./client/src/screens/Global/CreateGlobalRoomScreen.js";
@@ -25,11 +25,11 @@ const AppNavigation = () => {
         />
 
         <Stack.Screen
-          name="LocalOrGlobal"
-          component={LocalOrGlobal}
+          name="LocalOrGlobalScreen"
+          component={LocalOrGlobalScreen}
           options={{
             headerShown: false,
-            title: "LocalOrGlobal",
+            title: "LocalOrGlobalScreen",
             gestureEnabled: false,
           }}
         />

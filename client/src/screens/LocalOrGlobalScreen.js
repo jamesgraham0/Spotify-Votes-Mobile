@@ -3,18 +3,19 @@ import React from 'react';
 import * as Haptics from 'expo-haptics';
 import BackgroundCircles from '../components/BackgroundCircles';
 import RoomButton from '../components/RoomButton';
+import { useSelector } from 'react-redux';
 
-const LocalOrGlobal = ({ navigation, route }) => {
-    const { user } = route.params;
-    const name = user.display_name;
-    const isPremiumAccount = user.product !== "free";
+const LocalOrGlobalScreen = ({ navigation }) => {
+    const { userData } = useSelector((state) => state.spotify);
+    const name = userData.display_name;
+    const isPremiumAccount = userData.product !== "free";
 
     const handleLocalRoomButton = () => {
-        navigation.navigate('CreateOrJoinLocalRoomScreen', { user: user });
+        navigation.navigate('CreateOrJoinLocalRoomScreen', { user: userData });
     }
 
     const handleGlobalRoomButton = () => {
-        navigation.navigate('CreateOrJoinGlobalRoomScreen', { user: user });
+        navigation.navigate('CreateOrJoinGlobalRoomScreen', { user: userData });
     }
     
     return (
@@ -222,4 +223,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LocalOrGlobal;
+export default LocalOrGlobalScreen;

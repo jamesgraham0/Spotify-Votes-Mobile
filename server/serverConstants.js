@@ -18,7 +18,9 @@ const Constants = {
         },
     ],
     PORT: "4000",
-    DEFAULT_PROFILE_IMAGE: "http://www.gravatar.com/avatar/?d=mp"
+    DEFAULT_PROFILE_IMAGE: "http://www.gravatar.com/avatar/?d=mp",
+    SPOTIFY_URL: "https://open.spotify.com",
+    SPOTIFY_API_URL: "https://api.spotify.com/v1",
 };
 
 export default Constants;

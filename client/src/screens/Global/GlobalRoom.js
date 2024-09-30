@@ -30,7 +30,7 @@ const GlobalRoom = ({ navigation, route }) => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/queue/${room.id}`);
+        const res = await fetch(`http://${Constants.EXPO_IP}:${Constants.SERVER_PORT}/queue/${room.id}`);
         const data = await res.json();
         // TODO
         // setQ(data);

@@ -7,7 +7,7 @@ let roomCodeToIdMap = {};
 export default function socketOperations(io) {
   io.on("connection", (socket) => {
     console.log(`User connected with socket id: ${socket.id}`);
-
+    
     socket.on("createRoom", (room) => {
       const { id } = room;
       const code = generateRandomString();

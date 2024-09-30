@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 import Constants from './constants';
 
-export const socket = io(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}`, {
+export const socket = io(`http://${Constants.EXPO_IP}:${Constants.SERVER_PORT}`, {
   transports: ['websocket'],
   jsonp: false
 });

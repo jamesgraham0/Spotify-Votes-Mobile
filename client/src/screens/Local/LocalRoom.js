@@ -20,7 +20,7 @@ const LocalRoom = ({ navigation, route }) => {
 
     useEffect(() => {
         function fetchRoomCode() {
-            fetch(`http://${Constants.EXPO_IP}:${Constants.BACKEND_PORT}/code/${room.id}`)
+            fetch(`http://${Constants.EXPO_IP}:${Constants.SERVER_PORT}/code/${room.id}`)
                 .then((res) => res.json())
                 .then((data) => setRoomCode(data))
                 .catch((err) => console.error(err));
